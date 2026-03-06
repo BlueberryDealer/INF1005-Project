@@ -1,8 +1,18 @@
-# INF1005 Web Project
-Tech Stack
-- HTML
-- CSS
-- Bootstrap
-- JavaScript
-- PHP
-- MySQL
+# Tech Stack
+
+Frontend  
+- HTML  
+- CSS  
+- Bootstrap  
+- JavaScript  
+
+Backend  
+- PHP  
+
+Database  
+- MySQL  
+
+Tools  
+- Git & GitHub  
+- VS Code  
+- MySQL Workbench 
