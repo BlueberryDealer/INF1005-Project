@@ -25,7 +25,7 @@ include __DIR__ . "/components/navbar.php";
       Discover the best in classic sodas, sports drinks, and energy boosts.
     </p>
 
-    <a href="pages/products.php" class="hero-btn">
+    <a href="pages/products_test.php" class="hero-btn">
       Explore Our Collection
     </a>
 
