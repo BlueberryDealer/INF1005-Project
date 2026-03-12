@@ -3,7 +3,7 @@ include __DIR__ . "/../components/header.php";
 include __DIR__ . "/../components/navbar.php";
 ?>
 
-<main class="container">
+<div class="container mt-5 pt-5">
 
 <h2>Product Testing Page</h2>
 
