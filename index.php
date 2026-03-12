@@ -5,33 +5,42 @@ include __DIR__ . "/components/navbar.php";
 
 <main id="maincontent">
 
-<section class="hero">
+  <section class="hero">
 
-  <div class="hero-slideshow">
+    <div class="hero-slideshow">
+      <div class="hero-slide slide1"></div>
+      <div class="hero-slide slide2"></div>
+      <div class="hero-slide slide3"></div>
+    </div>
 
-    <div class="hero-slide slide1"></div>
-    <div class="hero-slide slide2"></div>
-    <div class="hero-slide slide3"></div>
+    <div class="hero-content">
+      <p class="hero-tag">EXPERIENCE REFRESHMENT.</p>
 
-  </div>
+      <h1>Your Favorite Sodas and Drinks, Delivered.</h1>
 
-  <div class="hero-content">
+      <p class="hero-sub">
+        Discover the best in classic sodas, sports drinks, and energy boosts.
+      </p>
 
-    <p class="hero-tag">EXPERIENCE REFRESHMENT.</p>
+      <a href="pages/products.php" class="hero-btn">
+        Explore Our Collection
+      </a>
+    </div>
 
-    <h1>Your Favorite Sodas and Drinks, Delivered.</h1>
+  </section>
 
-    <p class="hero-sub">
-      Discover the best in classic sodas, sports drinks, and energy boosts.
-    </p>
+  <section class="top-sellers">
+    <div class="container">
+      <h2 class="section-title">Top Sellers</h2>
 
-    <a href="pages/products.php" class="hero-btn">
-      Explore Our Collection
-    </a>
-
-  </div>
-
-</section>
+      <div class="product-grid">
+        <div class="product-card"></div>
+        <div class="product-card"></div>
+        <div class="product-card"></div>
+        <div class="product-card"></div>
+      </div>
+    </div>
+  </section>
 
 </main>
 
