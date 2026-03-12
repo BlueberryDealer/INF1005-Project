@@ -6,7 +6,10 @@
   <li><a href="/pages/products.php">Shop</a></li>
   <li><a href="/pages/about.php">About</a></li>
   <li><a href="#">Where to Buy</a></li>
-  <li><a href="/admin/add_product.php">Admin add</a></li>
+
+  <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+      <li><a href="/admin/add_product.php">Admin add</a></li>
+  <?php endif; ?>
 
   <li class="dropdown">
     <a href="#">Member</a>

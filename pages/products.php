@@ -5,8 +5,8 @@
 2)FIX AND TEST ADD PRODUCT FUNCTIONALITY (ADMIN ONLY) 
 3)IMPLEMENT EDIT AND DELETE FUNCTIONALITY (ADMIN ONLY)
 */
-
-require_once __DIR__ . '/../security/auth_guard.php';
+require_once __DIR__ . '/../security/session.php';
+$session = new SessionManager();
 
  $config = parse_ini_file('/var/www/private/db-config.ini'); 
     if (!$config) 
