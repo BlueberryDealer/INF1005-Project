@@ -1,12 +1,15 @@
 <?php
 session_start();
+
 /* TO DO
 
 1)CHECK IF USER IS ADMIN - IF NOT, REDIRECT TO HOMEPAGE (SECURITY)
 2)FIX AND TEST ADD PRODUCT FUNCTIONALITY (ADMIN ONLY) 
 3)IMPLEMENT EDIT AND DELETE FUNCTIONALITY (ADMIN ONLY)
-*/
  $config = parse_ini_file('/var/www/private/db-config.ini'); 
+*/
+
+$config = parse_ini_file(__DIR__ . '/../db-config.ini');
     if (!$config) 
     { 
         $errorMsg = "Failed to read database config file."; 
@@ -82,6 +85,7 @@ include ROOT . "/components/navbar.php";
             <?php endwhile; ?>
         <?php else: ?>
             <p class="text-center">No products found in our inventory.</p>
+
         <?php endif; ?>
     </div>
 </div>
