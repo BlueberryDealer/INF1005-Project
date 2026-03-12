@@ -7,13 +7,14 @@ session_start();
 //     exit();
 // }
 
-
+    
 
 $name = $price = $desc = $stock = $errorMsg = $successMsg = "";
 
 // 2. PROCESS FORM ON SUBMIT
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $config = parse_ini_file('/var/www/private/db-config.ini');
+    //$config = parse_ini_file('/var/www/private/db-config.ini');
+    $config = parse_ini_file(__DIR__ . '/../db-config.ini');
     if (!$config) {
         $errorMsg = "Failed to read database config file.";
         $success = false;
@@ -121,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary">Save Product</button>
-                                <a href="admin_dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
+                                <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
                             </div>
                         </form>
                     </div>
