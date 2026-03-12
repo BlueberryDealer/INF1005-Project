@@ -500,3 +500,50 @@ h1,h2,h3{
     padding: 48px 0 24px;
   }
 }
+/* Search input */
+.nav-search-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-search-input {
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+}
+
+/* Small success message */
+.message-box {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #222;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  display: none;
+  z-index: 9999;
+}
+.error-text {
+  color: red;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* for cart row */
+.cart-item-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.cart-item-row button {
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
