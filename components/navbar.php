@@ -41,7 +41,16 @@
   </button>
 </form>
 
-  <a href="cart_test.php">Cart (<span id="cartCount">0</span>)</a>
+<div class="cart-container">
+
+  <a href="/pages/cart_test.php" class="nav-cart">
+    Cart
+    <span id="cartCount" class="cart-badge">0</span>
+  </a>
+
+  <div class="cart-preview" id="cartPreview"></div>
+
+</div>
 
 </div>
 
