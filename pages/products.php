@@ -8,7 +8,6 @@
 
 require_once __DIR__ . '/../security/auth_guard.php';
 
-
  $config = parse_ini_file('/var/www/private/db-config.ini'); 
     if (!$config) 
     { 

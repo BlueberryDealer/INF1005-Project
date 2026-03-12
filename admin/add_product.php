@@ -1,4 +1,5 @@
 <?php
+
 // 1. SECURITY CHECK: Only Admins allowed
 // if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 //     header("Location: ../index.php");
