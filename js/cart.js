@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('product_id', productId);
         formData.append('quantity', quantity);
 
-        const res  = await fetch('cart_actions.php', { method: 'POST', body: formData });
+        const res  = await fetch('/pages/cart_actions.php', { method: 'POST', body: formData });
         const data = await res.json();
         return data;
     }

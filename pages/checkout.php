@@ -2,17 +2,11 @@
 // -------------------------------------------------------
 // checkout.php  –  Shipping details + order placement
 // -------------------------------------------------------
-session_start();
-require_once __DIR__ . '/db_connect.php';
-require_once __DIR__ . '/models/order_model.php';
 
-// ---------- Auth guard: must be logged in ----------
-// Assumes Role 3 sets $_SESSION['user_id'] and $_SESSION['user_name']
-// Adjust session key names if Role 3 uses different ones.
-if (empty($_SESSION['user_id'])) {
-    header('Location: login.php?redirect=checkout.php');
-    exit;
-}
+require_once __DIR__ . '/../config/db_connect.php';
+require_once __DIR__ . '/../models/order_model.php';
+require_once __DIR__ . '/../security/auth_guard.php';
+
 
 // ---------- Redirect if cart is empty ----------
 if (empty($_SESSION['cart'])) {

@@ -6,9 +6,10 @@
 // Called via form POST or fetch() from main.js (Role 5).
 // -------------------------------------------------------
 
-session_start();
-require_once __DIR__ . '/db_connect.php';
-require_once __DIR__ . '/models/order_model.php';
+require_once __DIR__ . '/../config/db_connect.php';
+require_once __DIR__ . '/../models/order_model.php';
+require_once __DIR__ . '/../security/session.php';
+$session = new SessionManager();
 
 // ---------- CSRF helper (mirrors security.php from Role 3) ----------
 // If Role 3 provides a security.php with generateCsrfToken() and
