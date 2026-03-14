@@ -2,15 +2,10 @@
 // -------------------------------------------------------
 // order_confirm.php  –  Order confirmation / summary page
 // -------------------------------------------------------
-session_start();
-require_once __DIR__ . '/db_connect.php';
-require_once __DIR__ . '/models/order_model.php';
 
-// Auth guard
-if (empty($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
+require_once __DIR__ . '/../config/db_connect.php';
+require_once __DIR__ . '/../models/order_model.php';
+require_once __DIR__ . '/../security/auth_guard.php';
 
 $orderId = (int)($_GET['order_id'] ?? 0);
 
