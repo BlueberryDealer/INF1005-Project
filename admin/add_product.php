@@ -120,7 +120,7 @@ include __DIR__ . "/../components/header.php";
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Save Product</button>
+                                <button type="submit" class="btn btn-primary">Add Product</button>
                                 <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
                             </div>
                         </form>
