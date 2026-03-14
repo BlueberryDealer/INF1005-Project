@@ -54,12 +54,14 @@ include ROOT . "/components/navbar.php";
 ?>
 <div class="container mt-5">
     <h2 class="text-center mb-4">Our Products</h2>
-    <div class="row">
+    <div class="row" id="productList">
         <?php if ($result->num_rows > 0): ?>
             <?php while($row = $result->fetch_assoc()): ?>
                 <div class="col-sm-6 col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        
+                    <div class="card h-100 shadow-sm product-card"
+                        data-name="<?php echo htmlspecialchars($row['name']); ?>"
+                        data-price="<?php echo htmlspecialchars($row['price']); ?>"
+                        data-category="<?php echo htmlspecialchars($row['category'] ?? ''); ?>">
                         <img src="/images/<?php echo htmlspecialchars($row['image_url']); ?>" 
                              class="card-img-top" alt="<?php echo htmlspecialchars($row['name']); ?>">
                         
@@ -73,7 +75,7 @@ include ROOT . "/components/navbar.php";
                                     <a href="edit_product.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-warning">Edit</a>
                                     <a href="delete_product.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger">Delete</a>
                                 <?php else: ?>
-                                    <button class="btn btn-primary">Add to Cart</button>
+                                    <button class="btn btn-primary add-cart">Add to Cart</button>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -86,4 +88,5 @@ include ROOT . "/components/navbar.php";
     </div>
 </div>
 
-<?php include __DIR__ . "/components/footer.php"; ?>
+<?php include __DIR__ . "/../components/footer.php"; ?>
+<script src="/js/main.js"></script>
