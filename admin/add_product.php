@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+//require_once __DIR__ . '/../security/admin_guard.php';  
 // 1. SECURITY CHECK: Only Admins allowed
 // if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 //     header("Location: ../index.php");
@@ -13,8 +13,9 @@ $name = $price = $desc = $stock = $errorMsg = $successMsg = "";
 
 // 2. PROCESS FORM ON SUBMIT
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    //$config = parse_ini_file('/var/www/private/db-config.ini');
-    $config = parse_ini_file(__DIR__ . '/../db-config.ini');
+    //$config = parse_ini_file('/var/www/private/db-config.ini'); prod
+    //$config = parse_ini_file(__DIR__ . '/../db-config.ini'); test
+    $config = parse_ini_file('/var/www/private/db-config.ini');
     if (!$config) {
         $errorMsg = "Failed to read database config file.";
         $success = false;
@@ -42,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 // 3. SECURE INSERT: Using Prepared Statements
                 $stmt = $conn->prepare("INSERT INTO products (name, description, price,  image_url) VALUES (?, ?, ?, ?)");
-                $stmt->bind_param("ssss", $name, $desc, $price, $image_url);
+                $stmt->bind_param("ssds", $name, $desc, $price, $image_url);
 
                 if ($stmt->execute()) {
                     $successMsg = "Product added successfully!";
@@ -63,14 +64,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Add New Product - Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+
+<?php
+include __DIR__ . "/../components/header.php";
+?>
 
 <body class="bg-light">
     <div class="container mt-5">
@@ -132,4 +130,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </body>
 
-</html>
+<?php include __DIR__ . "/../components/footer.php"; ?>

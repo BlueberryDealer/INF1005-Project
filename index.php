@@ -44,4 +44,4 @@ include __DIR__ . "/components/navbar.php";
 
 </main>
 
-<?php include __DIR__ . "/components/footer.php"; ?>
+<?php include __DIR__ . '/components/footer.php'; ?>

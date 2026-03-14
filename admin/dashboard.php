@@ -1,12 +1,13 @@
 <?php
+session_start();
 // admin_dashboard.php
-
+//require_once __DIR__ . '/../security/admin_guard.php'; 
 $errorMsg = "";
 $success = true;
 $result = null;
 
 // Fetching products using your provided logic
-$config = parse_ini_file(__DIR__ . '/../db-config.ini');
+$config = parse_ini_file('/var/www/private/db-config.ini');
 if (!$config) {
     $errorMsg = "Failed to read database config file.";
     $success = false;
@@ -31,23 +32,20 @@ if (!$config) {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | E-Commerce</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/dashboard.css">
-</head>
+<?php
+include __DIR__ . "/../components/header.php";
+?>
 <body>
-
+    <header>
+        <title>Admin Dashboard - BoltBrew Energy</title>
     <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
         <div class="container-fluid">
-            <span class="navbar-brand mb-0 h1">Admin Control Panel</span>
-            </div>
+        <span class="navbar-brand mb-0 h1">Admin Control Panel</span>
+        <a href="/index.php" class="btn btn-outline-light btn-sm">Back to Store</a>
+    </div>
     </nav>
-
+    </header>
+    <main>
     <div class="container-fluid px-4">
         <?php if (!empty($errorMsg)): ?>
             <div class="alert alert-danger" role="alert">
@@ -96,8 +94,10 @@ if (!$config) {
                                         $<?= number_format(htmlspecialchars($row['price']), 2) ?>
                                     </td>
                                     <td class="pe-4 text-end">
-                                        <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
-                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                        <a href="edit_product.php?id=<?= htmlspecialchars($row['product_id']) ?>" 
+   class="btn btn-sm btn-outline-secondary me-1">Edit</a>
+                                        <a href="delete_product.php?id=<?= htmlspecialchars($row['product_id']) ?>"
+   class="btn btn-sm btn-outline-danger">Delete</a>
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
@@ -111,8 +111,8 @@ if (!$config) {
             </div>
         </div>
     </div>
+    </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/dashboard.js"></script>
+
 </body>
-</html>
+<?php include __DIR__ . "/../components/footer.php"; ?>
