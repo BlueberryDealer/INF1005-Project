@@ -52,7 +52,7 @@ class RoleManager {
     
     
     // Require user to be logged in. If not logged in, redirect to login page
-    public function requireAuthenticated(string $redirectUrl = '/auth/login.php'): bool {
+    public function requireAuthenticated(string $redirectUrl = '/pages/unauthorized.php'): bool {
         if (!$this->session->isAuthenticated()) {
             header("Location: $redirectUrl");
             exit;
