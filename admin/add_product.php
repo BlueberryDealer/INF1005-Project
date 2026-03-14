@@ -13,12 +13,8 @@ $name = $price = $desc = $stock = $errorMsg = $successMsg = "";
 
 // 2. PROCESS FORM ON SUBMIT
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // CSRF check
-    if (!CSRFToken::validate($_POST['csrf_token'] ?? '', true)) {
-        http_response_code(403);
-        exit('Invalid CSRF token');
-    }
-
+    //$config = parse_ini_file('/var/www/private/db-config.ini'); prod
+    //$config = parse_ini_file(__DIR__ . '/../db-config.ini'); test
     $config = parse_ini_file('/var/www/private/db-config.ini');
     if (!$config) {
         $errorMsg = "Failed to read database config file.";
@@ -30,6 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $desc = trim($_POST['description']);
         $stock = $_POST['stock_quantity'];
         $image_url = $_POST['image_url']; // For now, manually typing the filename
+        $quantity = (int) $_POST['stock_quantity'];
 
         $conn = new mysqli(
             $config['servername'],
@@ -42,12 +39,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $errorMsg = "Connection failed: " . $conn->connect_error;
             $success = false;
         } else {
-            if (empty($name) || empty($price)) {
-                $errorMsg = "Product name and price are required.";
+            if (empty($name) || empty($price) || !isset($_POST['stock_quantity'])) {
+                $errorMsg = "Product name, price and quantity are required.";
             } else {
                 // 3. SECURE INSERT: Using Prepared Statements
-                $stmt = $conn->prepare("INSERT INTO products (name, description, price,  image_url) VALUES (?, ?, ?, ?)");
-                $stmt->bind_param("ssss", $name, $desc, $price, $image_url);
+                $stmt = $conn->prepare("INSERT INTO products (name, description, price, image_url, quantity) VALUES (?, ?, ?, ?, ?)");
+                $stmt->bind_param("ssdsi", $name, $desc, $price, $image_url, $quantity);
 
                 if ($stmt->execute()) {
                     $successMsg = "Product added successfully!";
@@ -68,14 +65,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Add New Product - Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+
+<?php
+include __DIR__ . "/../components/header.php";
+?>
 
 <body class="bg-light">
     <div class="container mt-5">
@@ -108,9 +102,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         value="<?php echo $price; ?>" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Stock Quantity</label>
-                                    <input type="number" name="stock_quantity" class="form-control"
-                                        value="<?php echo $stock; ?>">
+                                    <label class="form-label">Stock Quantity *</label>
+                                    <input type="number" name="stock_quantity" class="form-control" min="0"
+                                        value="<?php echo htmlspecialchars($stock); ?>" required>
                                 </div>
                             </div>
 
@@ -127,8 +121,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Save Product</button>
-                                <a href="admin_dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
+                                <button type="submit" class="btn btn-primary">Add Product</button>
+                                <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
                             </div>
                         </form>
                     </div>
@@ -138,4 +132,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </body>
 
-</html>
+<?php include __DIR__ . "/../components/footer.php"; ?>
