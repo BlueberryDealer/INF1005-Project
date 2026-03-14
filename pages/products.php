@@ -1,15 +1,16 @@
 <?php
 session_start();
-
+//require_once __DIR__ . '/../security/session.php';
+//$session = new SessionManager();
 /* TO DO
 
 1)CHECK IF USER IS ADMIN - IF NOT, REDIRECT TO HOMEPAGE (SECURITY)
 2)FIX AND TEST ADD PRODUCT FUNCTIONALITY (ADMIN ONLY) 
 3)IMPLEMENT EDIT AND DELETE FUNCTIONALITY (ADMIN ONLY)
- $config = parse_ini_file('/var/www/private/db-config.ini'); 
+ $config = parse_ini_file('/var/www/private/db-config.ini'); prod
 */
 
-$config = parse_ini_file(__DIR__ . '/../db-config.ini');
+$config = parse_ini_file('/var/www/private/db-config.ini');
     if (!$config) 
     { 
         $errorMsg = "Failed to read database config file."; 
@@ -46,13 +47,11 @@ $config = parse_ini_file(__DIR__ . '/../db-config.ini');
 ?>
 
 
-<!DOCTYPE html>
-<html lang="en">
 <?php
-define('ROOT', $_SERVER['DOCUMENT_ROOT']);
-include ROOT . "/components/header.php";
-include ROOT . "/components/navbar.php";
+include __DIR__ . "/../components/header.php";
+include __DIR__ . "/../components/navbar.php";
 ?>
+<body>
 <div class="container mt-5">
     <h2 class="text-center mb-4">Our Products</h2>
     <div class="row" id="productList">
@@ -89,6 +88,5 @@ include ROOT . "/components/navbar.php";
         <?php endif; ?>
     </div>
 </div>
-
+</body>
 <?php include __DIR__ . "/../components/footer.php"; ?>
-<script src="/js/main.js"></script>
