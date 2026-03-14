@@ -46,33 +46,10 @@
     Cart
     <span id="cartCount" class="cart-badge">0</span>
   </a>
-    <form id="siteSearchForm" class="nav-search-form" action="/pages/products_test.php" method="get">
-      <input
-        type="text"
-        id="searchInput"
-        name="search"
-        class="nav-search-input"
-        placeholder="Search products..."
-        aria-label="Search products"
-      >
-      <button type="submit" class="nav-icon" aria-label="Submit search">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <circle cx="11" cy="11" r="7" stroke="white" stroke-width="2"/>
-          <line x1="16.65" y1="16.65" x2="21" y2="21" stroke="white" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
-    </form>
 
-    <div class="cart-container">
+  <div class="cart-preview" id="cartPreview"></div>
 
-      <a href="/pages/cart_test.php" class="nav-cart">
-        Cart
-        <span id="cartCount" class="cart-badge">0</span>
-      </a>
-
-      <div class="cart-preview" id="cartPreview"></div>
-
-    </div>
+</div>
 
     <!-- Profile icon dropdown -->
     <div class="dropdown nav-profile">
