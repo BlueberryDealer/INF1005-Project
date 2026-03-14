@@ -21,7 +21,7 @@ class Sanitizer {
     /**
      * Main validation function
      * Example: ['name' => 'required|min:3', 'email' => 'required|email']
-     * rules separated by | 
+     * rules are separated by | 
      */
     public function validate(array $rules): bool {
         // Check each field
@@ -39,7 +39,7 @@ class Sanitizer {
      * Split rules by | and check each one
      */
     private function checkField(string $field, mixed $value, string $rules): void {
-        // Split rules: 'required|min:3|max:20' becomes array
+        // Split rules: 'required|min:3|max:20' 
         $ruleList = explode('|', trim($rules));
         
         // Check each rule
@@ -125,8 +125,7 @@ class Sanitizer {
         }
         $this->errors[$field][] = $message;
     }
-    
-    
+
     // Get all error messages
     public function getErrors(): array {
         return $this->errors;
