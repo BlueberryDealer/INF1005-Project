@@ -12,7 +12,7 @@ h1,h2,h3{
 
 /* ---------- NAVBAR (Left links / Center brand / Right actions) ---------- */
 .navbar{
-  position:fixed;
+
   top:0;
   left:0;
   right:0;
@@ -608,3 +608,7 @@ h1,h2,h3{
 
   padding: 2px 5px;
 }
+
+/* ========================Admin Dashboard=========================== */
+/* admin_style.css */
+

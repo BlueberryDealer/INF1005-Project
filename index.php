@@ -47,4 +47,4 @@ $session = new SessionManager();
 
 </main>
 
-<?php include __DIR__ . "/components/footer.php"; ?>
+<?php include __DIR__ . '/components/footer.php'; ?>
