@@ -4,7 +4,7 @@
 // Handles all DB operations for orders and order_items.
 // -------------------------------------------------------
 
-require_once __DIR__ . '/../db_connect.php';
+require_once __DIR__ . '/../config/db_connect.php';
 
 /**
  * Creates a new order and its line items in a single transaction.

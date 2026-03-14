@@ -2,9 +2,11 @@
 // -------------------------------------------------------
 // cart.php  –  View & manage the shopping cart
 // -------------------------------------------------------
-session_start();
-require_once __DIR__ . '/db_connect.php';
-require_once __DIR__ . '/models/order_model.php';
+
+require_once __DIR__ . '/../config/db_connect.php';
+require_once __DIR__ . '/../models/order_model.php';
+require_once __DIR__ . '/../security/session.php';
+$session = new SessionManager();
 
 // ---------- CSRF token ----------
 if (empty($_SESSION['csrf_token'])) {
