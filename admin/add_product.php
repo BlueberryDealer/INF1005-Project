@@ -7,7 +7,7 @@ session_start();
 //     exit();
 // }
 
-    
+
 
 $name = $price = $desc = $stock = $errorMsg = $successMsg = "";
 
@@ -26,6 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $desc = trim($_POST['description']);
         $stock = $_POST['stock_quantity'];
         $image_url = $_POST['image_url']; // For now, manually typing the filename
+        $quantity = (int) $_POST['stock_quantity'];
 
         $conn = new mysqli(
             $config['servername'],
@@ -38,12 +39,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $errorMsg = "Connection failed: " . $conn->connect_error;
             $success = false;
         } else {
-            if (empty($name) || empty($price)) {
-                $errorMsg = "Product name and price are required.";
+            if (empty($name) || empty($price) || !isset($_POST['stock_quantity'])) {
+                $errorMsg = "Product name, price and quantity are required.";
             } else {
                 // 3. SECURE INSERT: Using Prepared Statements
-                $stmt = $conn->prepare("INSERT INTO products (name, description, price,  image_url) VALUES (?, ?, ?, ?)");
-                $stmt->bind_param("ssds", $name, $desc, $price, $image_url);
+                $stmt = $conn->prepare("INSERT INTO products (name, description, price, image_url, quantity) VALUES (?, ?, ?, ?, ?)");
+                $stmt->bind_param("ssdsi", $name, $desc, $price, $image_url, $quantity);
 
                 if ($stmt->execute()) {
                     $successMsg = "Product added successfully!";
@@ -100,9 +101,9 @@ include __DIR__ . "/../components/header.php";
                                         value="<?php echo $price; ?>" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Stock Quantity</label>
-                                    <input type="number" name="stock_quantity" class="form-control"
-                                        value="<?php echo $stock; ?>">
+                                    <label class="form-label">Stock Quantity *</label>
+                                    <input type="number" name="stock_quantity" class="form-control" min="0"
+                                        value="<?php echo htmlspecialchars($stock); ?>" required>
                                 </div>
                             </div>
 

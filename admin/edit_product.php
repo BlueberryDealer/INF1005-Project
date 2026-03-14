@@ -3,7 +3,7 @@ session_start();
 //require_once __DIR__ . '/../security/admin_guard.php';  
 
 
-$errorMsg   = "";
+$errorMsg = "";
 $successMsg = "";
 
 // ── Step 1: Validate the product_id from the URL ──────────────
@@ -24,10 +24,11 @@ if (!$config) {
 // ── Step 3: Handle form submission (POST = save changes) ──────
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $name      = trim($_POST['name']);
-    $price     = $_POST['price'];
-    $desc      = trim($_POST['description']);
+    $name = trim($_POST['name']);
+    $price = $_POST['price'];
+    $desc = trim($_POST['description']);
     $image_url = trim($_POST['image_url']);
+    $quantity = (int) $_POST['quantity'];
 
     if (empty($name) || empty($price)) {
         $errorMsg = "Product name and price are required.";
@@ -45,10 +46,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // Prepared statement — safe UPDATE
             $stmt = $conn->prepare(
                 "UPDATE products 
-                    SET name = ?, description = ?, price = ?, image_url = ?
-                  WHERE product_id = ?"
+            SET name = ?, description = ?, price = ?, image_url = ?, quantity = ?
+          WHERE product_id = ?"
             );
-            $stmt->bind_param("ssdsi", $name, $desc, $price, $image_url, $productId);
+            $stmt->bind_param("ssdsii", $name, $desc, $price, $image_url, $quantity, $productId);
 
             if ($stmt->execute()) {
                 $successMsg = "Product updated successfully!";
@@ -76,7 +77,7 @@ if ($conn->connect_error) {
 }
 
 $stmt = $conn->prepare(
-    "SELECT product_id, name, price, description, image_url 
+    "SELECT product_id, name, price, description, image_url, quantity 
        FROM products 
       WHERE product_id = ?"
 );
@@ -98,7 +99,7 @@ if (!$product) {
 include __DIR__ . "/../components/header.php";
 ?>
 
-<body >
+<body>
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -127,76 +128,54 @@ include __DIR__ . "/../components/header.php";
                             Keep the product_id in the URL for the action so
                             the same page handles GET (load) and POST (save)
                         -->
-                        <form action="edit_product.php?id=<?= htmlspecialchars($product['product_id']) ?>" method="POST">
+                        <form action="edit_product.php?id=<?= htmlspecialchars($product['product_id']) ?>"
+                            method="POST">
 
                             <div class="mb-3">
                                 <label for="name" class="form-label">Product Name *</label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    name="name"
-                                    class="form-control"
-                                    value="<?= htmlspecialchars($product['name']) ?>"
-                                    required
-                                >
+                                <input type="text" id="name" name="name" class="form-control"
+                                    value="<?= htmlspecialchars($product['name']) ?>" required>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="price" class="form-label">Price ($) *</label>
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        id="price"
-                                        name="price"
-                                        class="form-control"
-                                        value="<?= htmlspecialchars($product['price']) ?>"
-                                        required
-                                    >
+                                    <input type="number" step="0.01" id="price" name="price" class="form-control"
+                                        value="<?= htmlspecialchars($product['price']) ?>" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="quantity" class="form-label">Stock Quantity *</label>
+                                    <input type="number" id="quantity" name="quantity" class="form-control" min="0"
+                                        value="<?= htmlspecialchars($product['quantity']) ?>" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <!-- product_id is read-only — never editable -->
                                     <label class="form-label">Product ID</label>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        value="#<?= htmlspecialchars($product['product_id']) ?>"
-                                        disabled
-                                    >
+                                    <input type="text" class="form-control"
+                                        value="#<?= htmlspecialchars($product['product_id']) ?>" disabled>
                                     <div class="form-text">Product ID cannot be changed.</div>
                                 </div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
-                                <textarea
-                                    id="description"
-                                    name="description"
-                                    class="form-control"
-                                    rows="3"
-                                ><?= htmlspecialchars($product['description'] ?? '') ?></textarea>
+                                <textarea id="description" name="description" class="form-control"
+                                    rows="3"><?= htmlspecialchars($product['description'] ?? '') ?></textarea>
                             </div>
 
                             <div class="mb-4">
                                 <label for="image_url" class="form-label">Image Filename (e.g., product.jpg)</label>
-                                <input
-                                    type="text"
-                                    id="image_url"
-                                    name="image_url"
-                                    class="form-control"
+                                <input type="text" id="image_url" name="image_url" class="form-control"
                                     value="<?= htmlspecialchars($product['image_url'] ?? '') ?>"
-                                    placeholder="Place image in /images folder first"
-                                >
+                                    placeholder="Place image in /images folder first">
                                 <!-- Live preview of the current image -->
                                 <?php if (!empty($product['image_url'])): ?>
                                     <div class="mt-2">
                                         <p class="form-text mb-1">Current image:</p>
-                                        <img
-                                            src="/images/<?= htmlspecialchars($product['image_url']) ?>"
+                                        <img src="/images/<?= htmlspecialchars($product['image_url']) ?>"
                                             alt="<?= htmlspecialchars($product['name']) ?>"
                                             style="height: 80px; object-fit: cover; border-radius: 6px;"
-                                            onerror="this.style.display='none'"
-                                        >
+                                            onerror="this.style.display='none'">
                                     </div>
                                 <?php endif; ?>
                             </div>
