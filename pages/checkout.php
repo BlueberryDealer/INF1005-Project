@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $defaultEmail = $_SESSION['user_email'] ?? '';
 $defaultName  = $_SESSION['user_name']  ?? '';
 
-$pageTitle = 'Checkout – BoltBrew Energy';
+$pageTitle = 'Checkout – Quench';
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -26,7 +26,7 @@ if (!$order) {
 // Clear the last_order_id from session once page is loaded
 unset($_SESSION['last_order_id']);
 
-$pageTitle = 'Order Confirmed – BoltBrew Energy';
+$pageTitle = 'Order Confirmed – Quench';
 ?>
 <!DOCTYPE html>
 <html lang="en">
