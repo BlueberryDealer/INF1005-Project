@@ -14,25 +14,45 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     const csrfToken   = document.getElementById('csrf-token')?.value ?? '';
-    const cartStatus  = document.getElementById('cart-status');   // WCAG live region
+    const cartStatus  = document.getElementById('cart-status');
     const grandTotalEl = document.getElementById('cart-grand-total');
     const totalDisplayEl = document.getElementById('cart-total-display');
 
-    // -------------------------------------------------------
-    // Utility: announce message to screen readers
-    // -------------------------------------------------------
+    document.querySelectorAll('.add-cart').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            const card = e.target.closest('.product-card');
+            if (!card) return;
+
+            const productId = card.dataset.productId;
+            const name = card.dataset.name ?? 'Item';
+
+            if (!productId || !csrfToken) {
+                alert('Unable to add item to cart.');
+                return;
+            }
+
+            try {
+                const data = await cartAction('add', productId, 1);
+                if (data.success) {
+                    updateCartBadge(data.cart_count);
+                    announce(name + ' added to cart.');
+                } else {
+                    alert(data.message || 'Failed to add item.');
+                }
+            } catch {
+                alert('Could not add item to cart.');
+            }
+        });
+    });
+
     function announce(msg) {
         if (cartStatus) {
             cartStatus.textContent = '';
-            // Small timeout forces screen readers to re-read
             setTimeout(() => { cartStatus.textContent = msg; }, 50);
         }
     }
 
-    // -------------------------------------------------------
-    // Utility: POST to cart_actions.php
-    // -------------------------------------------------------
-    async function cartAction(action, productId, quantity = 1) {
+    async function cartAction(action, productId = 0, quantity = 1) {
         const formData = new FormData();
         formData.append('csrf_token', csrfToken);
         formData.append('action', action);
@@ -44,22 +64,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return data;
     }
 
-    // -------------------------------------------------------
-    // Recalculate grand total from visible row subtotals
-    // -------------------------------------------------------
     function recalcTotal() {
         let total = 0;
         document.querySelectorAll('.item-subtotal').forEach(el => {
             total += parseFloat(el.dataset.subtotal ?? 0);
         });
         const formatted = '$' + total.toFixed(2);
-        if (grandTotalEl)  grandTotalEl.textContent  = formatted;
+        if (grandTotalEl) grandTotalEl.textContent = formatted;
         if (totalDisplayEl) totalDisplayEl.textContent = formatted;
     }
 
-    // -------------------------------------------------------
-    // Update a single row's subtotal display
-    // -------------------------------------------------------
     function updateRowSubtotal(row, unitPrice, qty) {
         const subtotalEl = row.querySelector('.item-subtotal');
         if (!subtotalEl) return;
@@ -68,41 +82,65 @@ document.addEventListener('DOMContentLoaded', () => {
         subtotalEl.textContent = '$' + subtotal.toFixed(2);
     }
 
-    // -------------------------------------------------------
-    // Update navbar cart badge count (if Role 1/5 adds one)
-    // -------------------------------------------------------
     function updateCartBadge(count) {
-        const badge = document.getElementById('cart-badge');
-        if (badge) badge.textContent = count;
+        const badge = document.getElementById('cartCount');
+        if (!badge) return;
+
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'flex' : 'none';
+
+        const preview = document.getElementById('cartPreview');
+        if (preview) {
+            if (count > 0) {
+                preview.innerHTML = `<div class="p-2">You have ${count} item(s) in cart.</div>`;
+            } else {
+                preview.innerHTML = `<div class="p-2">Your cart is empty.</div>`;
+            }
+        }
     }
 
-    // -------------------------------------------------------
-    // Event delegation on the cart table
-    // -------------------------------------------------------
+    const clearCartBtn = document.getElementById('clearCartBtn');
+
+    if (clearCartBtn) {
+        clearCartBtn.addEventListener('click', async () => {
+            try {
+                const data = await cartAction('clear', 0, 0);
+                console.log('clear response:', data);
+
+                if (data.success) {
+                    updateCartBadge(0);
+                    location.reload();
+                } else {
+                    alert(data.message || 'Failed to clear cart.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Could not clear cart.');
+            }
+        });
+    }
+
     const cartTable = document.getElementById('cart-table');
-    if (!cartTable) return; // No cart table = empty cart page, nothing to do
+    if (!cartTable) return;
 
     cartTable.addEventListener('click', async (e) => {
-
-        // ------ +/- quantity button ------
         const qtyBtn = e.target.closest('.qty-btn');
         if (qtyBtn) {
             const row       = qtyBtn.closest('tr');
             const productId = row.dataset.productId;
             const input     = row.querySelector('.qty-input');
-            const unitPrice = parseFloat(row.querySelector('.item-subtotal').dataset.unitPrice
-                              ?? row.querySelector('[data-unit-price]')?.dataset.unitPrice
-                              ?? 0);
+            const unitPrice = parseFloat(
+                row.querySelector('.item-subtotal').dataset.unitPrice
+                ?? row.querySelector('[data-unit-price]')?.dataset.unitPrice
+                ?? 0
+            );
 
             let qty = parseInt(input.value, 10);
 
             if (qtyBtn.dataset.action === 'increase') {
                 qty++;
             } else {
-                if (qty <= 1) {
-                    // Let the user remove via the trash button; just floor at 1
-                    return;
-                }
+                if (qty <= 1) return;
                 qty--;
             }
 
@@ -122,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // ------ Remove button ------
         const removeBtn = e.target.closest('.remove-btn');
         if (removeBtn) {
             const row       = removeBtn.closest('tr');
@@ -137,10 +174,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateCartBadge(data.cart_count);
                     announce(name + ' removed from cart.');
 
-                    // Show empty state if no rows remain
                     const remainingRows = cartTable.querySelectorAll('tbody tr');
                     if (remainingRows.length === 0) {
-                        location.reload(); // Reload to show the empty cart UI
+                        location.reload();
                     }
                 }
             } catch {
@@ -150,9 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // -------------------------------------------------------
-    // Manual input change (typing a number directly)
-    // -------------------------------------------------------
     cartTable.addEventListener('change', async (e) => {
         const input = e.target.closest('.qty-input');
         if (!input) return;
@@ -165,7 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let qty = parseInt(input.value, 10);
 
-        // Floor at 1
         if (isNaN(qty) || qty < 1) qty = 1;
         input.value = qty;
 
@@ -181,19 +213,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // -------------------------------------------------------
-    // Init: set data-unit-price and data-subtotal on each row
-    // so recalcTotal() works without page reload
-    // -------------------------------------------------------
     cartTable.querySelectorAll('tbody tr').forEach(row => {
         const subtotalEl = row.querySelector('.item-subtotal');
         const input      = row.querySelector('.qty-input');
         if (!subtotalEl || !input) return;
 
-        const qty        = parseInt(input.value, 10);
-        // Parse subtotal text "$X.XX" -> number
+        const qty = parseInt(input.value, 10);
         const subtotalVal = parseFloat(subtotalEl.textContent.replace('$', '')) || 0;
-        const unitPrice  = qty > 0 ? subtotalVal / qty : 0;
+        const unitPrice = qty > 0 ? subtotalVal / qty : 0;
 
         subtotalEl.dataset.subtotal  = subtotalVal;
         subtotalEl.dataset.unitPrice = unitPrice;

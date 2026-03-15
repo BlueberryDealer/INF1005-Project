@@ -25,19 +25,19 @@ if (!empty($_SESSION['cart'])) {
     // Index products by ID for easy lookup
     $productMap = [];
     foreach ($products as $p) {
-        $productMap[$p['id']] = $p;
+        $productMap[$p['product_id']] = $p;
     }
 
     foreach ($_SESSION['cart'] as $pid => $qty) {
-        if (!isset($productMap[$pid])) continue; // product removed from DB
+        if (!isset($productMap[$pid])) continue;
         $p         = $productMap[$pid];
         $subtotal  = $p['price'] * $qty;
         $grandTotal += $subtotal;
         $cartItems[] = [
-            'product_id' => $p['id'],
+            'product_id' => $p['product_id'],
             'name'       => $p['name'],
             'price'      => $p['price'],
-            'image'      => $p['image'],
+            'image'      => $p['image_url'],
             'quantity'   => $qty,
             'subtotal'   => $subtotal,
         ];
@@ -60,16 +60,15 @@ $pageTitle = 'Your Cart – BoltBrew Energy';
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Site styles (Role 1) -->
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
 
-<?php include __DIR__ . '/components/header.php'; ?>
-<?php include __DIR__ . '/components/navbar.php'; ?>
+<?php include __DIR__ . '/../components/header.php'; ?>
+<?php include __DIR__ . '/../components/navbar.php'; ?>
 
 <main class="container my-5" id="main-content">
     <h1 class="mb-4">Your Cart</h1>
-
     <?php if (empty($cartItems)): ?>
     <!-- ===== EMPTY CART STATE ===== -->
     <div class="text-center py-5" id="empty-cart-message">
@@ -84,6 +83,9 @@ $pageTitle = 'Your Cart – BoltBrew Energy';
 
     <?php else: ?>
     <!-- ===== CART TABLE ===== -->
+    <button type="button" id="clearCartBtn" class="btn btn-outline-danger mb-3">
+        Clear Cart
+    </button>
     <div class="table-responsive">
         <table class="table align-middle" id="cart-table" aria-label="Shopping cart items">
             <thead class="table-dark">
@@ -192,13 +194,13 @@ $pageTitle = 'Your Cart – BoltBrew Energy';
     <div id="cart-status" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
 </main>
 
-<?php include __DIR__ . '/components/footer.php'; ?>
+<?php include __DIR__ . '/../components/footer.php'; ?>
 
 <!-- Hidden CSRF token for JS use -->
 <input type="hidden" id="csrf-token" value="<?= htmlspecialchars($csrfToken) ?>">
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Cart JS (Role 5 integrates into main.js; standalone version below) -->
-<script src="assets/js/cart.js"></script>
+<script src="/js/cart.js"></script>
 </body>
 </html>

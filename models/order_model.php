@@ -108,22 +108,36 @@ function getOrderById(int $orderId, int $userId): ?array
  * @param array $productIds  Array of product IDs
  * @return array
  */
-function getProductsByIds(array $productIds): array
-{
-    global $pdo;
+function getProductsByIds(array $ids): array {
+    global $conn;
 
-    if (empty($productIds)) return [];
+    if (empty($ids)) {
+        return [];
+    }
 
-    // Build a safe IN clause with positional placeholders
-    $placeholders = implode(',', array_fill(0, count($productIds), '?'));
-    $stmt = $pdo->prepare("
-        SELECT product_id AS id,
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+    $stmt = $conn->prepare("
+        SELECT product_id,
                name,
                price,
-               image_url AS image
+               image_url
         FROM products
         WHERE product_id IN ($placeholders)
     ");
-    $stmt->execute($productIds);
-    return $stmt->fetchAll();
+
+    $types = str_repeat('i', count($ids));
+    $stmt->bind_param($types, ...$ids);
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $products = [];
+    while ($row = $result->fetch_assoc()) {
+        $products[] = $row;
+    }
+
+    $stmt->close();
+
+    return $products;
 }
