@@ -42,8 +42,8 @@ $pageTitle = 'Order Confirmed – BoltBrew Energy';
 </head>
 <body>
 
-<?php include __DIR__ . '/components/header.php'; ?>
-<?php include __DIR__ . '/components/navbar.php'; ?>
+<?php include __DIR__ . '/../components/header.php'; ?>
+<?php include __DIR__ . '/../components/navbar.php'; ?>
 
 <main class="container my-5" id="main-content">
 
@@ -158,7 +158,7 @@ $pageTitle = 'Order Confirmed – BoltBrew Energy';
     </div>
 </main>
 
-<?php include __DIR__ . '/components/footer.php'; ?>
+<?php include __DIR__ . '/../components/footer.php'; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

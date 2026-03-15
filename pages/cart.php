@@ -3,10 +3,10 @@
 // cart.php  –  View & manage the shopping cart
 // -------------------------------------------------------
 
-require_once __DIR__ . '/../config/db_connect.php';
-require_once __DIR__ . '/../models/order_model.php';
-require_once __DIR__ . '/../security/session.php';
-$session = new SessionManager();
+// require_once __DIR__ . '/../config/db_connect.php';
+// require_once __DIR__ . '/../models/order_model.php';
+// require_once __DIR__ . '/../security/session.php';
+// $session = new SessionManager();
 
 // ---------- CSRF token ----------
 if (empty($_SESSION['csrf_token'])) {
@@ -64,8 +64,8 @@ $pageTitle = 'Your Cart – BoltBrew Energy';
 </head>
 <body>
 
-<?php include __DIR__ . '/components/header.php'; ?>
-<?php include __DIR__ . '/components/navbar.php'; ?>
+<?php include __DIR__ . '/../components/header.php'; ?>
+<?php include __DIR__ . '/../components/navbar.php'; ?>
 
 <main class="container my-5" id="main-content">
     <h1 class="mb-4">Your Cart</h1>
@@ -192,7 +192,7 @@ $pageTitle = 'Your Cart – BoltBrew Energy';
     <div id="cart-status" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
 </main>
 
-<?php include __DIR__ . '/components/footer.php'; ?>
+<?php include __DIR__ . '/../components/footer.php'; ?>
 
 <!-- Hidden CSRF token for JS use -->
 <input type="hidden" id="csrf-token" value="<?= htmlspecialchars($csrfToken) ?>">

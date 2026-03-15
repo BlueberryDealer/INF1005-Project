@@ -3,9 +3,9 @@
 // checkout.php  –  Shipping details + order placement
 // -------------------------------------------------------
 
-require_once __DIR__ . '/../config/db_connect.php';
-require_once __DIR__ . '/../models/order_model.php';
-require_once __DIR__ . '/../security/auth_guard.php';
+// require_once __DIR__ . '/../config/db_connect.php';
+// require_once __DIR__ . '/../models/order_model.php';
+// require_once __DIR__ . '/../security/auth_guard.php';
 
 
 // ---------- Redirect if cart is empty ----------
@@ -135,8 +135,8 @@ $pageTitle = 'Checkout – BoltBrew Energy';
 </head>
 <body>
 
-<?php include __DIR__ . '/components/header.php'; ?>
-<?php include __DIR__ . '/components/navbar.php'; ?>
+<?php include __DIR__ . '/../components/header.php'; ?>
+<?php include __DIR__ . '/../components/navbar.php'; ?>
 
 <main class="container my-5" id="main-content">
     <h1 class="mb-4">Checkout</h1>
@@ -350,7 +350,7 @@ $pageTitle = 'Checkout – BoltBrew Energy';
     </div><!-- /row -->
 </main>
 
-<?php include __DIR__ . '/components/footer.php'; ?>
+<?php include __DIR__ . '/../components/footer.php'; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/checkout_validation.js"></script>
