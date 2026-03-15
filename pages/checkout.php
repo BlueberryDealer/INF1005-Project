@@ -3,9 +3,9 @@
 // checkout.php  –  Shipping details + order placement
 // -------------------------------------------------------
 
-require_once __DIR__ . '/../config/db_connect.php';
-require_once __DIR__ . '/../models/order_model.php';
-require_once __DIR__ . '/../security/auth_guard.php';
+// require_once __DIR__ . '/../config/db_connect.php';
+// require_once __DIR__ . '/../models/order_model.php';
+// require_once __DIR__ . '/../security/auth_guard.php';
 
 
 // ---------- Redirect if cart is empty ----------
@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $defaultEmail = $_SESSION['user_email'] ?? '';
 $defaultName  = $_SESSION['user_name']  ?? '';
 
-$pageTitle = 'Checkout – BoltBrew Energy';
+$pageTitle = 'Checkout – Quench';
 ?>
 <!DOCTYPE html>
 <html lang="en">
