@@ -1,49 +1,45 @@
 <?php
-session_start();
-//require_once __DIR__ . '/../security/session.php';
-//$session = new SessionManager();
-/* TO DO
+require_once __DIR__ . '/../security/session.php';
+$session = new SessionManager();
 
-1)CHECK IF USER IS ADMIN - IF NOT, REDIRECT TO HOMEPAGE (SECURITY)
-2)FIX AND TEST ADD PRODUCT FUNCTIONALITY (ADMIN ONLY) 
-3)IMPLEMENT EDIT AND DELETE FUNCTIONALITY (ADMIN ONLY)
- $config = parse_ini_file('/var/www/private/db-config.ini'); prod
-*/
+$errorMsg = "";
+$success = true;
+$result = null;
 
-$config = parse_ini_file('/var/www/private/db-config.ini');
-    if (!$config) 
-    { 
-        $errorMsg = "Failed to read database config file."; 
-        $success = false; 
-    } 
-    else 
-    { 
-        $conn = new mysqli( 
-            $config['servername'], 
-            $config['username'], 
-            $config['password'], 
-            $config['dbname'] 
-        ); 
- 
-        // Check connection 
-        if ($conn->connect_error) 
-        { 
-            $errorMsg = "Connection failed: " . $conn->connect_error; 
-            $success = false; 
-        } 
-        else 
-        { 
-            // Prepare the statement: 
-            $stmt = $conn->prepare("SELECT * FROM products");
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrfToken = $_SESSION['csrf_token'];
 
-            // Bind & execute the query statement: 
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $stmt->close();
-        } 
- 
-        $conn->close(); 
-    } 
+$serverConfig = '/var/www/private/db-config.ini';
+$localConfig  = __DIR__ . '/../config/db-config.ini';
+$configPath = file_exists($serverConfig) ? $serverConfig : $localConfig;
+
+$config = parse_ini_file($configPath);
+
+if (!$config) {
+    $errorMsg = "Failed to read database config file.";
+    $success = false;
+} else {
+    $conn = new mysqli(
+        $config['servername'],
+        $config['username'],
+        $config['password'],
+        $config['dbname']
+    );
+
+    if ($conn->connect_error) {
+        $errorMsg = "Connection failed: " . $conn->connect_error;
+        $success = false;
+    } else {
+        $stmt = $conn->prepare("SELECT * FROM products");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+    }
+
+    $conn->close();
+}
 ?>
 
 
@@ -54,11 +50,12 @@ include __DIR__ . "/../components/navbar.php";
 <body>
 <div class="container mt-5">
     <h2 class="text-center mb-4">Our Products</h2>
-    <div class="row" id="productList" id="productList">
-        <?php if ($result->num_rows > 0): ?>
+    <div class="row" id="productList">
+        <?php if ($result && $result->num_rows > 0): ?>
             <?php while($row = $result->fetch_assoc()): ?>
                 <div class="col-sm-6 col-md-4 mb-4">
     <div class="card h-100 shadow-sm product-card"
+        data-product-id="<?= (int)$row['product_id'] ?>"
         data-name="<?= htmlspecialchars($row['name']) ?>"
         data-price="<?= htmlspecialchars($row['price']) ?>"
         data-category="<?= htmlspecialchars($row['category'] ?? '') ?>">
@@ -95,5 +92,8 @@ include __DIR__ . "/../components/navbar.php";
         <?php endif; ?>
     </div>
 </div>
+<input type="hidden" id="csrf-token" value="<?= htmlspecialchars($csrfToken) ?>">
+<script src="/js/main.js"></script>
+<script src="/js/cart.js"></script>
 </body>
 <?php include __DIR__ . "/../components/footer.php"; ?>

@@ -1,7 +1,4 @@
 <?php
-include __DIR__ . "/../components/header.php";
-include __DIR__ . "/../components/navbar.php";
-
 require_once __DIR__ . '/../security/csrf.php';
 require_once __DIR__ . '/../security/sanitization.php';
 require_once __DIR__ . '/../security/passwordProtection.php';
@@ -11,6 +8,9 @@ $session = new SessionManager();
 
 $error = $_SESSION['flash_error'] ?? null;
 unset($_SESSION['flash_error']);
+
+include __DIR__ . "/../components/header.php";
+include __DIR__ . "/../components/navbar.php";
 ?>
 
 <!doctype html>

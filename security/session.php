@@ -12,14 +12,22 @@ class SessionManager {
     // Constructor - Start session when object is created
     public function __construct() {
         if (session_status() === PHP_SESSION_NONE) {
-            if (!@session_start()) { // Try to start session, suppress warnings
-                // If session fails
+            session_set_cookie_params([
+                'lifetime' => 0,
+                'path' => '/',
+                'domain' => '',
+                'secure' => isset($_SERVER['HTTPS']),
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ]);
+
+            if (!@session_start()) {
                 echo "Cannot start session. Please try again.";
-                exit; // Stop execution so the app doesn't break
+                exit;
             }
         }
     }
-    
+        
     /**
      * Create a new session after successful login
      * Store user info in $_SESSION to remember they're logged in
