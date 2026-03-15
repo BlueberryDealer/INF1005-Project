@@ -6,7 +6,7 @@
 require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../models/order_model.php';
 require_once __DIR__ . '/../security/auth_guard.php';
-
+$session = new SessionManager();
 
 // ---------- Redirect if cart is empty ----------
 if (empty($_SESSION['cart'])) {
