@@ -84,31 +84,81 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateCartBadge(count) {
         const badge = document.getElementById('cartCount');
-        if (!badge) return;
+        if (badge) {
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'flex' : 'none';
+        }
 
-        badge.textContent = count;
-        badge.style.display = count > 0 ? 'flex' : 'none';
+        renderCartPreview();
+    }
 
-        const preview = document.getElementById('cartPreview');
-        if (preview) {
-            if (count > 0) {
-                preview.innerHTML = `<div class="p-2">You have ${count} item(s) in cart.</div>`;
-            } else {
-                preview.innerHTML = `<div class="p-2">Your cart is empty.</div>`;
-            }
+    async function fetchCartPreviewData() {
+        try {
+            const res = await fetch('/pages/cart_preview.php');
+            return await res.json();
+        } catch (err) {
+            console.error('Preview fetch failed:', err);
+            return { success: false, count: 0, total: 0, items: [] };
         }
     }
+
+    async function renderCartPreview() {
+        const preview = document.getElementById('cartPreview');
+        if (!preview) return;
+
+        const data = await fetchCartPreviewData();
+
+        if (!data.success || data.count <= 0 || !data.items.length) {
+            preview.innerHTML = `
+                <div class="p-3 small text-muted">Your cart is empty.</div>
+            `;
+            return;
+        }
+
+        const itemsHtml = data.items.slice(0, 3).map(item => `
+            <div class="d-flex align-items-start gap-2 mb-2 small">
+                <img
+                    src="${item.image}"
+                    alt="${item.name}"
+                    width="42"
+                    height="42"
+                    class="rounded object-fit-cover flex-shrink-0"
+                    onerror="this.src='/assets/images/placeholder.png'"
+                >
+                <div class="flex-grow-1">
+                    <div class="fw-semibold">${item.name}</div>
+                    <div class="text-muted">Qty: ${item.quantity}</div>
+                </div>
+                <div>$${Number(item.subtotal).toFixed(2)}</div>
+            </div>
+        `).join('');
+
+        preview.innerHTML = `
+            <div class="p-3">
+                <div class="fw-semibold mb-2">Cart Preview</div>
+                ${itemsHtml}
+                ${data.items.length > 3 ? `<div class="small text-muted mb-2">+ ${data.items.length - 3} more item(s)</div>` : ''}
+                <div class="d-flex justify-content-between small border-top pt-2 mt-2">
+                    <span>Subtotal</span>
+                    <strong>$${Number(data.total).toFixed(2)}</strong>
+                </div>
+                <a href="/pages/cart.php" class="btn btn-sm btn-primary w-100 mt-2">View Cart</a>
+            </div>
+        `;
+        }
 
     const clearCartBtn = document.getElementById('clearCartBtn');
 
     if (clearCartBtn) {
         clearCartBtn.addEventListener('click', async () => {
+            if (!confirm('Clear all items from cart?')) return;
+
             try {
                 const data = await cartAction('clear', 0, 0);
-                console.log('clear response:', data);
 
                 if (data.success) {
                     updateCartBadge(0);
+                    await renderCartPreview();
                     location.reload();
                 } else {
                     alert(data.message || 'Failed to clear cart.');
@@ -227,4 +277,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     recalcTotal();
+    renderCartPreview();
 });
