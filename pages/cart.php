@@ -44,7 +44,7 @@ if (!empty($_SESSION['cart'])) {
     }
 }
 
-$pageTitle = 'Your Cart – BoltBrew Energy';
+$pageTitle = 'Your Cart – Quench';
 ?>
 <!DOCTYPE html>
 <html lang="en">
