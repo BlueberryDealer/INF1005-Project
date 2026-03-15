@@ -3,10 +3,10 @@
 // cart.php  –  View & manage the shopping cart
 // -------------------------------------------------------
 
-require_once __DIR__ . '/../config/db_connect.php';
-require_once __DIR__ . '/../models/order_model.php';
-require_once __DIR__ . '/../security/session.php';
-$session = new SessionManager();
+// require_once __DIR__ . '/../config/db_connect.php';
+// require_once __DIR__ . '/../models/order_model.php';
+// require_once __DIR__ . '/../security/session.php';
+// $session = new SessionManager();
 
 // ---------- CSRF token ----------
 if (empty($_SESSION['csrf_token'])) {
@@ -44,7 +44,7 @@ if (!empty($_SESSION['cart'])) {
     }
 }
 
-$pageTitle = 'Your Cart – BoltBrew Energy';
+$pageTitle = 'Your Cart – Quench';
 ?>
 <!DOCTYPE html>
 <html lang="en">
