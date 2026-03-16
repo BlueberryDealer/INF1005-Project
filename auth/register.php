@@ -35,28 +35,28 @@ include __DIR__ . "/../components/navbar.php";
     
     <div class="mb-3">
       <label for="fname" class="form-label">First Name:</label>
-      <input type="text" id="fname" name="fname" class="form-control" placeholder="Enter first name">
+      <input maxlength="50" type="text" id="fname" name="fname" class="form-control" placeholder="Enter first name">
     </div>
 
     <div class="mb-3">
       <label for="lname" class="form-label">Last Name:</label>
-      <input type="text" id="lname" name="lname" class="form-control" placeholder="Enter last name" required>
+      <input required maxlength="50" type="text" id="lname" name="lname" class="form-control" placeholder="Enter last name" required>
     </div>
 
     <div class="mb-3">
       <label for="email" class="form-label">Email:</label> 
-      <input maxlength="45" type="email" id="email" name="email" class="form-control" 
+      <input required maxlength="50" type="email" id="email" name="email" class="form-control" 
         placeholder="Enter email">  
     </div>
 
     <div class="mb-3">
       <label for="password" class="form-label">Password:</label>
-      <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+      <input required type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
     </div>
 
     <div class="mb-3">
       <label for="password_confirm" class="form-label">Confirm Password:</label>
-      <input type="password" id="password_confirm" name="password_confirm" class="form-control" placeholder="Confirm password" required>
+      <input required type="password" id="password_confirm" name="password_confirm" class="form-control" placeholder="Confirm password" required>
     </div>
 
     <div class="mb-3"> 

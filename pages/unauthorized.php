@@ -30,3 +30,4 @@ include __DIR__ . "/../components/navbar.php";
     <?php endif; ?>
 </body>
 </html>
+<?php include __DIR__ . "/components/footer.php"; ?>

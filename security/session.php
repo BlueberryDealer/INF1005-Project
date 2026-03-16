@@ -1,9 +1,5 @@
 <?php
-/**
- * SessionManager Class
- * Handles user login, logout, and session storage
- * Keeps track of who is logged in
- */
+// Session Manager class for session, checks session for user log in 
 class SessionManager {
     
     // Session timeout - user logs out after 1 hour of inactivity
@@ -27,11 +23,8 @@ class SessionManager {
             }
         }
     }
-        
-    /**
-     * Create a new session after successful login
-     * Store user info in $_SESSION to remember they're logged in
-     */
+    
+    // Create new session for logged in user. 
     public function createSession(
         int $userId,
         string $lname,
@@ -56,10 +49,7 @@ class SessionManager {
         }
     }
     
-    /**
-     * Check if user is logged in 
-     * Also checks if session has timed out
-     */
+    // Check if user is logged in and if there's timeout
     public function isAuthenticated(): bool {
         // Check if user_id exists in session
         if (empty($_SESSION['user_id'])) {
@@ -130,10 +120,7 @@ class SessionManager {
         ];
     }
     
-    /**
-     * Refresh session timeout on each page view
-     * This keeps user logged in as long as they're using the site
-     */
+    // Refresh session on each page visit. 
     public function refreshSession(): void {
         if ($this->isAuthenticated()) {
             $_SESSION['created_at'] = time();
