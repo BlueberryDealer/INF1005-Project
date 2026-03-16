@@ -1,27 +1,42 @@
 <?php
-$serverConfig = '/var/www/private/db-config.ini';
-$localConfig  = __DIR__ . '/db-config.ini';
 
-$configPath = file_exists($serverConfig) ? $serverConfig : $localConfig;
+function db_config_path(): string
+{
+    $serverConfig = '/var/www/private/db-config.ini';
+    $localConfig = __DIR__ . '/db-config.ini';
 
-if (!file_exists($configPath)) {
-    die("Database config file not found.");
+    if (file_exists($serverConfig)) {
+        return $serverConfig;
+    }
+
+    if (file_exists($localConfig)) {
+        return $localConfig;
+    }
+
+    throw new RuntimeException('Database config file not found.');
 }
 
-$config = parse_ini_file($configPath);
+function db_connect(): mysqli
+{
+    $config = parse_ini_file(db_config_path());
 
-if (!$config) {
-    die("Failed to read database config file.");
+    if (!$config) {
+        throw new RuntimeException('Failed to read database config file.');
+    }
+
+    $conn = new mysqli(
+        $config['servername'],
+        $config['username'],
+        $config['password'],
+        $config['dbname']
+    );
+
+    if ($conn->connect_error) {
+        throw new RuntimeException('Database connection failed: ' . $conn->connect_error);
+    }
+
+    return $conn;
 }
 
-$conn = new mysqli(
-    $config['servername'],
-    $config['username'],
-    $config['password'],
-    $config['dbname']
-);
-
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
+$conn = db_connect();
 ?>

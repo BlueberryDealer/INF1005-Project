@@ -200,7 +200,5 @@ $pageTitle = 'Your Cart – Quench';
 <input type="hidden" id="csrf-token" value="<?= htmlspecialchars($csrfToken) ?>">
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Cart JS (Role 5 integrates into main.js; standalone version below) -->
-<script src="/js/cart.js"></script>
 </body>
 </html>

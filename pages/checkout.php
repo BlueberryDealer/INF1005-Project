@@ -28,7 +28,7 @@ $products   = getProductsByIds($productIds);
 
 $productMap = [];
 foreach ($products as $p) {
-    $productMap[$p['id']] = $p;
+    $productMap[$p['product_id']] = $p;
 }
 
 foreach ($_SESSION['cart'] as $pid => $qty) {
@@ -37,10 +37,10 @@ foreach ($_SESSION['cart'] as $pid => $qty) {
     $subtotal  = $p['price'] * $qty;
     $grandTotal += $subtotal;
     $cartItems[] = [
-        'product_id' => $p['id'],
+        'product_id' => $p['product_id'],
         'name'       => $p['name'],
         'price'      => $p['price'],
-        'image'      => $p['image'],
+        'image'      => '/images/' . ltrim((string)$p['image_url'], '/'),
         'quantity'   => $qty,
         'subtotal'   => $subtotal,
     ];

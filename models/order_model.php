@@ -1,134 +1,144 @@
 <?php
-// -------------------------------------------------------
-// models/order_model.php
-// Handles all DB operations for orders and order_items.
-// -------------------------------------------------------
 
 require_once __DIR__ . '/../config/db_connect.php';
 
-/**
- * Creates a new order and its line items in a single transaction.
- *
- * @param int   $userId   Logged-in user's ID from $_SESSION['user_id']
- * @param array $shipping Validated shipping fields from checkout form
- * @param array $cartItems Array of cart rows (each with product details)
- * @param float $total    Grand total of the order
- * @return int|false      The new order ID on success, false on failure
- */
 function createOrder(int $userId, array $shipping, array $cartItems, float $total): int|false
 {
-    global $pdo;
+    $conn = db_connect();
 
     try {
-        $pdo->beginTransaction();
+        $conn->begin_transaction();
 
-        // 1. Insert the order header
-        $stmt = $pdo->prepare("
+        $stmt = $conn->prepare("
             INSERT INTO orders
                 (user_id, full_name, email, phone, address_line, city, postal_code, country, total_amount)
             VALUES
-                (:user_id, :full_name, :email, :phone, :address_line, :city, :postal_code, :country, :total_amount)
+                (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
-        $stmt->execute([
-            ':user_id'      => $userId,
-            ':full_name'    => $shipping['full_name'],
-            ':email'        => $shipping['email'],
-            ':phone'        => $shipping['phone'],
-            ':address_line' => $shipping['address_line'],
-            ':city'         => $shipping['city'],
-            ':postal_code'  => $shipping['postal_code'],
-            ':country'      => $shipping['country'],
-            ':total_amount' => $total,
-        ]);
 
-        $orderId = (int) $pdo->lastInsertId();
+        if (!$stmt) {
+            throw new RuntimeException('Failed to prepare order insert.');
+        }
 
-        // 2. Insert each order line item
-        $itemStmt = $pdo->prepare("
+        $stmt->bind_param(
+            'isssssssd',
+            $userId,
+            $shipping['full_name'],
+            $shipping['email'],
+            $shipping['phone'],
+            $shipping['address_line'],
+            $shipping['city'],
+            $shipping['postal_code'],
+            $shipping['country'],
+            $total
+        );
+        $stmt->execute();
+        $orderId = (int)$conn->insert_id;
+        $stmt->close();
+
+        $itemStmt = $conn->prepare("
             INSERT INTO order_items
                 (order_id, product_id, product_name, unit_price, quantity, subtotal)
             VALUES
-                (:order_id, :product_id, :product_name, :unit_price, :quantity, :subtotal)
+                (?, ?, ?, ?, ?, ?)
         ");
 
-        foreach ($cartItems as $item) {
-            $itemStmt->execute([
-                ':order_id'     => $orderId,
-                ':product_id'   => $item['product_id'],
-                ':product_name' => $item['name'],
-                ':unit_price'   => $item['price'],
-                ':quantity'     => $item['quantity'],
-                ':subtotal'     => $item['price'] * $item['quantity'],
-            ]);
+        if (!$itemStmt) {
+            throw new RuntimeException('Failed to prepare order item insert.');
         }
 
-        $pdo->commit();
-        return $orderId;
+        foreach ($cartItems as $item) {
+            $productId = (int)$item['product_id'];
+            $productName = (string)$item['name'];
+            $unitPrice = (float)$item['price'];
+            $quantity = (int)$item['quantity'];
+            $subtotal = $unitPrice * $quantity;
 
-    } catch (PDOException $e) {
-        $pdo->rollBack();
+            $itemStmt->bind_param('iisdid', $orderId, $productId, $productName, $unitPrice, $quantity, $subtotal);
+            $itemStmt->execute();
+        }
+
+        $itemStmt->close();
+        $conn->commit();
+        $conn->close();
+
+        return $orderId;
+    } catch (Throwable $e) {
+        $conn->rollback();
+        $conn->close();
         error_log('createOrder failed: ' . $e->getMessage());
+
         return false;
     }
 }
 
-/**
- * Fetches a single order with all its line items.
- *
- * @param int $orderId
- * @param int $userId  Used to ensure users can only see their own orders
- * @return array|null
- */
 function getOrderById(int $orderId, int $userId): ?array
 {
-    global $pdo;
+    $conn = db_connect();
 
-    $stmt = $pdo->prepare("
+    $stmt = $conn->prepare("
         SELECT * FROM orders
-        WHERE id = :order_id AND user_id = :user_id
+        WHERE id = ? AND user_id = ?
     ");
-    $stmt->execute([':order_id' => $orderId, ':user_id' => $userId]);
-    $order = $stmt->fetch();
 
-    if (!$order) return null;
+    if (!$stmt) {
+        $conn->close();
+        return null;
+    }
 
-    $itemStmt = $pdo->prepare("
-        SELECT * FROM order_items WHERE order_id = :order_id
+    $stmt->bind_param('ii', $orderId, $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $order = $result ? $result->fetch_assoc() : null;
+    $stmt->close();
+
+    if (!$order) {
+        $conn->close();
+        return null;
+    }
+
+    $itemStmt = $conn->prepare("
+        SELECT * FROM order_items
+        WHERE order_id = ?
     ");
-    $itemStmt->execute([':order_id' => $orderId]);
-    $order['items'] = $itemStmt->fetchAll();
+
+    if (!$itemStmt) {
+        $conn->close();
+        return null;
+    }
+
+    $itemStmt->bind_param('i', $orderId);
+    $itemStmt->execute();
+    $itemResult = $itemStmt->get_result();
+    $order['items'] = $itemResult ? $itemResult->fetch_all(MYSQLI_ASSOC) : [];
+    $itemStmt->close();
+    $conn->close();
 
     return $order;
 }
 
-/**
- * Fetches product rows from the DB for all product IDs in the session cart.
- * Returns only products that actually exist.
- *
- * @param array $productIds  Array of product IDs
- * @return array
- */
-function getProductsByIds(array $ids): array {
-    global $conn;
-
+function getProductsByIds(array $ids): array
+{
     if (empty($ids)) {
         return [];
     }
 
+    $conn = db_connect();
     $placeholders = implode(',', array_fill(0, count($ids), '?'));
 
     $stmt = $conn->prepare("
-        SELECT product_id,
-               name,
-               price,
-               image_url
+        SELECT product_id, name, price, image_url
         FROM products
         WHERE product_id IN ($placeholders)
     ");
 
+    if (!$stmt) {
+        $conn->close();
+        return [];
+    }
+
     $types = str_repeat('i', count($ids));
     $stmt->bind_param($types, ...$ids);
-
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -138,6 +148,7 @@ function getProductsByIds(array $ids): array {
     }
 
     $stmt->close();
+    $conn->close();
 
     return $products;
 }

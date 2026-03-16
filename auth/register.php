@@ -12,25 +12,20 @@ include __DIR__ . "/../components/header.php";
 include __DIR__ . "/../components/navbar.php";
 
 ?>
-  
-<!doctype html>
-<html>
-<head><meta charset="utf-8"><title>Register</title></head>
-<body>
-<main class="container">
+<main class="container py-4">
   <h1>Member Registration</h1> 
   <p> 
       For existing members, please go to the 
-      <a href="login.php">Sign In page</a>. 
+      <a href="/auth/login.php">Sign In page</a>. 
   </p> 
 
   <?php if ($error): ?>
-    <div style="color:#900; background:#fee; border:1px solid #f99; padding:8px; margin:8px 0;">
+    <div class="alert alert-danger" role="alert">
       <?= Sanitizer::escape((string)$error) ?>
     </div>
   <?php endif; ?>
 
-  <form method="post" action="/auth/register_process.php" autocomplete="off">
+  <form method="post" action="/auth/register_process.php" autocomplete="off" style="max-width: 540px;">
     <?php echo CSRFToken::field('csrf_token'); ?>
     
     <div class="mb-3">
@@ -64,6 +59,4 @@ include __DIR__ . "/../components/navbar.php";
     </div>
   </form>
 </main>
-</body>
-</html>
-<?php include __DIR__ . "/components/footer.php"; ?>
+<?php include __DIR__ . "/../components/footer.php"; ?>
