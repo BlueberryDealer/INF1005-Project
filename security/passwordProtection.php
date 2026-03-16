@@ -1,17 +1,14 @@
 <?php
-/**
- * PasswordManager Class
- * Password hashing and verification
- */
+// Password Manager class for password hashing and verification. 
 class PasswordManager {
     
-    // Hash a password securely
+    // Password hashing
     public static function hash(string $password): string|false {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         return $hashedPassword !== false ? $hashedPassword : false;
     }
     
-    // Verify password against hash. Used during login
+    // Check password with hased password. Used during login
     public static function verify(string $password, string $hash): bool {
         if (empty($password) || empty($hash)) {
             return false;
@@ -20,15 +17,8 @@ class PasswordManager {
         return password_verify($password, $hash);
     }
     
-    /**
-     * Check if password is strong
-     * Requirements:
-     * - >8 characters
-     * - Uppercase letter
-     * - Lowercase letter
-     * - Number
-     * - Special character
-     */
+    // Check if password is strong
+    // Need at least 8 characters, uppercase, lowercase, number, and special character
     public static function isStrong(string $password): bool {
         if (strlen($password) < 8) return false;
         if (!preg_match('/[A-Z]/', $password)) return false;
@@ -39,7 +29,7 @@ class PasswordManager {
         return true;
     }
     
-    // Get password strength feedback. Tells user what's missing.
+    // Get password strength feedback.
     public static function getStrengthFeedback(string $password): array {
         $feedback = [];
         

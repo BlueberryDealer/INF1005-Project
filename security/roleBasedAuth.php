@@ -1,8 +1,5 @@
 <?php
-/**
- * RoleManager Class
- * Two roles: Admin and User
- */
+// Role Manager class for authentication based on roles
 class RoleManager {
     
     private SessionManager $session;
@@ -41,7 +38,7 @@ class RoleManager {
     
     // These methods stop access and redirect if user is not allowed
     
-    // Require user to be an Admin. If not admin, redirect them away
+    // Require user to be an Admin. If not admin, redirect them 
     public function requireAdmin(string $redirectUrl = '/pages/unauthorized.php'): bool {
         if (!$this->isAdmin()) {
             header("Location: $redirectUrl");
@@ -51,7 +48,7 @@ class RoleManager {
     }
     
     
-    // Require user to be logged in. If not logged in, redirect to login page
+    // Require user to be logged in. If not logged in, redirect them
     public function requireAuthenticated(string $redirectUrl = '/pages/unauthorized.php'): bool {
         if (!$this->session->isAuthenticated()) {
             header("Location: $redirectUrl");

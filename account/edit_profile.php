@@ -85,7 +85,7 @@ $email = (string)($user['email'] ?? '');
       </div>
     <?php endif; ?>
 
-    <form method="post" action="/pages/editProfile_process.php" autocomplete="off">
+    <form method="post" action="/account/editProfile_process.php" autocomplete="off">
       <?= CSRFToken::field('csrf_token') ?>
 
       <div class="mb-3">
@@ -108,7 +108,7 @@ $email = (string)($user['email'] ?? '');
 
       <div class="mb-3 d-flex gap-2">
         <button type="submit" class="btn btn-primary">Save</button>
-        <a class="btn btn-secondary" href="/account/profile.php">Cancel</a>
+        <a class="btn btn-secondary" href="/account/userProfile.php">Cancel</a>
       </div>
     </form>
   </main>

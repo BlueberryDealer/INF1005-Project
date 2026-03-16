@@ -1,9 +1,5 @@
 <?php
-/**
- * Sanitizer 
- * Validation and sanitization for form inputs
- * Makes sure data is safe and in correct format
- */
+// Sanitizer class to validate and sanitizr form inputs
 class Sanitizer {
     
     // Store the data to validate
@@ -18,11 +14,10 @@ class Sanitizer {
         $this->errors = [];
     }
     
-    /**
-     * Main validation function
-     * Example: ['name' => 'required|min:3', 'email' => 'required|email']
-     * rules are separated by | 
-     */
+
+    // Main validation function
+    // Example: ['name' => 'required|min:3', 'email' => 'required|email']
+    // rules are separated by | 
     public function validate(array $rules): bool {
         // Check each field
         foreach ($rules as $field => $fieldRules) {
@@ -30,14 +25,10 @@ class Sanitizer {
             $this->checkField($field, $value, $fieldRules);
         }
         
-        // If no errors, return true
         return empty($this->errors);
     }
     
-    /**
-     * Check one field with all its rules
-     * Split rules by | and check each one
-     */
+    // Check one field with all its rules
     private function checkField(string $field, mixed $value, string $rules): void {
         // Split rules: 'required|min:3|max:20' 
         $ruleList = explode('|', trim($rules));
@@ -104,10 +95,7 @@ class Sanitizer {
         };
     }
     
-    /**
-     * Check if password is strong enough
-     * Must have: uppercase, lowercase, number, special character
-     */
+    // Check password strength
     private function isStrongPassword(string $password): bool {
         if (strlen($password) < 8) return false;
         if (!preg_match('/[A-Z]/', $password)) return false;      // A-Z

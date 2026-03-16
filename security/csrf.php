@@ -9,10 +9,7 @@ class CSRFToken {
     private static $tokenLength = 32; // 256 bits
     private static $tokenExpiry = 3600; // 1 hour
     
-    /**
-     * Generate a new CSRF token
-     * Stores it in session with timestamp
-     */
+    // Generata new csrf token & store in session
     public static function generate() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -50,12 +47,7 @@ class CSRFToken {
         return self::generate();
     }
     
-    /**
-     * Validate a token
-     * - Checks if token exists
-     * - Compares with session token using timing-safe comparison
-     * - Checks expiration
-     */
+    // Validate a token
     public static function validate($providedToken, $consume = false) {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -73,7 +65,7 @@ class CSRFToken {
             return false;
         }
         
-        // 3. Timing-safe comparison (prevents timing attacks)
+        // 3. Timing-safe comparison 
         if (!hash_equals($_SESSION[self::$sessionKey], $providedToken)) {
             self::logFailure('Token mismatch');
             return false;
