@@ -1,33 +1,24 @@
 <?php
-session_start();
-// admin_dashboard.php
-//require_once __DIR__ . '/../security/admin_guard.php'; 
+require_once __DIR__ . '/../security/admin_guard.php';
+require_once __DIR__ . '/../config/db_connect.php';
+
 $errorMsg = "";
 $success = true;
 $result = null;
 
 // Fetching products using your provided logic
-$config = parse_ini_file('/var/www/private/db-config.ini');
-if (!$config) {
-    $errorMsg = "Failed to read database config file.";
+try {
+    $conn = db_connect();
+} catch (RuntimeException $e) {
+    $errorMsg = $e->getMessage();
     $success = false;
-} else {
-    $conn = new mysqli(
-        $config['servername'],
-        $config['username'],
-        $config['password'],
-        $config['dbname']
-    );
+}
 
-    if ($conn->connect_error) {
-        $errorMsg = "Connection failed: " . $conn->connect_error;
-        $success = false;
-    } else {
-        $stmt = $conn->prepare("SELECT product_id, name, price, description, image_url, quantity FROM products");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $stmt->close();
-    }
+if ($success) {
+    $stmt = $conn->prepare("SELECT product_id, name, price, description, image_url, quantity FROM products");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
     $conn->close();
 }
 ?>
@@ -42,7 +33,7 @@ include __DIR__ . "/../components/header.php";
         <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
             <div class="container-fluid">
                 <span class="navbar-brand mb-0 h1">Admin Control Panel</span>
-                <a href="/index.php" class="btn btn-outline-light btn-sm">Back to Store</a>
+                <a href="/pages/products.php" class="btn btn-outline-light btn-sm">Back to Store</a>
             </div>
         </nav>
     </header>

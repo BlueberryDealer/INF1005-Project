@@ -31,7 +31,7 @@ if (!empty($_SESSION['cart'])) {
             'product_id' => (int)$p['product_id'],
             'name' => $p['name'],
             'price' => (float)$p['price'],
-            'image' => $p['image_url'],
+            'image' => '/images/' . ltrim((string)$p['image_url'], '/'),
             'quantity' => (int)$qty,
             'subtotal' => $subtotal
         ];

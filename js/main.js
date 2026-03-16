@@ -1,10 +1,43 @@
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
+    initDropdowns();
     initSearch();
+    initAdminSearch();
     initForms();
 }
 
+function initDropdowns() {
+    const dropdowns = document.querySelectorAll(".dropdown");
+
+    dropdowns.forEach(function (dropdown) {
+        const trigger = dropdown.querySelector(".nav-trigger");
+        if (!trigger) return;
+
+        trigger.addEventListener("click", function (e) {
+            e.preventDefault();
+            const shouldOpen = !dropdown.classList.contains("is-open");
+
+            dropdowns.forEach(function (item) {
+                item.classList.remove("is-open");
+                item.querySelector(".nav-trigger")?.setAttribute("aria-expanded", "false");
+            });
+
+            if (shouldOpen) {
+                dropdown.classList.add("is-open");
+                trigger.setAttribute("aria-expanded", "true");
+            }
+        });
+    });
+
+    document.addEventListener("click", function (e) {
+        dropdowns.forEach(function (dropdown) {
+            if (dropdown.contains(e.target)) return;
+            dropdown.classList.remove("is-open");
+            dropdown.querySelector(".nav-trigger")?.setAttribute("aria-expanded", "false");
+        });
+    });
+}
 
 function initSearch() {
     const searchInput = document.getElementById("searchInput");
@@ -12,36 +45,61 @@ function initSearch() {
 
     if (!searchInput || !searchForm) return;
 
-    const hasProducts = document.querySelectorAll(".product-card").length > 0;
-    if (!hasProducts) return;
-
-    searchInput.addEventListener("input", filterProducts);
-
+    const products = document.querySelectorAll(".product-card[data-name]");
+    const hasProducts = products.length > 0;
     const urlParams = new URLSearchParams(window.location.search);
-    const queryFromUrl = urlParams.get("search");
+    const queryFromUrl = (urlParams.get("search") || "").trim();
 
-    if (queryFromUrl) {
+    if (queryFromUrl !== "") {
         searchInput.value = queryFromUrl;
-        filterProducts();
+
+        if (hasProducts) {
+            filterProducts(queryFromUrl);
+        }
+    }
+
+    if (hasProducts) {
+        searchInput.addEventListener("input", function () {
+            filterProducts(searchInput.value);
+        });
     }
 
     searchForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-        filterProducts();
+        const query = searchInput.value.trim();
+        const action = searchForm.getAttribute("action") || "/pages/products.php";
+
+        if (hasProducts) {
+            e.preventDefault();
+            const targetUrl = query === ""
+                ? action
+                : `${action}?search=${encodeURIComponent(query)}`;
+
+            window.location.href = targetUrl;
+            return;
+        }
+
+        if (query === "") {
+            return;
+        }
     });
 }
 
-function filterProducts() {
-    const searchInput = document.getElementById("searchInput");
-    if (!searchInput) return;
-
-    const query = searchInput.value.trim().toLowerCase();
-    const products = document.querySelectorAll(".product-card");
+function filterProducts(rawQuery) {
+    const query = (rawQuery || "").trim().toLowerCase();
+    const products = document.querySelectorAll(".product-card[data-name]");
 
     products.forEach(function (product) {
         const name = (product.dataset.name || "").toLowerCase();
         const category = (product.dataset.category || "").toLowerCase();
-        const matches = name.includes(query) || category.includes(query);
+        const description = (
+            product.querySelector(".card-text")?.textContent || ""
+        ).toLowerCase();
+
+        const matches =
+            query === "" ||
+            name.includes(query) ||
+            category.includes(query) ||
+            description.includes(query);
 
         const wrapper = product.closest(".col-sm-6, .col-md-4, .mb-4");
         if (wrapper) {
@@ -52,7 +110,24 @@ function filterProducts() {
     });
 }
 
-//Register form validation
+function initAdminSearch() {
+    const searchInput = document.getElementById("productSearch");
+    const rows = document.querySelectorAll("#productsTable .product-row");
+
+    if (!searchInput || rows.length === 0) return;
+
+    searchInput.addEventListener("input", function () {
+        const query = searchInput.value.trim().toLowerCase();
+
+        rows.forEach(function (row) {
+            const name = row.querySelector(".product-name")?.textContent.toLowerCase() ?? "";
+            const desc = row.querySelector(".product-desc")?.textContent.toLowerCase() ?? "";
+            const matches = query === "" || name.includes(query) || desc.includes(query);
+            row.style.display = matches ? "" : "none";
+        });
+    });
+}
+
 function initForms() {
     const registerForm = document.getElementById("registerForm");
     if (registerForm) {

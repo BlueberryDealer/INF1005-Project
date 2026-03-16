@@ -3,6 +3,7 @@ require_once __DIR__ . '/../security/sanitization.php';
 require_once __DIR__ . '/../security/passwordProtection.php';
 require_once __DIR__ . '/../security/csrf.php';
 require_once __DIR__ . '/../security/session.php';
+require_once __DIR__ . '/../config/db_connect.php';
 
 $session = new SessionManager();
 
@@ -46,20 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // 5. Connect to DB 
-    $config = parse_ini_file('/var/www/private/db-config.ini');
-    if (!$config) {
-        fail('Failed to read database config file.');
-    }
-
-    $conn = new mysqli(
-        $config['servername'],
-        $config['username'],
-        $config['password'],
-        $config['dbname']
-    );
-
-    if ($conn->connect_error) {
-        fail('Database connection failed: ' . $conn->connect_error);
+    try {
+        $conn = db_connect();
+    } catch (RuntimeException $e) {
+        fail($e->getMessage());
     }
 
     // 6. Check if email already exists

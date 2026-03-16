@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartStatus  = document.getElementById('cart-status');
     const grandTotalEl = document.getElementById('cart-grand-total');
     const totalDisplayEl = document.getElementById('cart-total-display');
+    const preview = document.getElementById('cartPreview');
+    const cartContainer = document.querySelector('.cart-container');
 
     document.querySelectorAll('.add-cart').forEach(button => {
         button.addEventListener('click', async (e) => {
@@ -95,6 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchCartPreviewData() {
         try {
             const res = await fetch('/pages/cart_preview.php');
+            if (!res.ok) {
+                throw new Error('Preview request failed with status ' + res.status);
+            }
             return await res.json();
         } catch (err) {
             console.error('Preview fetch failed:', err);
@@ -103,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function renderCartPreview() {
-        const preview = document.getElementById('cartPreview');
         if (!preview) return;
 
         const data = await fetchCartPreviewData();
@@ -145,7 +149,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 <a href="/pages/cart.php" class="btn btn-sm btn-primary w-100 mt-2">View Cart</a>
             </div>
         `;
-        }
+    }
+
+    if (cartContainer && preview) {
+        const ensurePreviewLoaded = async () => {
+            await renderCartPreview();
+        };
+
+        cartContainer.addEventListener('mouseenter', ensurePreviewLoaded);
+        cartContainer.addEventListener('focusin', ensurePreviewLoaded);
+    }
 
     const clearCartBtn = document.getElementById('clearCartBtn');
 
@@ -275,7 +288,5 @@ document.addEventListener('DOMContentLoaded', () => {
         subtotalEl.dataset.subtotal  = subtotalVal;
         subtotalEl.dataset.unitPrice = unitPrice;
     });
-
     recalcTotal();
-    renderCartPreview();
 });
