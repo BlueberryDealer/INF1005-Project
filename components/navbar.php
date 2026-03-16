@@ -9,6 +9,7 @@ require_once __DIR__ . '/../models/order_model.php';
 $isAuthenticated = $session->isAuthenticated();
 $isAdmin = $isAuthenticated && $session->getRole() === 'admin';
 $memberHref = $isAuthenticated ? '/account/userProfile.php' : '/auth/login.php';
+$isHomePage = basename($_SERVER['SCRIPT_NAME'] ?? '') === 'index.php';
 $cartCount = isset($_SESSION['cart']) ? array_sum($_SESSION['cart']) : 0;
 $cartPreviewItems = [];
 $cartPreviewTotal = 0.0;
@@ -157,3 +158,6 @@ if (!empty($_SESSION['cart'])) {
 
   </nav>
 </header>
+<?php if (!$isHomePage): ?>
+  <div class="navbar-spacer" aria-hidden="true"></div>
+<?php endif; ?>
