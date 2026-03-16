@@ -48,22 +48,10 @@ if (!empty($_SESSION['cart'])) {
       <li><a href="/pages/products.php">Shop</a></li>
       <li><a href="/pages/about.php">About</a></li>
       <li><a href="#">Where to Buy</a></li>
+
       <?php if ($isAdmin): ?>
         <li><a href="/admin/dashboard.php">Admin</a></li>
       <?php endif; ?>
-      <li class="dropdown">
-        <button type="button" class="nav-trigger nav-trigger-text" aria-haspopup="true" aria-expanded="false">Member</button>
-        <ul class="dropdown-menu">
-          <?php if ($isAuthenticated): ?>
-            <li><a href="/account/userProfile.php">View Profile</a></li>
-            <li><a href="<?= $memberHref ?>">Account Home</a></li>
-            <li><a href="/auth/logout.php">Logout</a></li>
-          <?php else: ?>
-            <li><a href="/auth/login.php">Login</a></li>
-            <li><a href="/auth/register.php">Register</a></li>
-          <?php endif; ?>
-        </ul>
-      </li>
     </ul>
 
     <!-- Center brand -->
