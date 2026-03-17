@@ -43,12 +43,18 @@ if (!empty($_SESSION['cart'])) {
 <header class="navbar">
   <nav class="nav-container">
 
-    <!-- Left navigation -->
+    <!-- Hamburger (mobile only) -->
+    <button type="button" class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+
+    <!-- Left navigation (desktop only) -->
     <ul class="nav-links">
       <li><a href="/pages/products.php">Shop</a></li>
       <li><a href="/pages/about.php">About</a></li>
       <li><a href="#">Where to Buy</a></li>
-
       <?php if ($isAdmin): ?>
         <li><a href="/admin/dashboard.php">Admin</a></li>
       <?php endif; ?>
@@ -57,7 +63,7 @@ if (!empty($_SESSION['cart'])) {
     <!-- Center brand -->
     <a class="nav-brand" href="/index.php">QUENCH</a>
 
-    <!-- Right side -->
+    <!-- Right side (always visible) -->
     <div class="nav-actions">
       <form id="siteSearchForm" class="nav-search-form" action="/pages/products.php" method="get">
         <input
@@ -155,8 +161,41 @@ if (!empty($_SESSION['cart'])) {
       </div>
     </div>
 
+    <!-- Mobile slide-out menu -->
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <ul class="mobile-menu-links">
+        <li><a href="/pages/products.php">Shop</a></li>
+        <li><a href="/pages/about.php">About</a></li>
+        <li><a href="#">Where to Buy</a></li>
+        <?php if ($isAdmin): ?>
+          <li><a href="/admin/dashboard.php">Admin</a></li>
+        <?php endif; ?>
+      </ul>
+      <div class="mobile-menu-divider"></div>
+      <ul class="mobile-menu-links">
+        <?php if ($isAuthenticated): ?>
+          <li><a href="/account/userProfile.php">My Profile</a></li>
+          <li><a href="/auth/logout.php">Logout</a></li>
+        <?php else: ?>
+          <li><a href="/auth/login.php">Login</a></li>
+          <li><a href="/auth/register.php">Register</a></li>
+        <?php endif; ?>
+      </ul>
+    </div>
+
   </nav>
 </header>
+
+<!-- Mobile overlay -->
+<div class="mobile-overlay" id="mobileOverlay"></div>
+
 <?php if (!$isHomePage): ?>
   <div class="navbar-spacer" aria-hidden="true"></div>
 <?php endif; ?>
+
+<!-- Scroll-to-top button -->
+<button type="button" class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+    <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
