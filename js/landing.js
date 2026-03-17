@@ -1,6 +1,7 @@
 /**
  * landing.js — Custom JavaScript for QUENCH
- * Handles: theme toggle, scroll reveals, navbar scroll, parallax, stat counters
+ * Features: theme toggle, scroll reveals, navbar scroll, parallax,
+ *           stat counters, hamburger menu, scroll-to-top, skeleton loader
  */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -12,13 +13,60 @@ document.addEventListener("DOMContentLoaded", function () {
   if (toggle) {
     toggle.addEventListener("click", function () {
       var current = html.getAttribute("data-theme");
-
       if (current === "dark") {
         html.removeAttribute("data-theme");
         localStorage.setItem("quench-theme", "light");
       } else {
         html.setAttribute("data-theme", "dark");
         localStorage.setItem("quench-theme", "dark");
+      }
+    });
+  }
+
+  /* ========== Hamburger Menu ========== */
+  var hamburger = document.getElementById("hamburgerBtn");
+  var mobileMenu = document.getElementById("mobileMenu");
+  var overlay = document.getElementById("mobileOverlay");
+
+  function openMenu() {
+    hamburger.classList.add("is-active");
+    hamburger.setAttribute("aria-expanded", "true");
+    mobileMenu.classList.add("is-open");
+    mobileMenu.setAttribute("aria-hidden", "false");
+    overlay.classList.add("is-visible");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeMenu() {
+    hamburger.classList.remove("is-active");
+    hamburger.setAttribute("aria-expanded", "false");
+    mobileMenu.classList.remove("is-open");
+    mobileMenu.setAttribute("aria-hidden", "true");
+    overlay.classList.remove("is-visible");
+    document.body.style.overflow = "";
+  }
+
+  if (hamburger && mobileMenu && overlay) {
+    hamburger.addEventListener("click", function () {
+      if (mobileMenu.classList.contains("is-open")) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    overlay.addEventListener("click", closeMenu);
+
+    // Close menu on link click
+    var mobileLinks = mobileMenu.querySelectorAll("a");
+    mobileLinks.forEach(function (link) {
+      link.addEventListener("click", closeMenu);
+    });
+
+    // Close on Escape key
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && mobileMenu.classList.contains("is-open")) {
+        closeMenu();
       }
     });
   }
@@ -50,15 +98,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /* ========== Navbar darken on scroll ========== */
   var navbar = document.querySelector(".navbar");
+  var scrollTopBtn = document.getElementById("scrollTopBtn");
 
-  if (navbar) {
+  if (navbar || scrollTopBtn) {
     window.addEventListener("scroll", function () {
-      if (window.scrollY > 80) {
-        navbar.classList.add("scrolled");
-      } else {
-        navbar.classList.remove("scrolled");
+      var y = window.scrollY;
+
+      // Navbar
+      if (navbar) {
+        if (y > 80) {
+          navbar.classList.add("scrolled");
+        } else {
+          navbar.classList.remove("scrolled");
+        }
+      }
+
+      // Scroll-to-top button
+      if (scrollTopBtn) {
+        if (y > 400) {
+          scrollTopBtn.classList.add("is-visible");
+        } else {
+          scrollTopBtn.classList.remove("is-visible");
+        }
       }
     }, { passive: true });
+  }
+
+  /* ========== Scroll-to-top click ========== */
+  if (scrollTopBtn) {
+    scrollTopBtn.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
   }
 
   /* ========== Parallax Hero (about page) ========== */
@@ -66,9 +136,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (parallaxEl) {
     window.addEventListener("scroll", function () {
-      var scrolled = window.scrollY;
-      parallaxEl.style.backgroundPositionY = (scrolled * 0.4) + "px";
+      parallaxEl.style.backgroundPositionY = (window.scrollY * 0.4) + "px";
     }, { passive: true });
+  }
+
+  /* ========== Skeleton Loader ========== */
+  var skeletonGrid = document.getElementById("skeletonGrid");
+  var productList = document.getElementById("productList");
+
+  if (skeletonGrid && productList) {
+    // Short delay to show skeleton, then fade in real content
+    setTimeout(function () {
+      skeletonGrid.style.display = "none";
+      productList.style.display = "";
+      productList.style.opacity = "0";
+      productList.style.transition = "opacity 0.4s ease";
+
+      // Trigger reflow then fade in
+      requestAnimationFrame(function () {
+        productList.style.opacity = "1";
+      });
+    }, 600);
   }
 
   /* ========== Animated Stat Counters ========== */

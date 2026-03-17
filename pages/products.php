@@ -64,7 +64,16 @@ include __DIR__ . "/../components/header.php";
       </div>
     <?php endif; ?>
 
-    <div class="row g-4" id="productList">
+    <!-- Skeleton loader (shown while page loads) -->
+    <div class="row g-4 skeleton-grid" id="skeletonGrid" aria-hidden="true">
+      <div class="col-sm-6 col-md-4 col-lg-3"><div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--text"></div><div class="skeleton-line skeleton-line--price"></div><div class="skeleton-line skeleton-line--btn"></div></div></div></div>
+      <div class="col-sm-6 col-md-4 col-lg-3"><div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--text"></div><div class="skeleton-line skeleton-line--price"></div><div class="skeleton-line skeleton-line--btn"></div></div></div></div>
+      <div class="col-sm-6 col-md-4 col-lg-3"><div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--text"></div><div class="skeleton-line skeleton-line--price"></div><div class="skeleton-line skeleton-line--btn"></div></div></div></div>
+      <div class="col-sm-6 col-md-4 col-lg-3"><div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--text"></div><div class="skeleton-line skeleton-line--price"></div><div class="skeleton-line skeleton-line--btn"></div></div></div></div>
+    </div>
+
+    <!-- Actual product grid (hidden initially, revealed by JS) -->
+    <div class="row g-4 product-list" id="productList" style="display:none;">
       <?php if (!empty($matchedProducts)): ?>
         <?php foreach ($matchedProducts as $row): ?>
           <div class="col-sm-6 col-md-4 col-lg-3">
