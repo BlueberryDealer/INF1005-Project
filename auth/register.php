@@ -9,54 +9,69 @@ $error = $_SESSION['flash_error'] ?? null;
 unset($_SESSION['flash_error']);
 
 include __DIR__ . "/../components/header.php";
-include __DIR__ . "/../components/navbar.php";
-
 ?>
-<main class="container py-4">
-  <h1>Member Registration</h1> 
-  <p> 
-      For existing members, please go to the 
-      <a href="/auth/login.php">Sign In page</a>. 
-  </p> 
+<a class="skip-link" href="#maincontent">Skip to main content</a>
+<?php include __DIR__ . "/../components/navbar.php"; ?>
 
-  <?php if ($error): ?>
-    <div class="alert alert-danger" role="alert">
-      <?= Sanitizer::escape((string)$error) ?>
-    </div>
-  <?php endif; ?>
+<main id="maincontent" class="auth-page">
+  <div class="auth-wrapper">
+    <div class="auth-card">
 
-  <form method="post" action="/auth/register_process.php" autocomplete="off" style="max-width: 540px;">
-    <?php echo CSRFToken::field('csrf_token'); ?>
-    
-    <div class="mb-3">
-      <label for="fname" class="form-label">First Name:</label>
-      <input maxlength="50" type="text" id="fname" name="fname" class="form-control" placeholder="Enter first name">
-    </div>
+      <h1 class="auth-title">Create Account</h1>
+      <p class="auth-subtitle">
+        Join QUENCH and start shopping your favorite drinks.
+      </p>
 
-    <div class="mb-3">
-      <label for="lname" class="form-label">Last Name:</label>
-      <input required maxlength="50" type="text" id="lname" name="lname" class="form-control" placeholder="Enter last name" required>
-    </div>
+      <?php if ($error): ?>
+        <div class="alert alert-danger" role="alert">
+          <?= Sanitizer::escape((string)$error) ?>
+        </div>
+      <?php endif; ?>
 
-    <div class="mb-3">
-      <label for="email" class="form-label">Email:</label> 
-      <input required maxlength="50" type="email" id="email" name="email" class="form-control" 
-        placeholder="Enter email">  
-    </div>
+      <form method="post" action="/auth/register_process.php" autocomplete="off">
+        <?php echo CSRFToken::field('csrf_token'); ?>
 
-    <div class="mb-3">
-      <label for="password" class="form-label">Password:</label>
-      <input required type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
-    </div>
+        <div class="auth-row">
+          <div class="auth-field">
+            <label for="fname" class="auth-label">First Name</label>
+            <input maxlength="50" type="text" id="fname" name="fname" class="auth-input"
+              placeholder="John" required>
+          </div>
 
-    <div class="mb-3">
-      <label for="password_confirm" class="form-label">Confirm Password:</label>
-      <input required type="password" id="password_confirm" name="password_confirm" class="form-control" placeholder="Confirm password" required>
-    </div>
+          <div class="auth-field">
+            <label for="lname" class="auth-label">Last Name</label>
+            <input maxlength="50" type="text" id="lname" name="lname" class="auth-input"
+              placeholder="Doe" required>
+          </div>
+        </div>
 
-    <div class="mb-3"> 
-        <button type="submit" class="btn btn-primary">Submit</button> 
+        <div class="auth-field">
+          <label for="email" class="auth-label">Email</label>
+          <input maxlength="50" type="email" id="email" name="email" class="auth-input"
+            placeholder="you@example.com" required>
+        </div>
+
+        <div class="auth-field">
+          <label for="password" class="auth-label">Password</label>
+          <input type="password" id="password" name="password" class="auth-input"
+            placeholder="Create a password" required>
+        </div>
+
+        <div class="auth-field">
+          <label for="password_confirm" class="auth-label">Confirm Password</label>
+          <input type="password" id="password_confirm" name="password_confirm" class="auth-input"
+            placeholder="Confirm your password" required>
+        </div>
+
+        <button type="submit" class="auth-btn">Create Account</button>
+      </form>
+
+      <p class="auth-switch">
+        Already have an account? <a href="/auth/login.php">Sign in</a>
+      </p>
+
     </div>
-  </form>
+  </div>
 </main>
+
 <?php include __DIR__ . "/../components/footer.php"; ?>
