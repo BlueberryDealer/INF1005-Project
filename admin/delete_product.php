@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/../security/sanitization.php';
 //require_once __DIR__ . '/../security/admin_guard.php'; 
 // 1. SECURITY CHECK: Only Admins allowed
 // if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
@@ -98,7 +99,7 @@ if (!$product) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delete Product #<?= htmlspecialchars($product['product_id']) ?> - Admin</title>
+    <title>Delete Product #<?= Sanitizer::escape($product['product_id']) ?> - Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -120,7 +121,7 @@ if (!$product) {
 
                     <?php if (!empty($errorMsg)): ?>
                         <div class="alert alert-danger" role="alert">
-                            <?= htmlspecialchars($errorMsg) ?>
+                            <?= Sanitizer::escape($errorMsg) ?>
                         </div>
                     <?php endif; ?>
 
@@ -131,7 +132,7 @@ if (!$product) {
                             <h3 class="mb-0">
                                 Delete Product
                                 <span class="fs-6 fw-normal ms-2 opacity-75">
-                                    #<?= htmlspecialchars($product['product_id']) ?>
+                                    #<?= Sanitizer::escape($product['product_id']) ?>
                                 </span>
                             </h3>
                         </div>
@@ -157,23 +158,23 @@ if (!$product) {
                                         <!-- Product image thumbnail -->
                                         <?php if (!empty($product['image_url'])): ?>
                                             <img
-                                                src="/images/<?= htmlspecialchars($product['image_url']) ?>"
-                                                alt="<?= htmlspecialchars($product['name']) ?>"
+                                                src="/images/<?= Sanitizer::escape($product['image_url']) ?>"
+                                                alt="<?= Sanitizer::escape($product['name']) ?>"
                                                 style="width: 64px; height: 64px; object-fit: cover; border-radius: 8px; flex-shrink: 0;"
                                                 onerror="this.style.display='none'"
                                             >
                                         <?php endif; ?>
 
                                         <div>
-                                            <p class="fw-semibold mb-1"><?= htmlspecialchars($product['name']) ?></p>
+                                            <p class="fw-semibold mb-1"><?= Sanitizer::escape($product['name']) ?></p>
                                             <p class="text-muted small mb-1">
-                                                ID: <span class="fw-bold">#<?= htmlspecialchars($product['product_id']) ?></span>
+                                                ID: <span class="fw-bold">#<?= Sanitizer::escape($product['product_id']) ?></span>
                                                 &nbsp;|&nbsp;
                                                 Price: <span class="fw-bold">$<?= number_format($product['price'], 2) ?></span>
                                             </p>
                                             <?php if (!empty($product['description'])): ?>
                                                 <p class="text-muted small mb-0 text-truncate" style="max-width: 280px;">
-                                                    <?= htmlspecialchars($product['description']) ?>
+                                                    <?= Sanitizer::escape($product['description']) ?>
                                                 </p>
                                             <?php endif; ?>
                                         </div>
@@ -185,8 +186,8 @@ if (!$product) {
                                 POST to same page with product_id hidden field.
                                 Server checks POST matches URL ID before deleting.
                             -->
-                            <form action="delete_product.php?id=<?= htmlspecialchars($product['product_id']) ?>" method="POST">
-                                <input type="hidden" name="product_id" value="<?= htmlspecialchars($product['product_id']) ?>">
+                            <form action="delete_product.php?id=<?= Sanitizer::escape($product['product_id']) ?>" method="POST">
+                                <input type="hidden" name="product_id" value="<?= Sanitizer::escape($product['product_id']) ?>">
 
                                 <div class="d-grid gap-2">
                                     <button

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../security/admin_guard.php';
 require_once __DIR__ . '/../config/db_connect.php';
+require_once __DIR__ . '/../security/sanitization.php';
 
 $errorMsg = "";
 $success = true;
@@ -41,7 +42,7 @@ include __DIR__ . "/../components/header.php";
         <div class="container-fluid px-4">
             <?php if (!empty($errorMsg)): ?>
                 <div class="alert alert-danger" role="alert">
-                    <?= htmlspecialchars($errorMsg) ?>
+                    <?= Sanitizer::escape($errorMsg) ?>
                 </div>
             <?php endif; ?>
 
@@ -76,35 +77,35 @@ include __DIR__ . "/../components/header.php";
                             <?php if ($result && $result->num_rows > 0): ?>
                                 <?php while ($row = $result->fetch_assoc()): ?>
                                     <tr class="product-row">
-                                        <td class="ps-4 fw-bold text-muted">#<?= htmlspecialchars($row['product_id']) ?></td>
+                                        <td class="ps-4 fw-bold text-muted">#<?= Sanitizer::escape($row['product_id']) ?></td>
                                         <td>
-                                            <img src="/images/<?= htmlspecialchars($row['image_url']) ?>" alt="Product Image"
+                                            <img src="/images/<?= Sanitizer::escape($row['image_url']) ?>" alt="Product Image"
                                                 class="product-thumbnail rounded">
                                         </td>
-                                        <td class="product-name fw-semibold"><?= htmlspecialchars($row['name']) ?></td>
+                                        <td class="product-name fw-semibold"><?= Sanitizer::escape($row['name']) ?></td>
                                         <td class="product-desc text-truncate" style="max-width: 250px;">
-                                            <?= htmlspecialchars($row['description']) ?>
+                                            <?= Sanitizer::escape($row['description']) ?>
                                         </td>
                                         <td class="fw-bold text-success-dark">
-                                            $<?= number_format(htmlspecialchars($row['price']), 2) ?>
+                                            $<?= number_format(($row['price']), 2) ?>
                                         </td>
                                         <td>
                                             <?php if ($row['quantity'] <= 0): ?>
                                                 <span class="badge bg-danger">Out of Stock</span>
                                             <?php elseif ($row['quantity'] <= 5): ?>
                                                 <span class="badge bg-warning text-dark">
-                                                    <?= $row['quantity'] ?> left
+                                                    <?= Sanitizer::escape($row['quantity']) ?> left
                                                 </span>
                                             <?php else: ?>
                                                 <span class="badge bg-success">
-                                                    <?= $row['quantity'] ?>
+                                                    <?= Sanitizer::escape($row['quantity']) ?>
                                                 </span>
                                             <?php endif; ?>
                                         </td>
                                         <td class="pe-4 text-end">
-                                            <a href="edit_product.php?id=<?= htmlspecialchars($row['product_id']) ?>"
+                                            <a href="edit_product.php?id=<?= Sanitizer::escape($row['product_id']) ?>"
                                                 class="btn btn-sm btn-outline-secondary me-1">Edit</a>
-                                            <a href="delete_product.php?id=<?= htmlspecialchars($row['product_id']) ?>"
+                                            <a href="delete_product.php?id=<?= Sanitizer::escape($row['product_id']) ?>"
                                                 class="btn btn-sm btn-outline-danger">Delete</a>
                                         </td>
                                     </tr>

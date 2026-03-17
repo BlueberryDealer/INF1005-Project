@@ -6,6 +6,7 @@
 require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../models/order_model.php';
 require_once __DIR__ . '/../security/auth_guard.php';
+require_once __DIR__ . '/../security/sanitization.php';
 
 $orderId = (int)($_GET['order_id'] ?? 0);
 
@@ -33,7 +34,7 @@ $pageTitle = 'Order Confirmed – Quench';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle) ?></title>
+    <title><?= Sanitizer::escape($pageTitle) ?></title>
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet"
@@ -54,12 +55,12 @@ $pageTitle = 'Order Confirmed – Quench';
         </div>
         <h1 class="h2">Order Confirmed!</h1>
         <p class="text-muted">
-            Thank you, <strong><?= htmlspecialchars($order['full_name']) ?></strong>!
+            Thank you, <strong><?= Sanitizer::escape($order['full_name']) ?></strong>!
             Your order has been placed successfully.
         </p>
         <p class="text-muted">
             A confirmation will be sent to
-            <strong><?= htmlspecialchars($order['email']) ?></strong>.
+            <strong><?= Sanitizer::escape($order['email']) ?></strong>.
         </p>
     </div>
 
@@ -71,7 +72,7 @@ $pageTitle = 'Order Confirmed – Quench';
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span class="fw-semibold">Order #<?= (int)$order['id'] ?></span>
                     <span class="badge bg-success text-capitalize">
-                        <?= htmlspecialchars($order['status']) ?>
+                        <?= Sanitizer::escape($order['status']) ?>
                     </span>
                 </div>
                 <div class="card-body">
@@ -79,7 +80,7 @@ $pageTitle = 'Order Confirmed – Quench';
                         <div class="col-sm-6">
                             <h2 class="h6 text-muted mb-1">Order Date</h2>
                             <p class="mb-0">
-                                <?= htmlspecialchars(
+                                <?= Sanitizer::escape(
                                     date('d M Y, g:i A', strtotime($order['created_at']))
                                 ) ?>
                             </p>
@@ -99,12 +100,12 @@ $pageTitle = 'Order Confirmed – Quench';
                 <div class="card-header fw-semibold">Shipping Address</div>
                 <div class="card-body">
                     <address class="mb-0">
-                        <strong><?= htmlspecialchars($order['full_name']) ?></strong><br>
-                        <?= htmlspecialchars($order['address_line']) ?><br>
-                        <?= htmlspecialchars($order['city']) ?>,
-                        <?= htmlspecialchars($order['postal_code']) ?><br>
-                        <?= htmlspecialchars($order['country']) ?><br>
-                        <abbr title="Phone">P:</abbr> <?= htmlspecialchars($order['phone']) ?>
+                        <strong><?= Sanitizer::escape($order['full_name']) ?></strong><br>
+                        <?= Sanitizer::escape($order['address_line']) ?><br>
+                        <?= Sanitizer::escape($order['city']) ?>,
+                        <?= Sanitizer::escape($order['postal_code']) ?><br>
+                        <?= Sanitizer::escape($order['country']) ?><br>
+                        <abbr title="Phone">P:</abbr> <?= Sanitizer::escape($order['phone']) ?>
                     </address>
                 </div>
             </div>
@@ -125,7 +126,7 @@ $pageTitle = 'Order Confirmed – Quench';
                         <tbody>
                             <?php foreach ($order['items'] as $item): ?>
                             <tr>
-                                <td><?= htmlspecialchars($item['product_name']) ?></td>
+                                <td><?= Sanitizer::escape($item['product_name']) ?></td>
                                 <td class="text-center"><?= (int)$item['quantity'] ?></td>
                                 <td class="text-end">$<?= number_format($item['unit_price'], 2) ?></td>
                                 <td class="text-end">$<?= number_format($item['subtotal'], 2) ?></td>

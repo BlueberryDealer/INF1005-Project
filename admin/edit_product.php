@@ -1,5 +1,7 @@
 <?php
 session_start();
+require_once __DIR__ . '/../security/sanitization.php';
+require_once __DIR__ . '/../security/csrf.php';
 //require_once __DIR__ . '/../security/admin_guard.php';  
 
 
@@ -24,14 +26,30 @@ if (!$config) {
 // ── Step 3: Handle form submission (POST = save changes) ──────
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $name = trim($_POST['name']);
-    $price = $_POST['price'];
-    $desc = trim($_POST['description']);
-    $image_url = trim($_POST['image_url']);
-    $quantity = (int) $_POST['quantity'];
+    // Check CSRF 
+    if (!CSRFToken::validate($_POST['csrf_token'] ?? '', true)) {
+        http_response_code(403);
+        exit('Invalid CSRF token');
+    }
 
-    if (empty($name) || empty($price)) {
-        $errorMsg = "Product name and price are required.";
+    // Sanitization & Validation
+    $validator = new Sanitizer($_POST);
+    $ok = $validator->validate([
+        'name' => 'required|min:3|max:100',
+        'price' => 'required|float|min:0',
+        'description' => 'max:500',
+        'quantity' => 'required|integer|min:0',
+    ]);
+
+    $name = Sanitizer::sanitizeString((string)$_POST['name']);
+    $price = Sanitizer::sanitizeFloat($_POST['price']);
+    $desc = Sanitizer::sanitizeString((string)$_POST['description']);
+    $stock = Sanitizer::sanitizeInt($_POST['quantity']);
+    $image_url = Sanitizer::sanitizeString((string)$_POST['image_url']);
+    $quantity = $stock;
+
+    if (!$ok) {
+        $errorMsg = $validator->firstError() ?? 'Please check your input.';
     } else {
         $conn = new mysqli(
             $config['servername'],
@@ -109,7 +127,7 @@ include __DIR__ . "/../components/header.php";
                         <h3 class="mb-0">
                             Edit Product
                             <span class="fs-6 fw-normal ms-2 opacity-75">
-                                #<?= htmlspecialchars($product['product_id']) ?>
+                                #<?= Sanitizer::escape($product['product_id']) ?>
                             </span>
                         </h3>
                     </div>
@@ -117,42 +135,43 @@ include __DIR__ . "/../components/header.php";
                     <div class="card-body">
 
                         <?php if ($successMsg): ?>
-                            <div class="alert alert-success"><?= htmlspecialchars($successMsg) ?></div>
+                            <div class="alert alert-success"><?= Sanitizer::escape($successMsg) ?></div>
                         <?php endif; ?>
 
                         <?php if ($errorMsg): ?>
-                            <div class="alert alert-danger"><?= htmlspecialchars($errorMsg) ?></div>
+                            <div class="alert alert-danger"><?= Sanitizer::escape($errorMsg) ?></div>
                         <?php endif; ?>
 
                         <!--
                             Keep the product_id in the URL for the action so
                             the same page handles GET (load) and POST (save)
                         -->
-                        <form action="edit_product.php?id=<?= htmlspecialchars($product['product_id']) ?>"
+                        <form action="edit_product.php?id=<?= Sanitizer::escape($product['product_id']) ?>"
                             method="POST">
+                            <?php echo CSRFToken::field('csrf_token'); ?>
 
                             <div class="mb-3">
                                 <label for="name" class="form-label">Product Name *</label>
                                 <input type="text" id="name" name="name" class="form-control"
-                                    value="<?= htmlspecialchars($product['name']) ?>" required>
+                                    value="<?= Sanitizer::escape($product['name']) ?>" required>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="price" class="form-label">Price ($) *</label>
                                     <input type="number" step="0.01" id="price" name="price" class="form-control"
-                                        value="<?= htmlspecialchars($product['price']) ?>" required>
+                                        value="<?= Sanitizer::escape($product['price']) ?>" required>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label for="quantity" class="form-label">Stock Quantity *</label>
                                     <input type="number" id="quantity" name="quantity" class="form-control" min="0"
-                                        value="<?= htmlspecialchars($product['quantity']) ?>" required>
+                                        value="<?= Sanitizer::escape($product['quantity']) ?>" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <!-- product_id is read-only — never editable -->
                                     <label class="form-label">Product ID</label>
                                     <input type="text" class="form-control"
-                                        value="#<?= htmlspecialchars($product['product_id']) ?>" disabled>
+                                        value="#<?= Sanitizer::escape($product['product_id']) ?>" disabled>
                                     <div class="form-text">Product ID cannot be changed.</div>
                                 </div>
                             </div>
@@ -160,20 +179,20 @@ include __DIR__ . "/../components/header.php";
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
                                 <textarea id="description" name="description" class="form-control"
-                                    rows="3"><?= htmlspecialchars($product['description'] ?? '') ?></textarea>
+                                    rows="3"><?= Sanitizer::escape($product['description'] ?? '') ?></textarea>
                             </div>
 
                             <div class="mb-4">
                                 <label for="image_url" class="form-label">Image Filename (e.g., product.jpg)</label>
                                 <input type="text" id="image_url" name="image_url" class="form-control"
-                                    value="<?= htmlspecialchars($product['image_url'] ?? '') ?>"
+                                    value="<?= Sanitizer::escape($product['image_url'] ?? '') ?>"
                                     placeholder="Place image in /images folder first">
                                 <!-- Live preview of the current image -->
                                 <?php if (!empty($product['image_url'])): ?>
                                     <div class="mt-2">
                                         <p class="form-text mb-1">Current image:</p>
-                                        <img src="/images/<?= htmlspecialchars($product['image_url']) ?>"
-                                            alt="<?= htmlspecialchars($product['name']) ?>"
+                                        <img src="/images/<?= Sanitizer::escape($product['image_url']) ?>"
+                                            alt="<?= Sanitizer::escape($product['name']) ?>"
                                             style="height: 80px; object-fit: cover; border-radius: 6px;"
                                             onerror="this.style.display='none'">
                                     </div>

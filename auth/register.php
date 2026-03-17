@@ -35,7 +35,7 @@ include __DIR__ . "/../components/header.php";
           <div class="auth-field">
             <label for="fname" class="auth-label">First Name</label>
             <input maxlength="50" type="text" id="fname" name="fname" class="auth-input"
-              placeholder="John" required>
+              placeholder="John">
           </div>
 
           <div class="auth-field">

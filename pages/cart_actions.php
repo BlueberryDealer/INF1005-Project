@@ -9,6 +9,8 @@
 require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../models/order_model.php';
 require_once __DIR__ . '/../security/session.php';
+require_once __DIR__ . '/../security/sanitization.php';
+require_once __DIR__ . '/../security/csrf.php';
 $session = new SessionManager();
 
 // ---------- CSRF helper (mirrors security.php from Role 3) ----------
@@ -16,19 +18,7 @@ $session = new SessionManager();
 // verifyCsrfToken(), replace these two functions with:
 //   require_once __DIR__ . '/components/security.php';
 
-function getCsrfToken(): string
-{
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf_token'];
-}
 
-function verifyCsrfToken(string $token): bool
-{
-    return isset($_SESSION['csrf_token']) &&
-           hash_equals($_SESSION['csrf_token'], $token);
-}
 // --------------------------------------------------------------------
 
 header('Content-Type: application/json');
@@ -41,8 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // CSRF check
-$csrfToken = $_POST['csrf_token'] ?? '';
-if (!verifyCsrfToken($csrfToken)) {
+if (!CSRFToken::validate($_POST['csrf_token'] ?? '', false)) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Invalid CSRF token.']);
     exit;
