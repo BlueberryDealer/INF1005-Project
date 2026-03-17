@@ -40,56 +40,69 @@ if ($success) {
 }
 
 include __DIR__ . "/../components/header.php";
-include __DIR__ . "/../components/navbar.php";
 ?>
-<main class="container mt-5">
-    <h2 class="text-center mb-4">Our Products</h2>
+<a class="skip-link" href="#maincontent">Skip to main content</a>
+<?php include __DIR__ . "/../components/navbar.php"; ?>
+
+<main id="maincontent" class="shop-page">
+  <div class="container">
+
+    <div class="shop-header">
+      <h1 class="section-title-bold">Our Products</h1>
+
+      <?php if ($searchTerm !== ''): ?>
+        <p class="shop-search-info">
+          Results for "<strong><?= htmlspecialchars($searchTerm) ?></strong>"
+          <a href="/pages/products.php" class="shop-clear-search">Clear</a>
+        </p>
+      <?php endif; ?>
+    </div>
 
     <?php if (!empty($errorMsg)): ?>
-        <div class="alert alert-danger" role="alert">
-            <?= htmlspecialchars($errorMsg) ?>
+      <div class="alert alert-danger" role="alert">
+        <?= htmlspecialchars($errorMsg) ?>
+      </div>
+    <?php endif; ?>
+
+    <div class="row g-4" id="productList">
+      <?php if (!empty($matchedProducts)): ?>
+        <?php foreach ($matchedProducts as $row): ?>
+          <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="shop-card product-card"
+              data-product-id="<?= (int)$row['product_id'] ?>"
+              data-name="<?= htmlspecialchars($row['name']) ?>"
+              data-price="<?= htmlspecialchars($row['price']) ?>"
+              data-category="<?= htmlspecialchars($row['category'] ?? '') ?>">
+
+              <div class="shop-card-img">
+                <img src="/images/<?= htmlspecialchars($row['image_url']) ?>"
+                  alt="<?= htmlspecialchars($row['name']) ?>"
+                  loading="lazy">
+              </div>
+
+              <div class="shop-card-body">
+                <h3 class="shop-card-title"><?= htmlspecialchars($row['name']) ?></h3>
+                <p class="shop-card-desc"><?= htmlspecialchars($row['description']) ?></p>
+                <span class="shop-card-price">$<?= number_format($row['price'], 2) ?></span>
+
+                <?php if ($row['quantity'] <= 0): ?>
+                  <button class="shop-btn shop-btn--disabled" disabled>Unavailable</button>
+                <?php else: ?>
+                  <button class="shop-btn add-cart">Add to Cart</button>
+                <?php endif; ?>
+              </div>
+
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <div class="col-12">
+          <p class="shop-empty">No products found in our inventory.</p>
         </div>
-    <?php endif; ?>
-
-    <?php if ($searchTerm !== ''): ?>
-        <p class="text-center text-muted mb-4">
-            Search results for "<strong><?= htmlspecialchars($searchTerm) ?></strong>"
-        </p>
-    <?php endif; ?>
-
-    <div class="row" id="productList">
-        <?php if (!empty($matchedProducts)): ?>
-            <?php foreach ($matchedProducts as $row): ?>
-                <div class="col-sm-6 col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm product-card"
-                        data-product-id="<?= (int)$row['product_id'] ?>"
-                        data-name="<?= htmlspecialchars($row['name']) ?>"
-                        data-price="<?= htmlspecialchars($row['price']) ?>"
-                        data-category="<?= htmlspecialchars($row['category'] ?? '') ?>">
-
-                        <img src="/images/<?= htmlspecialchars($row['image_url']) ?>"
-                            class="card-img-top" alt="<?= htmlspecialchars($row['name']) ?>">
-
-                        <div class="card-body">
-                            <h5 class="card-title"><?= htmlspecialchars($row['name']) ?></h5>
-                            <p class="card-text text-muted"><?= htmlspecialchars($row['description']) ?></p>
-                            <h6 class="text-primary">$<?= number_format($row['price'], 2) ?></h6>
-
-                            <div class="d-grid gap-2 mt-3">
-                                <?php if ($row['quantity'] <= 0): ?>
-                                    <button class="btn btn-secondary" disabled>Unavailable</button>
-                                <?php else: ?>
-                                    <button class="btn btn-primary add-cart">Add to Cart</button>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p class="text-center">No products found in our inventory.</p>
-        <?php endif; ?>
+      <?php endif; ?>
     </div>
+
+  </div>
 </main>
 
 <input type="hidden" id="csrf-token" value="<?= htmlspecialchars($csrfToken) ?>">
