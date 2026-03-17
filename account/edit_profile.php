@@ -62,16 +62,11 @@ include __DIR__ . "/../components/navbar.php";
   <form method="post" action="/account/editProfile_process.php" autocomplete="off" style="max-width: 720px;">
     <?= CSRFToken::field('csrf_token') ?>
 
-<<<<<<< Updated upstream
-    <form method="post" action="/account/editProfile_process.php" autocomplete="off">
-      <?= CSRFToken::field('csrf_token') ?>
-=======
     <div class="mb-3">
       <label for="fname" class="form-label">First Name (optional)</label>
       <input maxlength="50" type="text" id="fname" name="fname" class="form-control"
              value="<?= Sanitizer::escape($fname) ?>">
     </div>
->>>>>>> Stashed changes
 
     <div class="mb-3">
       <label for="lname" class="form-label">Last Name</label>
@@ -92,17 +87,4 @@ include __DIR__ . "/../components/navbar.php";
   </form>
 </main>
 
-<<<<<<< Updated upstream
-      <div class="mb-3 d-flex gap-2">
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a class="btn btn-secondary" href="/account/userProfile.php">Cancel</a>
-      </div>
-    </form>
-  </main>
-</body>
-</html>
-
 <?php include __DIR__ . "/../components/footer.php"; ?>
-=======
-<?php include __DIR__ . "/../components/footer.php"; ?>
->>>>>>> Stashed changes

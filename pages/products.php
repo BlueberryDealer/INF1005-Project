@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../security/session.php';
 require_once __DIR__ . '/../config/db_connect.php';
+require_once __DIR__ . '/../security/sanitization.php';
+require_once __DIR__ . '/../security/csrf.php';
 
 $session = new SessionManager();
 
@@ -10,10 +12,7 @@ $result = null;
 $searchTerm = trim((string)($_GET['search'] ?? ''));
 $matchedProducts = [];
 
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
-$csrfToken = $_SESSION['csrf_token'];
+$csrfToken = CSRFToken::get();
 
 try {
     $conn = db_connect();
@@ -52,16 +51,16 @@ include __DIR__ . "/../components/header.php";
 
       <?php if ($searchTerm !== ''): ?>
         <p class="shop-search-info">
-          Results for "<strong><?= htmlspecialchars($searchTerm) ?></strong>"
+          Results for "<strong><?= Sanitizer::escape($searchTerm) ?></strong>"
           <a href="/pages/products.php" class="shop-clear-search">Clear</a>
         </p>
       <?php endif; ?>
     </div>
 
     <?php if (!empty($errorMsg)): ?>
-      <div class="alert alert-danger" role="alert">
-        <?= htmlspecialchars($errorMsg) ?>
-      </div>
+        <div class="alert alert-danger" role="alert">
+            <?= Sanitizer::escape($errorMsg) ?>
+        </div>
     <?php endif; ?>
 
     <!-- Skeleton loader (shown while page loads) -->
@@ -79,19 +78,19 @@ include __DIR__ . "/../components/header.php";
           <div class="col-sm-6 col-md-4 col-lg-3">
             <div class="shop-card product-card"
               data-product-id="<?= (int)$row['product_id'] ?>"
-              data-name="<?= htmlspecialchars($row['name']) ?>"
-              data-price="<?= htmlspecialchars($row['price']) ?>"
-              data-category="<?= htmlspecialchars($row['category'] ?? '') ?>">
+              data-name="<?= Sanitizer::escape($row['name']) ?>"
+              data-price="<?= Sanitizer::escape($row['price']) ?>"
+              data-category="<?= Sanitizer::escape($row['category'] ?? '') ?>">
 
               <div class="shop-card-img">
-                <img src="/images/<?= htmlspecialchars($row['image_url']) ?>"
-                  alt="<?= htmlspecialchars($row['name']) ?>"
+                <img src="/images/<?= Sanitizer::escape($row['image_url']) ?>"
+                  alt="<?= Sanitizer::escape($row['name']) ?>"
                   loading="lazy">
               </div>
 
               <div class="shop-card-body">
-                <h3 class="shop-card-title"><?= htmlspecialchars($row['name']) ?></h3>
-                <p class="shop-card-desc"><?= htmlspecialchars($row['description']) ?></p>
+                <h3 class="shop-card-title"><?= Sanitizer::escape($row['name']) ?></h3>
+                <p class="shop-card-desc"><?= Sanitizer::escape($row['description']) ?></p>
                 <span class="shop-card-price">$<?= number_format($row['price'], 2) ?></span>
 
                 <?php if ($row['quantity'] <= 0): ?>
@@ -114,6 +113,6 @@ include __DIR__ . "/../components/header.php";
   </div>
 </main>
 
-<input type="hidden" id="csrf-token" value="<?= htmlspecialchars($csrfToken) ?>">
+<input type="hidden" id="csrf-token" value="<?= Sanitizer::escape($csrfToken) ?>">
 
 <?php include __DIR__ . "/../components/footer.php"; ?>

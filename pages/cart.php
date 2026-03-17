@@ -6,13 +6,12 @@
 require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../models/order_model.php';
 require_once __DIR__ . '/../security/session.php';
+require_once __DIR__ . '/../security/sanitization.php';
+require_once __DIR__ . '/../security/csrf.php';
 $session = new SessionManager();
 
 // ---------- CSRF token ----------
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
-$csrfToken = $_SESSION['csrf_token'];
+$csrfToken = CSRFToken::get();
 
 // ---------- Build cart items from session ----------
 $cartItems  = [];
@@ -92,13 +91,13 @@ include __DIR__ . '/../components/header.php';
             <!-- Product -->
             <td>
               <div class="d-flex align-items-center gap-3">
-                <img src="/images/<?= htmlspecialchars($item['image']) ?>"
-                     alt="<?= htmlspecialchars($item['name']) ?>"
+                <img src="/images/<?= Sanitizer::escape($item['image']) ?>"
+                     alt="<?= Sanitizer::escape($item['name']) ?>"
                      width="60" height="60"
                      class="rounded object-fit-cover"
                      loading="lazy"
                      onerror="this.src='/images/placeholder.png'">
-                <span class="fw-semibold"><?= htmlspecialchars($item['name']) ?></span>
+                <span class="fw-semibold"><?= Sanitizer::escape($item['name']) ?></span>
               </div>
             </td>
 
@@ -110,7 +109,7 @@ include __DIR__ . '/../components/header.php';
               <div class="d-flex align-items-center gap-2" style="width: 130px;">
                 <button class="btn btn-outline-secondary btn-sm qty-btn"
                         data-action="decrease"
-                        aria-label="Decrease quantity of <?= htmlspecialchars($item['name']) ?>">
+                        aria-label="Decrease quantity of <?= Sanitizer::escape($item['name']) ?>">
                   <i class="bi bi-dash" aria-hidden="true"></i>
                 </button>
 
@@ -118,11 +117,11 @@ include __DIR__ . '/../components/header.php';
                        class="form-control form-control-sm text-center qty-input"
                        value="<?= (int)$item['quantity'] ?>"
                        min="1"
-                       aria-label="Quantity for <?= htmlspecialchars($item['name']) ?>">
+                       aria-label="Quantity for <?= Sanitizer::escape($item['name']) ?>">
 
                 <button class="btn btn-outline-secondary btn-sm qty-btn"
                         data-action="increase"
-                        aria-label="Increase quantity of <?= htmlspecialchars($item['name']) ?>">
+                        aria-label="Increase quantity of <?= Sanitizer::escape($item['name']) ?>">
                   <i class="bi bi-plus" aria-hidden="true"></i>
                 </button>
               </div>
@@ -136,7 +135,7 @@ include __DIR__ . '/../components/header.php';
             <!-- Remove -->
             <td>
               <button class="btn btn-outline-danger btn-sm remove-btn"
-                      aria-label="Remove <?= htmlspecialchars($item['name']) ?> from cart">
+                      aria-label="Remove <?= Sanitizer::escape($item['name']) ?> from cart">
                 <i class="bi bi-trash" aria-hidden="true"></i>
               </button>
             </td>
@@ -189,6 +188,6 @@ include __DIR__ . '/../components/header.php';
 </main>
 
 <!-- Hidden CSRF token for JS use -->
-<input type="hidden" id="csrf-token" value="<?= htmlspecialchars($csrfToken) ?>">
+<input type="hidden" id="csrf-token" value="<?= Sanitizer::escape($csrfToken) ?>">
 
 <?php include __DIR__ . '/../components/footer.php'; ?>

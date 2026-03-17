@@ -22,11 +22,5 @@ include __DIR__ . "/../components/navbar.php";
         <p>You must be logged in to access this page.</p>
         <a href="/auth/login.php" class="btn btn-primary">Go to Login</a>
     <?php endif; ?>
-<<<<<<< Updated upstream
-</body>
-</html>
-<?php include __DIR__ . "/components/footer.php"; ?>
-=======
 </main>
 <?php include __DIR__ . "/../components/footer.php"; ?>
->>>>>>> Stashed changes
