@@ -2,10 +2,13 @@
 session_start();
 require_once __DIR__ . '/../security/sanitization.php';
 require_once __DIR__ . '/../security/csrf.php';
-//require_once __DIR__ . '/../security/admin_guard.php';  
+require_once __DIR__ . '/../security/admin_guard.php';
+require_once __DIR__ . '/../config/db_connect.php';
 
 
 $errorMsg = "";
+$success = true;
+$result = null;
 $successMsg = "";
 
 // ── Step 1: Validate the product_id from the URL ──────────────
@@ -17,11 +20,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $productId = (int) $_GET['id']; // cast to int — safe against SQL injection
 
-// ── Step 2: Load DB config (shared with all other pages) ──────
-$config = parse_ini_file('/var/www/private/db-config.ini');
-if (!$config) {
-    die("Failed to read database config file.");
-}
+
 
 // ── Step 3: Handle form submission (POST = save changes) ──────
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -41,26 +40,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         'quantity' => 'required|integer|min:0',
     ]);
 
-    $name = Sanitizer::sanitizeString((string)$_POST['name']);
+    $name = Sanitizer::sanitizeString((string) $_POST['name']);
     $price = Sanitizer::sanitizeFloat($_POST['price']);
-    $desc = Sanitizer::sanitizeString((string)$_POST['description']);
+    $desc = Sanitizer::sanitizeString((string) $_POST['description']);
     $stock = Sanitizer::sanitizeInt($_POST['quantity']);
-    $image_url = Sanitizer::sanitizeString((string)$_POST['image_url']);
+    $image_url = Sanitizer::sanitizeString((string) $_POST['image_url']);
     $quantity = $stock;
 
     if (!$ok) {
         $errorMsg = $validator->firstError() ?? 'Please check your input.';
     } else {
-        $conn = new mysqli(
-            $config['servername'],
-            $config['username'],
-            $config['password'],
-            $config['dbname']
-        );
+        try {
+            $conn = db_connect();
+        } catch (RuntimeException $e) {
+            $errorMsg = $e->getMessage();
+            $success = false;
+        }
 
-        if ($conn->connect_error) {
-            $errorMsg = "Connection failed: " . $conn->connect_error;
-        } else {
+        if ($success) {
             // Prepared statement — safe UPDATE
             $stmt = $conn->prepare(
                 "UPDATE products 
@@ -78,39 +75,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt->close();
             $conn->close();
         }
+
+
+    }
+}
+
+try {
+    $conn = db_connect();
+} catch (RuntimeException $e) {
+    $errorMsg = $e->getMessage();
+    $success = false;
+}
+
+if ($success) {
+    $stmt = $conn->prepare(
+        "SELECT product_id, name, price, description, image_url, quantity 
+       FROM products 
+      WHERE product_id = ?"
+    );
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $product = $result->fetch_assoc();
+    $stmt->close();
+    $conn->close();
+
+    // Product not found — send back to dashboard
+    if (!$product) {
+        header("Location: dashboard.php");
+        exit();
     }
 }
 
 // ── Step 4: Fetch current product data to pre-fill the form ───
 // Re-fetch after POST too, so the form always shows the latest values
-$conn = new mysqli(
-    $config['servername'],
-    $config['username'],
-    $config['password'],
-    $config['dbname']
-);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-$stmt = $conn->prepare(
-    "SELECT product_id, name, price, description, image_url, quantity 
-       FROM products 
-      WHERE product_id = ?"
-);
-$stmt->bind_param("i", $productId);
-$stmt->execute();
-$result = $stmt->get_result();
-$product = $result->fetch_assoc();
-$stmt->close();
-$conn->close();
-
-// Product not found — send back to dashboard
-if (!$product) {
-    header("Location: dashboard.php");
-    exit();
-}
 ?>
 
 <?php

@@ -1,14 +1,14 @@
 <?php
 session_start();
+require_once __DIR__ . '/../security/admin_guard.php';
+require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../security/sanitization.php';
-//require_once __DIR__ . '/../security/admin_guard.php'; 
-// 1. SECURITY CHECK: Only Admins allowed
-// if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-//     header("Location: ../index.php");
-//     exit();
-// }
+
 
 $errorMsg = "";
+$success = true;
+$result = null;
+
 
 // ── Step 1: Validate the product_id from the URL ──────────────
 // Dashboard Delete button links here as: delete_product.php?id=5
@@ -19,34 +19,26 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $productId = (int) $_GET['id'];
 
-// ── Step 2: Load DB config ────────────────────────────────────
-$config = parse_ini_file('/var/www/private/db-config.ini');
-if (!$config) {
-    die("Failed to read database config file.");
-}
+
 
 // ── Step 3: Handle confirmed deletion (POST = confirmed) ──────
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Double-check the posted ID matches the URL ID — prevents tampering
-    if (!isset($_POST['product_id']) || (int)$_POST['product_id'] !== $productId) {
+    if (!isset($_POST['product_id']) || (int) $_POST['product_id'] !== $productId) {
         header("Location: dashboard.php");
         exit();
     }
+    try {
+        $conn = db_connect();
+    } catch (RuntimeException $e) {
+        $errorMsg = $e->getMessage();
+        $success = false;
+    }
 
-    $conn = new mysqli(
-        $config['servername'],
-        $config['username'],
-        $config['password'],
-        $config['dbname']
-    );
-
-    if ($conn->connect_error) {
-        $errorMsg = "Connection failed: " . $conn->connect_error;
-    } else {
+    if ($success) {
         $stmt = $conn->prepare("DELETE FROM products WHERE product_id = ?");
         $stmt->bind_param("i", $productId);
-
         if ($stmt->execute()) {
             $stmt->close();
             $conn->close();
@@ -57,51 +49,46 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $errorMsg = "Database error: " . $stmt->error;
             $stmt->close();
         }
-
         $conn->close();
     }
 }
 
 // ── Step 4: Fetch product details to show on confirmation page ─
-$conn = new mysqli(
-    $config['servername'],
-    $config['username'],
-    $config['password'],
-    $config['dbname']
-);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+try {
+    $conn = db_connect();
+} catch (RuntimeException $e) {
+    $errorMsg = $e->getMessage();
+    $success = false;
 }
 
-$stmt = $conn->prepare(
-    "SELECT product_id, name, price, description, image_url
-       FROM products
-      WHERE product_id = ?"
-);
-$stmt->bind_param("i", $productId);
-$stmt->execute();
-$result = $stmt->get_result();
-$product = $result->fetch_assoc();
-$stmt->close();
-$conn->close();
+if ($success) {
+    $stmt = $conn->prepare(
+        "SELECT product_id, name, price, description, image_url
+           FROM products
+          WHERE product_id = ?"
+    );
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $product = $result->fetch_assoc();
+    $stmt->close();
+    $conn->close();
 
-// Product not found — nothing to delete
-if (!$product) {
+    // Product not found — nothing to delete
+    if (!$product) {
+        header("Location: dashboard.php");
+        exit();
+    }
+} else {
+    // If DB connection failed, we can't show product details — just redirect back
     header("Location: dashboard.php");
     exit();
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delete Product #<?= Sanitizer::escape($product['product_id']) ?> - Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<?php
+include __DIR__ . "/../components/header.php";
+?>
 
 <body class="bg-light">
 
@@ -144,7 +131,8 @@ if (!$product) {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                                     class="bi bi-exclamation-triangle-fill flex-shrink-0" viewBox="0 0 16 16"
                                     aria-hidden="true">
-                                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                                    <path
+                                        d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
                                 </svg>
                                 <span>This action is <strong>permanent</strong> and cannot be undone.</span>
                             </div>
@@ -157,20 +145,20 @@ if (!$product) {
                                     <div class="d-flex align-items-center gap-3">
                                         <!-- Product image thumbnail -->
                                         <?php if (!empty($product['image_url'])): ?>
-                                            <img
-                                                src="/images/<?= Sanitizer::escape($product['image_url']) ?>"
+                                            <img src="/images/<?= Sanitizer::escape($product['image_url']) ?>"
                                                 alt="<?= Sanitizer::escape($product['name']) ?>"
                                                 style="width: 64px; height: 64px; object-fit: cover; border-radius: 8px; flex-shrink: 0;"
-                                                onerror="this.style.display='none'"
-                                            >
+                                                onerror="this.style.display='none'">
                                         <?php endif; ?>
 
                                         <div>
                                             <p class="fw-semibold mb-1"><?= Sanitizer::escape($product['name']) ?></p>
                                             <p class="text-muted small mb-1">
-                                                ID: <span class="fw-bold">#<?= Sanitizer::escape($product['product_id']) ?></span>
+                                                ID: <span
+                                                    class="fw-bold">#<?= Sanitizer::escape($product['product_id']) ?></span>
                                                 &nbsp;|&nbsp;
-                                                Price: <span class="fw-bold">$<?= number_format($product['price'], 2) ?></span>
+                                                Price: <span
+                                                    class="fw-bold">$<?= number_format($product['price'], 2) ?></span>
                                             </p>
                                             <?php if (!empty($product['description'])): ?>
                                                 <p class="text-muted small mb-0 text-truncate" style="max-width: 280px;">
@@ -186,15 +174,13 @@ if (!$product) {
                                 POST to same page with product_id hidden field.
                                 Server checks POST matches URL ID before deleting.
                             -->
-                            <form action="delete_product.php?id=<?= Sanitizer::escape($product['product_id']) ?>" method="POST">
-                                <input type="hidden" name="product_id" value="<?= Sanitizer::escape($product['product_id']) ?>">
+                            <form action="delete_product.php?id=<?= Sanitizer::escape($product['product_id']) ?>"
+                                method="POST">
+                                <input type="hidden" name="product_id"
+                                    value="<?= Sanitizer::escape($product['product_id']) ?>">
 
                                 <div class="d-grid gap-2">
-                                    <button
-                                        type="submit"
-                                        class="btn btn-danger"
-                                        id="confirmDeleteBtn"
-                                    >
+                                    <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">
                                         Yes, Delete This Product
                                     </button>
                                     <a href="dashboard.php" class="btn btn-secondary">
@@ -211,17 +197,6 @@ if (!$product) {
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        // Disable the delete button after first click to prevent double submission
-        document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
-            this.disabled = true;
-            this.textContent = 'Deleting...';
-            this.closest('form').submit();
-        });
-    </script>
-
 </body>
 
-</html>
+<?php include __DIR__ . "/../components/footer.php"; ?>
