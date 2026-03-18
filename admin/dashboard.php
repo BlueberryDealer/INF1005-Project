@@ -31,14 +31,14 @@ include __DIR__ . "/../components/header.php";
 <body>
     <header>
         <title>Admin Dashboard - BoltBrew Energy</title>
-        <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
+        <nav class="navbar admin-navbar navbar-dark bg-dark mb-4 shadow-sm">
             <div class="container-fluid">
                 <span class="navbar-brand mb-0 h1">Admin Control Panel</span>
                 <a href="/pages/products.php" class="btn btn-outline-light btn-sm">Back to Store</a>
             </div>
         </nav>
     </header>
-    <main>
+    <main class="admin-main">
         <div class="container-fluid px-4">
             <?php if (!empty($errorMsg)): ?>
                 <div class="alert alert-danger" role="alert">

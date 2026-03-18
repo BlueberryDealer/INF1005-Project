@@ -1,35 +1,35 @@
 <?php
 
-// 1. SECURITY CHECK: Only Admins allowed
-// if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-//     header("Location: ../index.php");
-//     exit();
-// }
 
 require_once __DIR__ . '/../security/admin_guard.php';
 require_once __DIR__ . '/../security/sanitization.php';
 require_once __DIR__ . '/../security/csrf.php';
+require_once __DIR__ . '/../config/db_connect.php';
 
-$name = $price = $desc = $stock = $errorMsg = $successMsg = "";
-
+$name = $price = $desc = $stock = $successMsg = "";
+$errorMsg = "";
+$success = true;
+$result = null;
 
 // 2. PROCESS FORM ON SUBMIT
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check CSRF
     if (!CSRFToken::validate($_POST['csrf_token'] ?? '', true)) {
-            http_response_code(403);
-            exit('Invalid CSRF token');
-        }
+        http_response_code(403);
+        exit('Invalid CSRF token');
+    }
 
     //$config = parse_ini_file('/var/www/private/db-config.ini'); prod
     //$config = parse_ini_file(__DIR__ . '/../db-config.ini'); test
-    $config = parse_ini_file('/var/www/private/db-config.ini');
-    if (!$config) {
-        $errorMsg = "Failed to read database config file.";
+    try {
+        $conn = db_connect();
+    } catch (RuntimeException $e) {
+        $errorMsg = $e->getMessage();
         $success = false;
-    } else {
-        // Sanitization & Validation
+    }
+
+    if ($success) {
         $validator = new Sanitizer($_POST);
         $ok = $validator->validate([
             'name' => 'required|min:3|max:100',
@@ -38,44 +38,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'stock_quantity' => 'required|integer|min:0',
         ]);
 
-        $name = Sanitizer::sanitizeString((string)$_POST['name']);
+        $name = Sanitizer::sanitizeString((string) $_POST['name']);
         $price = Sanitizer::sanitizeFloat($_POST['price']);
-        $desc = Sanitizer::sanitizeString((string)$_POST['description']);
+        $desc = Sanitizer::sanitizeString((string) $_POST['description']);
         $stock = Sanitizer::sanitizeInt($_POST['stock_quantity']);
-        $image_url = Sanitizer::sanitizeString((string)$_POST['image_url']);
+        $image_url = Sanitizer::sanitizeString((string) $_POST['image_url']);
         $quantity = $stock;
 
-        $conn = new mysqli(
-            $config['servername'],
-            $config['username'],
-            $config['password'],
-            $config['dbname']
-        );
-        // Check connection 
-        if ($conn->connect_error) {
-            $errorMsg = "Connection failed: " . $conn->connect_error;
-            $success = false;
+        if (!$ok) {
+            $errorMsg = $validator->firstError() ?? 'Please check your input.';
         } else {
-            if (!$ok) {
-                $errorMsg = $validator->firstError() ?? 'Please check your input.';
+            // 3. SECURE INSERT: Using Prepared Statements
+            $stmt = $conn->prepare("INSERT INTO products (name, description, price, image_url, quantity) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssdsi", $name, $desc, $price, $image_url, $quantity);
+
+            if ($stmt->execute()) {
+                $successMsg = "Product added successfully!";
+                // Reset fields
+                $name = $price = $desc = $stock = "";
             } else {
-                // 3. SECURE INSERT: Using Prepared Statements
-                $stmt = $conn->prepare("INSERT INTO products (name, description, price, image_url, quantity) VALUES (?, ?, ?, ?, ?)");
-                $stmt->bind_param("ssdsi", $name, $desc, $price, $image_url, $quantity);
-
-                if ($stmt->execute()) {
-                    $successMsg = "Product added successfully!";
-                    // Reset fields
-                    $name = $price = $desc = $stock = "";
-                } else {
-                    $errorMsg = "Database error: " . $stmt->error;
-                }
-                $stmt->close();
+                $errorMsg = "Database error: " . $stmt->error;
             }
+            $stmt->close();
+            $conn->close();
         }
-
-        $conn->close();
     }
+
 
 
 
