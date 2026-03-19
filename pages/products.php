@@ -10,7 +10,11 @@ $errorMsg = "";
 $success = true;
 $result = null;
 $searchTerm = trim((string)($_GET['search'] ?? ''));
+$selectedCategory = trim((string)($_GET['category'] ?? ''));
+$selectedStock = trim((string)($_GET['stock'] ?? ''));
+$selectedSort = trim((string)($_GET['sort'] ?? 'default'));
 $matchedProducts = [];
+$categories = [];
 
 $csrfToken = CSRFToken::get();
 
@@ -33,10 +37,19 @@ if ($success) {
     $result = $stmt->get_result();
     if ($result) {
         $matchedProducts = $result->fetch_all(MYSQLI_ASSOC);
+        foreach ($matchedProducts as $product) {
+            $category = trim((string)($product['category'] ?? ''));
+            if ($category !== '') {
+                $categories[$category] = true;
+            }
+        }
     }
     $stmt->close();
     $conn->close();
 }
+
+$categoryOptions = array_keys($categories);
+sort($categoryOptions, SORT_NATURAL | SORT_FLAG_CASE);
 
 include __DIR__ . "/../components/header.php";
 ?>
@@ -63,6 +76,42 @@ include __DIR__ . "/../components/header.php";
         </div>
     <?php endif; ?>
 
+    <section class="shop-toolbar" aria-label="Filter and sort products">
+      <div class="shop-toolbar-group">
+        <label for="categoryFilter" class="shop-toolbar-label">Category</label>
+        <select id="categoryFilter" class="shop-toolbar-select">
+          <option value="">All categories</option>
+          <?php foreach ($categoryOptions as $category): ?>
+            <option value="<?= Sanitizer::escape($category) ?>" <?= $selectedCategory === $category ? 'selected' : '' ?>>
+              <?= Sanitizer::escape($category) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+
+      <div class="shop-toolbar-group">
+        <label for="stockFilter" class="shop-toolbar-label">Availability</label>
+        <select id="stockFilter" class="shop-toolbar-select">
+          <option value="">All items</option>
+          <option value="in-stock" <?= $selectedStock === 'in-stock' ? 'selected' : '' ?>>In stock</option>
+          <option value="out-of-stock" <?= $selectedStock === 'out-of-stock' ? 'selected' : '' ?>>Out of stock</option>
+        </select>
+      </div>
+
+      <div class="shop-toolbar-group">
+        <label for="sortProducts" class="shop-toolbar-label">Sort by</label>
+        <select id="sortProducts" class="shop-toolbar-select">
+          <option value="default" <?= $selectedSort === 'default' ? 'selected' : '' ?>>Featured</option>
+          <option value="name-asc" <?= $selectedSort === 'name-asc' ? 'selected' : '' ?>>Name: A to Z</option>
+          <option value="name-desc" <?= $selectedSort === 'name-desc' ? 'selected' : '' ?>>Name: Z to A</option>
+          <option value="price-asc" <?= $selectedSort === 'price-asc' ? 'selected' : '' ?>>Price: Low to high</option>
+          <option value="price-desc" <?= $selectedSort === 'price-desc' ? 'selected' : '' ?>>Price: High to low</option>
+        </select>
+      </div>
+
+      <button type="button" id="clearProductFilters" class="shop-filter-reset">Clear filters</button>
+    </section>
+
     <!-- Skeleton loader (shown while page loads) -->
     <div class="row g-4 skeleton-grid" id="skeletonGrid" aria-hidden="true">
       <div class="col-sm-6 col-md-4 col-lg-3"><div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--text"></div><div class="skeleton-line skeleton-line--price"></div><div class="skeleton-line skeleton-line--btn"></div></div></div></div>
@@ -80,7 +129,9 @@ include __DIR__ . "/../components/header.php";
               data-product-id="<?= (int)$row['product_id'] ?>"
               data-name="<?= Sanitizer::escape($row['name']) ?>"
               data-price="<?= Sanitizer::escape($row['price']) ?>"
-              data-category="<?= Sanitizer::escape($row['category'] ?? '') ?>">
+              data-category="<?= Sanitizer::escape($row['category'] ?? '') ?>"
+              data-stock="<?= (int)$row['quantity'] ?>"
+              data-default-order="<?= (int)$row['product_id'] ?>">
 
               <div class="shop-card-img">
                 <img src="/images/<?= Sanitizer::escape($row['image_url']) ?>"
