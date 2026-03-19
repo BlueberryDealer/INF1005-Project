@@ -1791,12 +1791,3 @@ a:focus-visible, button:focus-visible {
   .scroll-top { bottom: 20px; right: 20px; width: 40px; height: 40px; }
 }
 
-.admin-navbar {
-z-index: 100;
-  background: rgba(18,18,18,0.22);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border-bottom: 1px solid var(--white-border);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.10);
-  transition: background 0.35s ease, box-shadow 0.35s ease;
-}
