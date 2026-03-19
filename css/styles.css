@@ -1900,3 +1900,344 @@ a:focus-visible, button:focus-visible {
   /* Scroll-to-top */
   .scroll-top { bottom: 20px; right: 20px; width: 40px; height: 40px; }
 }
+
+.admin-navbar {
+z-index: 100;
+  background: rgba(18,18,18,0.22);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--white-border);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.10);
+  transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* ============================================================
+   PRODUCTS PAGE — clickable image / title (products.php)
+   ============================================================ */
+
+/* Make the image wrapper an anchor without breaking the layout */
+a.shop-card-img {
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Clickable product title link */
+.shop-card-title-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.shop-card-title-link:hover .shop-card-title {
+  color: var(--accent);
+}
+
+/* ============================================================
+   PRODUCT DETAILS PAGE  (product_details.php)
+   ============================================================ */
+
+/* Page wrapper — mirrors .shop-page padding */
+.pd-page {
+  padding: 120px 0 100px;
+  background: var(--page-bg);
+  min-height: 100vh;
+}
+
+/* ── Breadcrumb ──────────────────────────────────────────── */
+.pd-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 40px;
+}
+
+.pd-breadcrumb a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.pd-breadcrumb a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+.pd-breadcrumb-sep { color: var(--divider); font-size: 16px; }
+
+.pd-breadcrumb-current {
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+
+/* ── Two-column detail card ──────────────────────────────── */
+.pd-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+  background: var(--card-bg);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius-xl);
+  padding: 48px;
+  box-shadow: var(--shadow-card);
+}
+
+/* ── Image panel ─────────────────────────────────────────── */
+.pd-image-wrap {
+  position: relative;
+}
+
+.pd-image-frame {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--section-alt);
+  border: 1px solid var(--divider);
+}
+
+.pd-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.pd-image-frame:hover .pd-image {
+  transform: scale(1.04);
+}
+
+/* Stock badge on top-right of image */
+.pd-stock-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.pd-stock-badge--in {
+  background: rgba(26, 158, 120, 0.15);
+  color: var(--accent-bright);
+  border: 1px solid rgba(26, 158, 120, 0.3);
+}
+
+.pd-stock-badge--out {
+  background: rgba(192, 57, 43, 0.12);
+  color: #e74c3c;
+  border: 1px solid rgba(192, 57, 43, 0.25);
+}
+
+/* ── Detail panel ────────────────────────────────────────── */
+.pd-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.pd-name {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--page-text);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 16px;
+  text-transform: uppercase;
+}
+
+.pd-price {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 0 0 24px;
+  letter-spacing: -0.01em;
+}
+
+.pd-divider {
+  height: 1px;
+  background: var(--divider);
+  margin-bottom: 24px;
+}
+
+.pd-description {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  margin: 0 0 24px;
+}
+
+.pd-no-desc {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Availability line */
+.pd-availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  margin-bottom: 32px;
+}
+
+.pd-availability--in  { color: var(--accent-bright); }
+.pd-availability--out { color: #e74c3c; }
+
+/* ── Action buttons ──────────────────────────────────────── */
+.pd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+/* Base button */
+.pd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition),
+              border-color var(--transition), transform var(--transition),
+              box-shadow var(--transition);
+  white-space: nowrap;
+}
+
+/* Primary: Add to Cart */
+.pd-btn--primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  flex: 1;
+  min-width: 160px;
+}
+
+.pd-btn--primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 122, 95, 0.3);
+}
+
+/* Flash green after successful add */
+.pd-btn--added {
+  background: #27ae60 !important;
+  border-color: #27ae60 !important;
+  box-shadow: 0 4px 16px rgba(39, 174, 96, 0.35) !important;
+}
+
+/* Secondary: Back to Shop */
+.pd-btn--secondary {
+  background: transparent;
+  color: var(--page-text);
+  border-color: var(--divider);
+}
+
+.pd-btn--secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+/* Disabled */
+.pd-btn--disabled {
+  background: #444;
+  color: rgba(255, 255, 255, 0.45);
+  border-color: #444;
+  cursor: not-allowed;
+  flex: 1;
+  min-width: 160px;
+}
+
+.pd-btn--disabled:hover { transform: none; box-shadow: none; }
+
+/* ── Cart status message ──────────────────────────────────── */
+.pd-cart-status {
+  margin-top: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 20px;
+  transition: opacity 0.3s ease;
+}
+
+.pd-cart-status--success { color: var(--accent-bright); }
+.pd-cart-status--error   { color: #e74c3c; }
+
+/* ── Dark-mode overrides ─────────────────────────────────── */
+[data-theme="dark"] .pd-card {
+  background: #161616;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .pd-image-frame {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .pd-btn--secondary {
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .pd-btn--secondary:hover {
+  border-color: var(--accent-bright);
+  color: var(--accent-bright);
+}
+
+/* ── Responsive: tablet ──────────────────────────────────── */
+@media (max-width: 900px) {
+  .pd-page { padding: 100px 0 80px; }
+
+  .pd-card {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 32px 24px;
+  }
+
+  .pd-name { font-size: 28px; }
+  .pd-price { font-size: 26px; }
+}
+
+/* ── Responsive: mobile ──────────────────────────────────── */
+@media (max-width: 576px) {
+  .pd-page { padding: 90px 0 60px; }
+
+  .pd-card { padding: 24px 16px; border-radius: var(--radius-lg); }
+
+  .pd-name  { font-size: 24px; }
+  .pd-price { font-size: 22px; }
+
+  .pd-actions { flex-direction: column; }
+  .pd-btn     { width: 100%; min-width: unset; }
+
+  .pd-breadcrumb-current { max-width: 160px; }
+}
+.product-thumbnail {
+width: 65px;
+height: 65px;
+object-fit: cover;
+}

@@ -25,10 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.add-cart').forEach(button => {
         button.addEventListener('click', async (e) => {
             const card = e.target.closest('.product-card');
-            if (!card) return;
 
-            const productId = card.dataset.productId;
-            const name = card.dataset.name ?? 'Item';
+            const productId = card ? card.dataset.productId : button.dataset.productId;
+            const name = card ? (card.dataset.name ?? 'Item') : (button.dataset.name ?? 'Item');
 
             if (!productId || !csrfToken) {
                 showMessage('Unable to add item to cart.', 'error');
