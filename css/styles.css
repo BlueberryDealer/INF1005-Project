@@ -1634,12 +1634,17 @@ h1, h2, h3 { font-family: var(--font-heading); }
 .light-section { background: var(--section-alt); }
 
 .message-box {
-  position: fixed; bottom: 20px; right: 20px;
+  position: fixed;
+  top: calc(var(--nav-height) + 18px);
+  left: 50%;
+  transform: translateX(-50%);
   background: rgba(18,18,18,0.94); color: var(--white);
   padding: 12px 18px; border-radius: 12px;
   font-size: 14px; font-weight: 600; display: none; z-index: 9999;
   min-width: 220px; box-shadow: 0 14px 30px rgba(0,0,0,0.22);
   border: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+  max-width: min(92vw, 420px);
 }
 .message-box.message-box--success { background: rgba(15,122,95,0.96); }
 .message-box.message-box--error { background: rgba(180,35,24,0.96); }
