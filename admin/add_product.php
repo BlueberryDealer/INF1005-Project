@@ -121,7 +121,7 @@ include __DIR__ . "/../components/header.php";
 
                             <div class="mb-3">
                                 <label class="form-label">Image Filename (e.g., dog_food.jpg)</label>
-                                <input type="text" name="image_url" class="form-control"
+                                <input type="text" name="image_url" class="form-control" value="default.jpg"
                                     placeholder="Place image in /images folder first">
                             </div>
 
