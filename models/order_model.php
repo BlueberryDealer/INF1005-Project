@@ -143,6 +143,89 @@ function getOrdersByUserId(int $userId): array
     return $orders;
 }
 
+function getTopSellingProducts(int $limit = 8): array
+{
+    $conn = db_connect();
+    $limit = max(1, $limit);
+
+    $sql = "
+        SELECT
+            oi.product_id,
+            MAX(oi.product_name) AS product_name,
+            SUM(oi.quantity) AS units_sold,
+            SUM(oi.subtotal) AS revenue,
+            COUNT(DISTINCT oi.order_id) AS order_count
+        FROM order_items oi
+        INNER JOIN orders o ON o.id = oi.order_id
+        GROUP BY oi.product_id
+        ORDER BY units_sold DESC, revenue DESC, product_name ASC
+        LIMIT $limit
+    ";
+
+    $result = $conn->query($sql);
+    $products = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    $conn->close();
+
+    return $products;
+}
+
+function getSalesSummary(): array
+{
+    $conn = db_connect();
+
+    $summary = [
+        'total_orders' => 0,
+        'total_revenue' => 0.0,
+        'units_sold' => 0,
+        'top_product' => null,
+    ];
+
+    $result = $conn->query("
+        SELECT
+            COUNT(*) AS total_orders,
+            COALESCE(SUM(total_amount), 0) AS total_revenue
+        FROM orders
+    ");
+
+    if ($result) {
+        $row = $result->fetch_assoc();
+        $summary['total_orders'] = (int)($row['total_orders'] ?? 0);
+        $summary['total_revenue'] = (float)($row['total_revenue'] ?? 0);
+    }
+
+    $unitsResult = $conn->query("
+        SELECT COALESCE(SUM(quantity), 0) AS units_sold
+        FROM order_items
+    ");
+
+    if ($unitsResult) {
+        $row = $unitsResult->fetch_assoc();
+        $summary['units_sold'] = (int)($row['units_sold'] ?? 0);
+    }
+
+    $topResult = $conn->query("
+        SELECT
+            product_id,
+            MAX(product_name) AS product_name,
+            SUM(quantity) AS units_sold
+        FROM order_items
+        GROUP BY product_id
+        ORDER BY units_sold DESC, product_name ASC
+        LIMIT 1
+    ");
+
+    if ($topResult) {
+        $topProduct = $topResult->fetch_assoc();
+        if ($topProduct) {
+            $summary['top_product'] = $topProduct;
+        }
+    }
+
+    $conn->close();
+
+    return $summary;
+}
+
 function getProductsByIds(array $ids): array
 {
     if (empty($ids)) {
