@@ -54,7 +54,7 @@ if (!empty($_SESSION['cart'])) {
     <ul class="nav-links">
       <li><a href="/pages/products.php">Shop</a></li>
       <li><a href="/pages/about.php">About</a></li>
-      <li><a href="#">Where to Buy</a></li>
+      <li><a href="/pages/where_to_buy.php">Where to Buy</a></li>
       <?php if ($isAdmin): ?>
         <li><a href="/admin/dashboard.php">Admin</a></li>
       <?php endif; ?>
@@ -167,7 +167,7 @@ if (!empty($_SESSION['cart'])) {
       <ul class="mobile-menu-links">
         <li><a href="/pages/products.php">Shop</a></li>
         <li><a href="/pages/about.php">About</a></li>
-        <li><a href="#">Where to Buy</a></li>
+        <li><a href="/pages/where_to_buy.php">Where to Buy</a></li>
         <?php if ($isAdmin): ?>
           <li><a href="/admin/dashboard.php">Admin</a></li>
         <?php endif; ?>

@@ -2241,3 +2241,239 @@ width: 65px;
 height: 65px;
 object-fit: cover;
 }
+
+/* ============================================
+   WHERE TO BUY — Store Locator
+   ============================================ */
+
+.wtb-page { min-height: 100vh; }
+
+/* Header */
+.wtb-header { padding: 60px 0 40px; text-align: center; }
+
+.wtb-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 48px; font-weight: 900;
+  letter-spacing: -1.5px; color: #111;
+  margin: 0 0 12px;
+}
+[data-theme="dark"] .wtb-title { color: #f5f5f5; }
+
+.wtb-subtitle {
+  font-size: 17px; color: #666;
+  max-width: 520px; margin: 0 auto; line-height: 1.6;
+}
+[data-theme="dark"] .wtb-subtitle { color: #aaa; }
+
+/* Layout */
+.wtb-content { padding: 0 0 60px; }
+
+.wtb-layout {
+  display: flex; gap: 0;
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  height: 600px;
+}
+[data-theme="dark"] .wtb-layout { box-shadow: 0 4px 24px rgba(0,0,0,0.3); }
+
+/* Sidebar */
+.wtb-sidebar {
+  width: 380px; min-width: 380px;
+  background: #fff; display: flex;
+  flex-direction: column;
+  border-right: 1px solid #eee;
+}
+[data-theme="dark"] .wtb-sidebar { background: #1a1a1a; border-right-color: #2a2a2a; }
+
+/* Search box */
+.wtb-search-box { padding: 16px; border-bottom: 1px solid #eee; }
+[data-theme="dark"] .wtb-search-box { border-bottom-color: #2a2a2a; }
+
+.wtb-search-wrap { position: relative; }
+
+.wtb-search-icon {
+  position: absolute; left: 14px; top: 50%;
+  transform: translateY(-50%); color: #999; pointer-events: none;
+}
+
+.wtb-search-input {
+  width: 100%; padding: 12px 16px 12px 42px;
+  border: 2px solid #e5e5e5; border-radius: 10px;
+  font-size: 14px; font-family: 'Inter', sans-serif;
+  background: #fafafa; color: #111;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  outline: none;
+}
+.wtb-search-input:focus { border-color: #111; background: #fff; }
+[data-theme="dark"] .wtb-search-input { background: #222; border-color: #333; color: #f5f5f5; }
+[data-theme="dark"] .wtb-search-input::placeholder { color: rgba(255,255,255,0.35); }
+[data-theme="dark"] .wtb-search-input:focus { border-color: #666; background: #2a2a2a; }
+
+/* Locate button */
+.wtb-locate-btn {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; width: 100%; margin-top: 10px;
+  padding: 10px 16px; background: #111; color: #fff;
+  border: none; border-radius: 10px;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: background 0.2s ease, opacity 0.2s ease;
+}
+.wtb-locate-btn:hover { background: #333; }
+.wtb-locate-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+[data-theme="dark"] .wtb-locate-btn { background: #f5f5f5; color: #111; }
+[data-theme="dark"] .wtb-locate-btn:hover { background: #ddd; }
+
+/* Status */
+.wtb-results-status { padding: 10px 16px; border-bottom: 1px solid #eee; }
+[data-theme="dark"] .wtb-results-status { border-bottom-color: #2a2a2a; }
+
+.wtb-status-text { font-size: 13px; font-weight: 600; color: #888; }
+[data-theme="dark"] .wtb-status-text { color: #aaa; }  /* FIX: was #777 */
+
+/* Results list */
+.wtb-results-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; flex: 1; }
+
+.wtb-result-card {
+  padding: 14px 16px; border-bottom: 1px solid #f0f0f0;
+  cursor: pointer; transition: background 0.15s ease;
+}
+.wtb-result-card:hover, .wtb-result-card.is-active { background: #f5f5f5; }
+[data-theme="dark"] .wtb-result-card { border-bottom-color: #2a2a2a; }
+[data-theme="dark"] .wtb-result-card:hover,
+[data-theme="dark"] .wtb-result-card.is-active { background: #222; }
+
+.wtb-result-top { display: flex; align-items: flex-start; gap: 12px; }
+
+.wtb-result-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; min-width: 28px;
+  background: #111; color: #fff;
+  font-size: 12px; font-weight: 700;
+  border-radius: 50%; margin-top: 2px;
+}
+[data-theme="dark"] .wtb-result-num { background: #f5f5f5; color: #111; }
+
+.wtb-result-info { flex: 1; }
+
+.wtb-result-name { font-size: 14px; font-weight: 700; color: #111; line-height: 1.3; margin-bottom: 4px; }
+[data-theme="dark"] .wtb-result-name { color: #f5f5f5; }
+
+.wtb-result-addr { font-size: 12px; color: #888; line-height: 1.4; margin-bottom: 4px; }
+[data-theme="dark"] .wtb-result-addr { color: #999; }  /* FIX: was #777 */
+
+.wtb-result-rating { display: flex; align-items: center; gap: 4px; font-size: 12px; }
+.wtb-stars { color: #f5a623; letter-spacing: 1px; }
+.wtb-rating-num { color: #999; font-weight: 600; }
+[data-theme="dark"] .wtb-rating-num { color: #bbb; }  /* FIX: was missing */
+
+.wtb-result-status {
+  font-size: 11px; font-weight: 700;
+  white-space: nowrap; padding: 3px 8px;
+  border-radius: 6px; margin-top: 2px;
+}
+.wtb-open { color: #16a34a; background: #f0fdf4; }
+[data-theme="dark"] .wtb-open { background: rgba(22,163,74,0.15); }
+.wtb-closed { color: #dc2626; background: #fef2f2; }
+[data-theme="dark"] .wtb-closed { background: rgba(220,38,38,0.15); }
+
+/* Map */
+.wtb-map-wrap { flex: 1; position: relative; }
+.wtb-map { width: 100%; height: 100%; min-height: 600px; }
+
+/* Info Window */
+.wtb-iw { font-family: 'Inter', sans-serif; padding: 4px 0; max-width: 260px; }
+.wtb-iw-name { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 4px; }
+.wtb-iw-addr { font-size: 12px; color: #666; line-height: 1.4; margin-bottom: 6px; }
+.wtb-iw-rating { font-size: 13px; color: #f5a623; margin-bottom: 4px; }
+.wtb-iw-status { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+.wtb-iw-dir {
+  display: inline-block; font-size: 13px; font-weight: 600;
+  color: #111; text-decoration: none;
+  border-bottom: 1.5px solid #111; padding-bottom: 1px;
+  transition: opacity 0.2s ease;
+}
+.wtb-iw-dir:hover { opacity: 0.7; }
+
+/* Responsive */
+@media (max-width: 991px) {
+  .wtb-layout { flex-direction: column; height: auto; }
+  .wtb-sidebar {
+    width: 100%; min-width: unset;
+    max-height: 300px; border-right: none;
+    border-bottom: 1px solid #eee; order: 2;
+  }
+  [data-theme="dark"] .wtb-sidebar { border-bottom-color: #2a2a2a; }
+  .wtb-map-wrap { order: 1; }
+  .wtb-map { min-height: 400px; }
+}
+
+@media (max-width: 600px) {
+  .wtb-header { padding: 40px 0 24px; }
+  .wtb-title { font-size: 32px; }
+  .wtb-subtitle { font-size: 15px; }
+  .wtb-map { min-height: 300px; }
+}
+
+/* ===== Filter Bar ===== */
+.wtb-filter-bar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #eee;
+}
+[data-theme="dark"] .wtb-filter-bar { border-bottom-color: #2a2a2a; }
+
+.wtb-filter-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px;
+  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
+  border-radius: 20px; cursor: pointer;
+  border: 1.5px solid #ddd; background: transparent; color: #555;
+  transition: all 0.15s ease;
+}
+.wtb-filter-btn:hover:not(:disabled) { border-color: #111; color: #111; }
+.wtb-filter-btn.is-active:hover:not(:disabled) {
+  background: #333;
+  border-color: #333;
+  color: #fff;
+}
+
+[data-theme="dark"] .wtb-filter-btn.is-active:hover:not(:disabled) {
+  background: #ddd;
+  border-color: #ddd;
+  color: #111;
+}
+.wtb-filter-btn.is-active { background: #111; color: #fff; border-color: #111; }
+.wtb-filter-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+[data-theme="dark"] .wtb-filter-btn { border-color: #333; color: #aaa; }
+[data-theme="dark"] .wtb-filter-btn:hover:not(:disabled) { border-color: #f5f5f5; color: #f5f5f5; }
+[data-theme="dark"] .wtb-filter-btn.is-active { background: #f5f5f5; color: #111; border-color: #f5f5f5; }
+
+/* ===== Distance badge ===== */
+.wtb-result-meta {
+  display: flex; flex-direction: column;
+  align-items: flex-end; gap: 4px; flex-shrink: 0;
+}
+
+.wtb-result-dist {
+  font-size: 11px; font-weight: 600;
+  color: #888; white-space: nowrap;
+}
+[data-theme="dark"] .wtb-result-dist { color: #777; }
+
+/* Distance in info window */
+.wtb-iw-dist {
+  font-size: 12px; color: #888;
+  margin-bottom: 8px;
+}
+
+/* ===== Empty state ===== */
+.wtb-empty-state {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 10px; padding: 40px 16px;
+  color: #aaa; font-size: 13px; font-weight: 600;
+  list-style: none; text-align: center;
+}
+[data-theme="dark"] .wtb-empty-state { color: #555; }
