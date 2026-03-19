@@ -34,7 +34,10 @@ include __DIR__ . "/../components/header.php";
         <nav class="navbar admin-navbar navbar-dark bg-dark mb-4 shadow-sm">
             <div class="container-fluid">
                 <span class="navbar-brand mb-0 h1">Admin Control Panel</span>
-                <a href="/pages/products.php" class="btn btn-outline-light btn-sm">Back to Store</a>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="/admin/statistics.php" class="btn btn-outline-info btn-sm">Statistics</a>
+                    <a href="/pages/products.php" class="btn btn-outline-light btn-sm">Back to Store</a>
+                </div>
             </div>
         </nav>
     </header>
@@ -50,6 +53,10 @@ include __DIR__ . "/../components/header.php";
                 <h2 class="text-primary-dark m-0">Inventory Management</h2>
 
                 <div class="d-flex gap-2 align-items-center">
+                    <a href="/admin/statistics.php" class="btn btn-outline-primary text-nowrap shadow-sm">
+                        View Statistics
+                    </a>
+
                     <input type="text" id="productSearch" class="form-control" placeholder="Search products..."
                         aria-label="Search products">
 
