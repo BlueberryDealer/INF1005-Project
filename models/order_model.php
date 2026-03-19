@@ -117,6 +117,32 @@ function getOrderById(int $orderId, int $userId): ?array
     return $order;
 }
 
+function getOrdersByUserId(int $userId): array
+{
+    $conn = db_connect();
+
+    $stmt = $conn->prepare("
+        SELECT id, total_amount, status, created_at
+        FROM orders
+        WHERE user_id = ?
+        ORDER BY created_at DESC, id DESC
+    ");
+
+    if (!$stmt) {
+        $conn->close();
+        return [];
+    }
+
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $orders = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    $stmt->close();
+    $conn->close();
+
+    return $orders;
+}
+
 function getProductsByIds(array $ids): array
 {
     if (empty($ids)) {

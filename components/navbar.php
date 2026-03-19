@@ -148,6 +148,7 @@ if (!empty($_SESSION['cart'])) {
         <ul class="dropdown-menu">
           <?php if ($isAuthenticated): ?>
             <li><a href="/account/userProfile.php">View Profile</a></li>
+            <li><a href="/account/orders.php">Order History</a></li>
             <?php if ($isAdmin): ?>
               <li><a href="/admin/dashboard.php">Admin Dashboard</a></li>
             <?php endif; ?>
@@ -175,6 +176,7 @@ if (!empty($_SESSION['cart'])) {
       <ul class="mobile-menu-links">
         <?php if ($isAuthenticated): ?>
           <li><a href="/account/userProfile.php">My Profile</a></li>
+          <li><a href="/account/orders.php">Order History</a></li>
           <li><a href="/auth/logout.php">Logout</a></li>
         <?php else: ?>
           <li><a href="/auth/login.php">Login</a></li>
