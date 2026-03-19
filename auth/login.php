@@ -42,19 +42,25 @@ include __DIR__ . "/../components/header.php";
         </div>
       <?php endif; ?>
 
-      <form method="post" action="/auth/login_process.php" autocomplete="off">
+      <form method="post" action="/auth/login_process.php" autocomplete="off" id="loginForm" novalidate>
+        <div id="loginFormAlert" class="auth-form-alert" role="alert" aria-live="polite" hidden></div>
         <?= CSRFToken::field('csrf_token') ?>
 
         <div class="auth-field">
           <label for="email" class="auth-label">Email</label>
           <input maxlength="45" type="email" id="email" name="email" class="auth-input"
-            placeholder="you@example.com" required>
+            placeholder="you@example.com" required aria-describedby="emailError">
+          <div id="emailError" class="invalid-feedback" aria-live="polite"></div>
         </div>
 
         <div class="auth-field">
           <label for="password" class="auth-label">Password</label>
-          <input type="password" id="password" name="password" class="auth-input"
-            placeholder="Enter your password" required>
+          <div class="auth-password-wrap">
+            <input type="password" id="password" name="password" class="auth-input"
+              placeholder="Enter your password" required aria-describedby="passwordError">
+            <button type="button" class="password-toggle" data-target="password" aria-label="Show password">Show</button>
+          </div>
+          <div id="passwordError" class="invalid-feedback" aria-live="polite"></div>
         </div>
 
         <button type="submit" class="auth-btn">Sign In</button>
