@@ -15,10 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const csrfToken   = document.getElementById('csrf-token')?.value ?? '';
     const cartStatus  = document.getElementById('cart-status');
+    const messageBox = document.getElementById('messageBox');
     const grandTotalEl = document.getElementById('cart-grand-total');
     const totalDisplayEl = document.getElementById('cart-total-display');
     const preview = document.getElementById('cartPreview');
     const cartContainer = document.querySelector('.cart-container');
+    let messageTimeout;
 
     document.querySelectorAll('.add-cart').forEach(button => {
         button.addEventListener('click', async (e) => {
@@ -29,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const name = card.dataset.name ?? 'Item';
 
             if (!productId || !csrfToken) {
-                alert('Unable to add item to cart.');
+                showMessage('Unable to add item to cart.', 'error');
                 return;
             }
 
@@ -38,11 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.success) {
                     updateCartBadge(data.cart_count);
                     announce(name + ' added to cart.');
+                    showMessage(name + ' added to cart.', 'success');
                 } else {
-                    alert(data.message || 'Failed to add item.');
+                    showMessage(data.message || 'Failed to add item.', 'error');
                 }
             } catch {
-                alert('Could not add item to cart.');
+                showMessage('Could not add item to cart.', 'error');
             }
         });
     });
@@ -52,6 +55,22 @@ document.addEventListener('DOMContentLoaded', () => {
             cartStatus.textContent = '';
             setTimeout(() => { cartStatus.textContent = msg; }, 50);
         }
+    }
+
+    function showMessage(msg, type = 'success') {
+        if (!messageBox) return;
+
+        messageBox.textContent = msg;
+        messageBox.className = `message-box message-box--${type}`;
+        messageBox.style.display = 'block';
+
+        if (messageTimeout) {
+            clearTimeout(messageTimeout);
+        }
+
+        messageTimeout = setTimeout(() => {
+            messageBox.style.display = 'none';
+        }, 2200);
     }
 
     async function cartAction(action, productId = 0, quantity = 1) {

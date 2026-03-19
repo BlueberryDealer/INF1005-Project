@@ -83,6 +83,7 @@ include __DIR__ . "/../components/navbar.php";
 
       <div class="mt-3 d-flex gap-2">
         <a class="btn btn-primary" href="/account/edit_profile.php">Edit Profile</a>
+        <a class="btn btn-outline-secondary" href="/account/orders.php">Order History</a>
 
         <form method="post" action="/account/deleteAccount_process.php" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
           <?= CSRFToken::field('csrf_token') ?>
