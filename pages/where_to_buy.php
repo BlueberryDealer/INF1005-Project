@@ -44,13 +44,6 @@ include __DIR__ . "/../components/header.php";
                 autocomplete="off"
               >
             </div>
-            <button type="button" class="wtb-locate-btn" id="wtbLocateBtn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-                <path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-              Use My Location
-            </button>
           </div>
 
           <!-- Filter bar -->
@@ -61,13 +54,6 @@ include __DIR__ . "/../components/header.php";
                 <path d="M8 12l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
               Open Now
-            </button>
-            <button type="button" class="wtb-filter-btn" id="wtbSortDistance" disabled title="Use My Location first">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/>
-                <circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="2"/>
-              </svg>
-              Nearest First
             </button>
           </div>
 

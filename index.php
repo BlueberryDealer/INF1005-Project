@@ -141,4 +141,41 @@ include __DIR__ . "/components/header.php";
 
 </main>
 
+<?php if (!$session->isAuthenticated()): ?>
+<!-- ===== SIGNUP POPUP (guests only, scroll-triggered) ===== -->
+<div class="popup-overlay" id="signupPopupOverlay" aria-hidden="true">
+  <div class="popup-modal" role="dialog" aria-labelledby="popupTitle" aria-modal="true">
+    <button type="button" class="popup-close" id="popupCloseBtn" aria-label="Close popup">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <div class="popup-body">
+      <div class="popup-icon" aria-hidden="true">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+          <path d="M20 12V22H4V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M22 7H2V12H22V7Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 22V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 7H7.5C6.83696 7 6.20107 6.73661 5.73223 6.26777C5.26339 5.79893 5 5.16304 5 4.5C5 3.83696 5.26339 3.20107 5.73223 2.73223C6.20107 2.26339 6.83696 2 7.5 2C11 2 12 7 12 7Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 7H16.5C17.163 7 17.7989 6.73661 18.2678 6.26777C18.7366 5.79893 19 5.16304 19 4.5C19 3.83696 18.7366 3.20107 18.2678 2.73223C17.7989 2.26339 17.163 2 16.5 2C13 2 12 7 12 7Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <h2 class="popup-title" id="popupTitle">Get 10% Off Your First Order</h2>
+      <p class="popup-text">Sign up for a QUENCH account and enjoy <strong>10% off</strong> your first purchase. Refreshment is just a click away.</p>
+
+      <a href="/auth/register.php" class="popup-cta" role="button">
+        Create Account
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+
+      <p class="popup-note">A discount code will be sent to your email after signup!</p>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
+
 <?php include __DIR__ . '/components/footer.php'; ?>
