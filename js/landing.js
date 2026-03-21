@@ -1,7 +1,8 @@
 /**
  * landing.js — Custom JavaScript for QUENCH
  * Features: theme toggle, scroll reveals, navbar scroll, parallax,
- *           stat counters, hamburger menu, scroll-to-top, skeleton loader
+ *           stat counters, hamburger menu, scroll-to-top, skeleton loader,
+ *           signup popup
  */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -57,13 +58,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     overlay.addEventListener("click", closeMenu);
 
-    // Close menu on link click
     var mobileLinks = mobileMenu.querySelectorAll("a");
     mobileLinks.forEach(function (link) {
       link.addEventListener("click", closeMenu);
     });
 
-    // Close on Escape key
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && mobileMenu.classList.contains("is-open")) {
         closeMenu();
@@ -104,7 +103,6 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener("scroll", function () {
       var y = window.scrollY;
 
-      // Navbar
       if (navbar) {
         if (y > 80) {
           navbar.classList.add("scrolled");
@@ -113,7 +111,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      // Scroll-to-top button
       if (scrollTopBtn) {
         if (y > 400) {
           scrollTopBtn.classList.add("is-visible");
@@ -145,14 +142,12 @@ document.addEventListener("DOMContentLoaded", function () {
   var productList = document.getElementById("productList");
 
   if (skeletonGrid && productList) {
-    // Short delay to show skeleton, then fade in real content
     setTimeout(function () {
       skeletonGrid.style.display = "none";
       productList.style.display = "";
       productList.style.opacity = "0";
       productList.style.transition = "opacity 0.4s ease";
 
-      // Trigger reflow then fade in
       requestAnimationFrame(function () {
         productList.style.opacity = "1";
       });
@@ -205,6 +200,56 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  /* ========== Scroll-Triggered Signup Popup ========== */
+  var popupOverlay = document.getElementById("signupPopupOverlay");
+  var popupCloseBtn = document.getElementById("popupCloseBtn");
+
+  if (popupOverlay && popupCloseBtn) {
+    var popupShown = false;
+    var popupDismissed = sessionStorage.getItem("quench-popup-dismissed") === "true";
+
+    function showPopup() {
+      if (popupShown || popupDismissed) return;
+      popupShown = true;
+      popupOverlay.classList.add("is-visible");
+      popupOverlay.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      popupCloseBtn.focus();
+    }
+
+    function hidePopup() {
+      popupOverlay.classList.remove("is-visible");
+      popupOverlay.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      sessionStorage.setItem("quench-popup-dismissed", "true");
+      popupDismissed = true;
+    }
+
+    if (!popupDismissed) {
+      window.addEventListener("scroll", function onScrollPopup() {
+        var scrollPercent = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+        if (scrollPercent > 0.35) {
+          showPopup();
+          window.removeEventListener("scroll", onScrollPopup);
+        }
+      }, { passive: true });
+    }
+
+    popupCloseBtn.addEventListener("click", hidePopup);
+
+    popupOverlay.addEventListener("click", function (e) {
+      if (e.target === popupOverlay) {
+        hidePopup();
+      }
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && popupOverlay.classList.contains("is-visible")) {
+        hidePopup();
+      }
+    });
+  }
+
 });
 
 /* ========== Newsletter form (UI only) ========== */
@@ -223,4 +268,36 @@ function handleNewsletter(e) {
       msg.textContent = "";
     }, 4000);
   }
+}
+
+function handleNewsletter(e) {
+  e.preventDefault();
+
+  var form = e.target;
+  var input = form.querySelector(".newsletter-input");
+  var msg = document.getElementById("newsletterMsg");
+
+  if (!input || !input.value) return;
+
+  msg.textContent = "Subscribing...";
+
+  var formData = new FormData();
+  formData.append("email", input.value);
+
+  fetch("/pages/newsletter_subscribe.php", {
+    method: "POST",
+    body: formData
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    msg.textContent = data.message;
+    if (data.success) {
+      input.value = "";
+    }
+    setTimeout(function() { msg.textContent = ""; }, 4000);
+  })
+  .catch(function() {
+    msg.textContent = "Something went wrong. Try again.";
+    setTimeout(function() { msg.textContent = ""; }, 4000);
+  });
 }

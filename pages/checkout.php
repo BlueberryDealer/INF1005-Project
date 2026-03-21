@@ -5,6 +5,7 @@
 
 require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../models/order_model.php';
+require_once __DIR__ . '/../models/coupon_model.php';
 require_once __DIR__ . '/../security/auth_guard.php';
 require_once __DIR__ . '/../security/sanitization.php';
 require_once __DIR__ . '/../security/csrf.php';
@@ -44,6 +45,39 @@ foreach ($_SESSION['cart'] as $pid => $qty) {
         'subtotal'   => $subtotal,
     ];
 }
+
+// ---------- Coupon handling ----------
+$couponMsg = '';
+$couponClass = '';
+$discount = 0.0;
+
+// Apply coupon
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['coupon_code'])) {
+    $couponResult = validateCoupon(trim($_POST['coupon_code']));
+    if ($couponResult['valid']) {
+        $_SESSION['applied_coupon'] = $couponResult;
+    } else {
+        unset($_SESSION['applied_coupon']);
+        $couponMsg = $couponResult['message'];
+        $couponClass = 'text-danger';
+    }
+}
+
+// Remove coupon
+if (isset($_GET['remove_coupon'])) {
+    unset($_SESSION['applied_coupon']);
+    header('Location: checkout.php');
+    exit;
+}
+
+// Calculate discount if coupon is active
+if (!empty($_SESSION['applied_coupon'])) {
+    $discount = $grandTotal * ($_SESSION['applied_coupon']['discount_percent'] / 100);
+    $couponMsg = $_SESSION['applied_coupon']['message'];
+    $couponClass = 'text-success';
+}
+
+$finalTotal = $grandTotal - $discount;
 
 // ---------- Form error / old-input storage ----------
 $errors   = [];
@@ -103,10 +137,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             (int) $_SESSION['user_id'],
             $sanitizedInput,
             $cartItems,
-            $grandTotal
+            $finalTotal
         );
 
         if ($orderId) {
+            unset($_SESSION['applied_coupon']);
             $_SESSION['cart'] = [];
             $_SESSION['last_order_id'] = $orderId;
             header('Location: order_confirm.php?order_id=' . $orderId);
@@ -116,9 +151,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-
-    
-    
 
 // Prefill with session user data if available (optional convenience)
 $defaultEmail = $_SESSION['user_email'] ?? '';
@@ -254,7 +286,7 @@ include __DIR__ . '/../components/header.php';
 
             <button type="submit" class="checkout-submit-btn">
               <i class="bi bi-bag-check me-2" aria-hidden="true"></i>
-              Place Order — $<?= number_format($grandTotal, 2) ?>
+              Place Order — $<?= number_format($finalTotal, 2) ?>
             </button>
           </form>
         </div>
@@ -283,11 +315,47 @@ include __DIR__ . '/../components/header.php';
             <?php endforeach; ?>
           </div>
 
+          <!-- Coupon Code -->
+          <div class="checkout-coupon">
+            <form method="POST" action="checkout.php" class="checkout-coupon-form">
+              <?= CSRFToken::field('csrf_token') ?>
+              <?php foreach ($oldInput as $key => $val): ?>
+                <input type="hidden" name="<?= $key ?>" value="<?= Sanitizer::escape($val) ?>">
+              <?php endforeach; ?>
+
+              <div class="checkout-coupon-wrap">
+                <input type="text" name="coupon_code" class="auth-input"
+                  placeholder="Enter coupon code"
+                  value="<?= Sanitizer::escape($_SESSION['applied_coupon']['code'] ?? '') ?>"
+                  aria-label="Coupon code">
+                <button type="submit" class="checkout-coupon-btn">Apply</button>
+              </div>
+              <?php if ($couponMsg): ?>
+                <p class="checkout-coupon-msg <?= $couponClass ?>"><?= Sanitizer::escape($couponMsg) ?></p>
+              <?php endif; ?>
+            </form>
+
+            <?php if (!empty($_SESSION['applied_coupon'])): ?>
+              <a href="checkout.php?remove_coupon=1" class="checkout-coupon-remove">Remove coupon</a>
+            <?php endif; ?>
+          </div>
+
           <div class="checkout-summary-divider"></div>
+
+          <?php if ($discount > 0): ?>
+          <div class="checkout-summary-row">
+            <span>Subtotal</span>
+            <span>$<?= number_format($grandTotal, 2) ?></span>
+          </div>
+          <div class="checkout-summary-row text-success">
+            <span>Discount (<?= $_SESSION['applied_coupon']['discount_percent'] ?>%)</span>
+            <span>-$<?= number_format($discount, 2) ?></span>
+          </div>
+          <?php endif; ?>
 
           <div class="checkout-summary-total">
             <span>Total</span>
-            <span>$<?= number_format($grandTotal, 2) ?></span>
+            <span>$<?= number_format($finalTotal, 2) ?></span>
           </div>
 
           <a href="cart.php" class="cart-continue-btn">

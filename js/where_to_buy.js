@@ -4,15 +4,10 @@
 
 var wtbMap, wtbService, wtbInfoWindow;
 var wtbMarkers = [];
-var wtbAllPlaces = [];     // all results from API
-var wtbCurrentPlaces = []; // after filter/sort applied
+var wtbAllPlaces = [];
+var wtbCurrentPlaces = [];
 var wtbBounds;
-var wtbUserMarker = null;
-var wtbUserLocation = null;
-
-// Filter state
 var wtbFilterOpen = false;
-var wtbSortNearest = false;
 
 /* ========== Init ========== */
 function initWtbMap() {
@@ -45,16 +40,10 @@ function initWtbMap() {
           searchFairPriceByArea(query);
         } else {
           wtbCurrentPlaces = wtbAllPlaces.slice();
-          applyFiltersAndSort();
+          applyFilter();
         }
       }, 400);
     });
-  }
-
-  // Use My Location
-  var locateBtn = document.getElementById("wtbLocateBtn");
-  if (locateBtn) {
-    locateBtn.addEventListener("click", useMyLocation);
   }
 
   // Open Now filter toggle
@@ -63,44 +52,23 @@ function initWtbMap() {
     filterOpenBtn.addEventListener("click", function () {
       wtbFilterOpen = !wtbFilterOpen;
       filterOpenBtn.classList.toggle("is-active", wtbFilterOpen);
-      applyFiltersAndSort();
-    });
-  }
-
-  // Sort by distance toggle
-  var sortDistBtn = document.getElementById("wtbSortDistance");
-  if (sortDistBtn) {
-    sortDistBtn.addEventListener("click", function () {
-      if (!wtbUserLocation) return;
-      wtbSortNearest = !wtbSortNearest;
-      sortDistBtn.classList.toggle("is-active", wtbSortNearest);
-      applyFiltersAndSort();
+      applyFilter();
     });
   }
 }
 
-/* ========== Filter & Sort ========== */
-function applyFiltersAndSort() {
+/* ========== Filter ========== */
+function applyFilter() {
   var results = wtbCurrentPlaces.slice();
 
-  // Filter: open now
   if (wtbFilterOpen) {
     results = results.filter(function (place) {
       return place.opening_hours && place.opening_hours.isOpen();
     });
   }
 
-  // Sort: nearest first
-  if (wtbSortNearest && wtbUserLocation) {
-    results.sort(function (a, b) {
-      return getDistance(wtbUserLocation, a.geometry.location) -
-             getDistance(wtbUserLocation, b.geometry.location);
-    });
-  }
-
   displayResults(results);
 
-  // Update status
   var total = wtbCurrentPlaces.length;
   var shown = results.length;
   if (wtbFilterOpen && shown < total) {
@@ -108,110 +76,6 @@ function applyFiltersAndSort() {
   } else {
     updateStatus(shown + " FairPrice outlet" + (shown !== 1 ? "s" : "") + " found");
   }
-}
-
-/* ========== Haversine distance (km) ========== */
-function getDistance(from, to) {
-  var R = 6371;
-  var lat1 = typeof from.lat === "function" ? from.lat() : from.lat;
-  var lng1 = typeof from.lng === "function" ? from.lng() : from.lng;
-  var lat2 = typeof to.lat === "function" ? to.lat() : to.lat;
-  var lng2 = typeof to.lng === "function" ? to.lng() : to.lng;
-
-  var dLat = toRad(lat2 - lat1);
-  var dLng = toRad(lng2 - lng1);
-  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-          Math.sin(dLng / 2) * Math.sin(dLng / 2);
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-function toRad(deg) { return deg * (Math.PI / 180); }
-
-/* ========== Use My Location ========== */
-function useMyLocation() {
-  if (!navigator.geolocation) {
-    updateStatus("Geolocation not supported by your browser.");
-    return;
-  }
-
-  var locateBtn = document.getElementById("wtbLocateBtn");
-  var sortDistBtn = document.getElementById("wtbSortDistance");
-  locateBtn.disabled = true;
-  locateBtn.textContent = "Locating...";
-  updateStatus("Getting your location...");
-
-  navigator.geolocation.getCurrentPosition(
-    function (position) {
-      wtbUserLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
-
-      if (wtbUserMarker) wtbUserMarker.setMap(null);
-
-      wtbUserMarker = new google.maps.Marker({
-        map: wtbMap, position: wtbUserLocation,
-        title: "Your Location",
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 10, fillColor: "#4285F4", fillOpacity: 1,
-          strokeColor: "#fff", strokeWeight: 3
-        },
-        zIndex: 999
-      });
-
-      wtbMap.panTo(wtbUserLocation);
-      wtbMap.setZoom(14);
-
-      // Enable sort by distance button
-      if (sortDistBtn) {
-        sortDistBtn.disabled = false;
-        sortDistBtn.title = "";
-      }
-
-      searchNearby(wtbUserLocation);
-      resetLocateBtn(locateBtn);
-    },
-    function (error) {
-      var msgs = ["", "Please allow location access.", "Location unavailable.", "Request timed out."];
-      updateStatus("Could not get your location. " + (msgs[error.code] || ""));
-      resetLocateBtn(locateBtn);
-    },
-    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-  );
-}
-
-function resetLocateBtn(btn) {
-  btn.disabled = false;
-  btn.innerHTML =
-    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
-    '<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>' +
-    '<path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' +
-    "</svg> Use My Location";
-}
-
-/* ========== Nearby Search ========== */
-function searchNearby(location) {
-  updateStatus("Finding FairPrice outlets near you...");
-  var request = { location: location, radius: 5000, keyword: "FairPrice", type: "supermarket" };
-
-  wtbService.nearbySearch(request, function (results, status) {
-    if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-      wtbAllPlaces = results;
-      wtbCurrentPlaces = results.slice();
-      applyFiltersAndSort();
-    } else {
-      request.radius = 10000;
-      wtbService.nearbySearch(request, function (results2, status2) {
-        if (status2 === google.maps.places.PlacesServiceStatus.OK && results2) {
-          wtbAllPlaces = results2;
-          wtbCurrentPlaces = results2.slice();
-          applyFiltersAndSort();
-        } else {
-          clearMarkers(); clearResultsList();
-          updateStatus("No outlets found nearby. Try searching by area.");
-        }
-      });
-    }
-  });
 }
 
 /* ========== Initial Search ========== */
@@ -223,16 +87,16 @@ function searchFairPrice(center) {
     if (status === google.maps.places.PlacesServiceStatus.OK && results) {
       wtbAllPlaces = results;
       wtbCurrentPlaces = results.slice();
-      applyFiltersAndSort();
+      applyFilter();
     } else {
       var fallback = { location: center, radius: 25000, keyword: "FairPrice", type: "supermarket" };
       wtbService.nearbySearch(fallback, function (results2, status2) {
         if (status2 === google.maps.places.PlacesServiceStatus.OK && results2) {
           wtbAllPlaces = results2;
           wtbCurrentPlaces = results2.slice();
-          applyFiltersAndSort();
+          applyFilter();
         } else {
-          updateStatus("Could not load stores. Ensure Places API is enabled. (Status: " + status + ")");
+          updateStatus("Could not load stores. Ensure Places API is enabled.");
         }
       });
     }
@@ -247,9 +111,10 @@ function searchFairPriceByArea(area) {
   wtbService.textSearch(request, function (results, status) {
     if (status === google.maps.places.PlacesServiceStatus.OK && results) {
       wtbCurrentPlaces = results;
-      applyFiltersAndSort();
+      applyFilter();
     } else {
-      clearMarkers(); clearResultsList();
+      clearMarkers();
+      clearResultsList();
       updateStatus('No outlets found near "' + area + '". Try a different area.');
     }
   });
@@ -276,8 +141,6 @@ function displayResults(places) {
   wtbBounds = new google.maps.LatLngBounds();
   var listEl = document.getElementById("wtbResultsList");
 
-  if (wtbUserMarker) wtbBounds.extend(wtbUserMarker.getPosition());
-
   places.forEach(function (place, index) {
     if (!place.geometry || !place.geometry.location) return;
 
@@ -291,15 +154,6 @@ function displayResults(places) {
     wtbMarkers.push(marker);
     wtbBounds.extend(place.geometry.location);
     marker.addListener("click", function () { showInfoWindow(place, marker); highlightCardByIndex(index); });
-
-    // Distance badge
-    var distHtml = "";
-    if (wtbUserLocation) {
-      var km = getDistance(wtbUserLocation, place.geometry.location);
-      distHtml = '<span class="wtb-result-dist">' +
-        (km < 1 ? Math.round(km * 1000) + "m" : km.toFixed(1) + "km") +
-        "</span>";
-    }
 
     var li = document.createElement("li");
     li.className = "wtb-result-card";
@@ -328,7 +182,7 @@ function displayResults(places) {
       '<div class="wtb-result-addr">' + escapeHtml(place.formatted_address || place.vicinity || "") + "</div>" +
       ratingHtml +
       "</div>" +
-      '<div class="wtb-result-meta">' + statusHtml + distHtml + "</div>" +
+      statusHtml +
       "</div>";
 
     li.addEventListener("click", function () {
@@ -354,21 +208,12 @@ function showInfoWindow(place, marker) {
   var lng = place.geometry.location.lng();
   var isOpen = place.opening_hours ? place.opening_hours.isOpen() : null;
 
-  var distHtml = "";
-  if (wtbUserLocation) {
-    var km = getDistance(wtbUserLocation, place.geometry.location);
-    distHtml = '<div class="wtb-iw-dist">' +
-      (km < 1 ? Math.round(km * 1000) + "m away" : km.toFixed(1) + "km away") +
-      "</div>";
-  }
-
   var content =
     '<div class="wtb-iw">' +
     '<div class="wtb-iw-name">' + escapeHtml(place.name) + "</div>" +
     '<div class="wtb-iw-addr">' + escapeHtml(place.formatted_address || place.vicinity || "") + "</div>" +
     (place.rating ? '<div class="wtb-iw-rating">' + renderStars(place.rating) + " " + place.rating + "/5</div>" : "") +
     (isOpen !== null ? '<div class="wtb-iw-status ' + (isOpen ? "wtb-open" : "wtb-closed") + '">' + (isOpen ? "Open Now" : "Currently Closed") + "</div>" : "") +
-    distHtml +
     '<a class="wtb-iw-dir" href="https://www.google.com/maps/dir/?api=1&destination=' + lat + "," + lng + '" target="_blank" rel="noopener noreferrer">Get Directions →</a>' +
     "</div>";
 

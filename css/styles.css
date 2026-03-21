@@ -2477,3 +2477,226 @@ object-fit: cover;
   list-style: none; text-align: center;
 }
 [data-theme="dark"] .wtb-empty-state { color: #555; }
+
+/* Coupon input */
+.checkout-coupon {
+  padding: 16px 0;
+}
+.checkout-coupon-form {
+  margin: 0;
+}
+.checkout-coupon-wrap {
+  display: flex;
+  gap: 8px;
+}
+.checkout-coupon-wrap .auth-input {
+  flex: 1;
+  font-size: 14px;
+}
+.checkout-coupon-btn {
+  padding: 10px 20px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+.checkout-coupon-btn:hover {
+  background: #333;
+}
+[data-theme="dark"] .checkout-coupon-btn {
+  background: #f5f5f5;
+  color: #111;
+}
+[data-theme="dark"] .checkout-coupon-btn:hover {
+  background: #ddd;
+}
+.checkout-coupon-msg {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 8px 0 0;
+}
+.checkout-coupon-remove {
+  font-size: 12px;
+  color: #dc2626;
+  text-decoration: underline;
+  margin-top: 4px;
+  display: inline-block;
+}
+.checkout-summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 14px;
+  color: #666;
+}
+[data-theme="dark"] .checkout-summary-row {
+  color: #aaa;
+}
+
+/* ============================================
+   SIGNUP POPUP (scroll-triggered)
+   ============================================ */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.popup-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.popup-modal {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  max-width: 420px;
+  width: 100%;
+  padding: 44px 36px 36px;
+  text-align: center;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+  transform: translateY(24px) scale(0.96);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.popup-overlay.is-visible .popup-modal {
+  transform: translateY(0) scale(1);
+}
+
+[data-theme="dark"] .popup-modal {
+  background: #1a1a1a;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+
+.popup-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  padding: 4px;
+  border-radius: 50%;
+  transition: color 0.2s ease, background 0.2s ease;
+  line-height: 0;
+}
+.popup-close:hover {
+  color: #333;
+  background: rgba(0,0,0,0.06);
+}
+[data-theme="dark"] .popup-close:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+}
+
+.popup-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.popup-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #111;
+  margin: 0 0 10px;
+}
+[data-theme="dark"] .popup-title {
+  color: #f5f5f5;
+}
+
+.popup-text {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+[data-theme="dark"] .popup-text {
+  color: #aaa;
+}
+
+.popup-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #111;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 14px 32px;
+  border-radius: 50px;
+  text-decoration: none;
+  letter-spacing: 0.3px;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+.popup-cta:hover {
+  background: #333;
+  transform: translateY(-1px);
+  color: #fff;
+  text-decoration: none;
+}
+[data-theme="dark"] .popup-cta {
+  background: #f5f5f5;
+  color: #111;
+}
+[data-theme="dark"] .popup-cta:hover {
+  background: #ddd;
+  color: #111;
+}
+
+.popup-note {
+  font-size: 13px;
+  color: #888;
+  margin: 18px 0 0;
+}
+.popup-code {
+  display: inline-block;
+  background: #f5f5f5;
+  color: #ff6b35;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+[data-theme="dark"] .popup-code {
+  background: #2a2a2a;
+  color: #ff8c42;
+}
+
+@media (max-width: 480px) {
+  .popup-modal {
+    padding: 36px 24px 28px;
+  }
+  .popup-title {
+    font-size: 20px;
+  }
+  .popup-cta {
+    padding: 12px 28px;
+    font-size: 14px;
+  }
+}
