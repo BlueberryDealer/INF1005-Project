@@ -226,6 +226,48 @@ function getSalesSummary(): array
     return $summary;
 }
 
+function getAllOrdersWithItems(): array
+{
+    global $pdo;
+ 
+    // Fetch all orders, newest first
+    $stmt = $pdo->prepare("
+        SELECT id, user_id, full_name, email, total_amount, status, created_at
+        FROM orders
+        ORDER BY created_at DESC
+    ");
+    $stmt->execute();
+    $orders = $stmt->fetchAll();
+ 
+    if (empty($orders)) return [];
+ 
+    // Fetch all order items in one query for efficiency
+    $orderIds    = array_column($orders, 'id');
+    $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
+    $itemStmt = $pdo->prepare("
+        SELECT order_id, product_name, unit_price, quantity, subtotal
+        FROM order_items
+        WHERE order_id IN ($placeholders)
+        ORDER BY order_id
+    ");
+    $itemStmt->execute($orderIds);
+    $allItems = $itemStmt->fetchAll();
+ 
+    // Group items by order_id
+    $itemsByOrder = [];
+    foreach ($allItems as $item) {
+        $itemsByOrder[$item['order_id']][] = $item;
+    }
+ 
+    // Attach items to each order
+    foreach ($orders as &$order) {
+        $order['items'] = $itemsByOrder[$order['id']] ?? [];
+    }
+    unset($order);
+ 
+    return $orders;
+}
+
 function getProductsByIds(array $ids): array
 {
     if (empty($ids)) {
