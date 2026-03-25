@@ -226,6 +226,34 @@ function getSalesSummary(): array
     return $summary;
 }
 
+function getHomepageTopSellingProducts(int $limit = 4): array
+{
+    $conn = db_connect();
+    $limit = max(1, $limit);
+
+    $sql = "
+        SELECT
+            oi.product_id,
+            COALESCE(MAX(p.name), MAX(oi.product_name)) AS name,
+            MAX(p.description) AS description,
+            MAX(p.image_url) AS image_url,
+            COALESCE(MAX(p.price), MAX(oi.unit_price)) AS price,
+            COALESCE(MAX(p.quantity), 0) AS quantity,
+            SUM(oi.quantity) AS units_sold
+        FROM order_items oi
+        LEFT JOIN products p ON p.product_id = oi.product_id
+        GROUP BY oi.product_id
+        ORDER BY units_sold DESC, name ASC
+        LIMIT $limit
+    ";
+
+    $result = $conn->query($sql);
+    $products = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    $conn->close();
+
+    return $products;
+}
+
 function getAllOrdersWithItems(): array
 {
     global $pdo;
