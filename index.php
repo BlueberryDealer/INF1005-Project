@@ -1,6 +1,17 @@
 <?php
 require_once __DIR__ . '/security/session.php';
+require_once __DIR__ . '/models/order_model.php';
+require_once __DIR__ . '/security/sanitization.php';
+require_once __DIR__ . '/security/csrf.php';
 $session = new SessionManager();
+$topSellers = [];
+$csrfToken = CSRFToken::get();
+
+try {
+    $topSellers = getHomepageTopSellingProducts(4);
+} catch (Throwable $e) {
+    $topSellers = [];
+}
 
 include __DIR__ . "/components/header.php";
 ?>
@@ -64,10 +75,47 @@ include __DIR__ . "/components/header.php";
       </div>
 
       <div class="product-grid">
-        <div class="product-card reveal"></div>
-        <div class="product-card reveal"></div>
-        <div class="product-card reveal"></div>
-        <div class="product-card reveal"></div>
+        <?php if (!empty($topSellers)): ?>
+          <?php foreach ($topSellers as $product): ?>
+            <?php $detailUrl = '/pages/product_details.php?id=' . (int)$product['product_id']; ?>
+            <div
+              class="shop-card product-card reveal"
+              data-product-id="<?= (int)$product['product_id'] ?>"
+              data-name="<?= Sanitizer::escape((string)$product['name']) ?>"
+              data-price="<?= Sanitizer::escape((string)$product['price']) ?>"
+            >
+              <a href="<?= $detailUrl ?>" class="shop-card-img"
+                aria-label="View details for <?= Sanitizer::escape((string)$product['name']) ?>">
+                <img
+                  src="/images/<?= Sanitizer::escape((string)$product['image_url']) ?>"
+                  alt="<?= Sanitizer::escape((string)$product['name']) ?>"
+                  loading="lazy"
+                  onerror="this.src='/images/placeholder.png'"
+                >
+              </a>
+
+              <div class="shop-card-body">
+                <a href="<?= $detailUrl ?>" class="shop-card-title-link">
+                  <h3 class="shop-card-title"><?= Sanitizer::escape((string)$product['name']) ?></h3>
+                </a>
+                <p class="shop-card-desc card-text">
+                  <?= Sanitizer::escape((string)($product['description'] ?? 'A customer favorite from our best-selling collection.')) ?>
+                </p>
+                <span class="shop-card-price">$<?= number_format((float)$product['price'], 2) ?></span>
+
+                <?php if ((int)$product['quantity'] <= 0): ?>
+                  <button class="shop-btn shop-btn--disabled" disabled>Unavailable</button>
+                <?php else: ?>
+                  <button class="shop-btn add-cart">Add to Cart</button>
+                <?php endif; ?>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <div class="col-12">
+            <p class="shop-empty reveal">Top sellers will appear here once customer orders are recorded.</p>
+          </div>
+        <?php endif; ?>
       </div>
     </div>
   </section>
@@ -140,6 +188,8 @@ include __DIR__ . "/components/header.php";
   </section>
 
 </main>
+
+<input type="hidden" id="csrf-token" value="<?= Sanitizer::escape($csrfToken) ?>">
 
 <?php if (!$session->isAuthenticated()): ?>
 <!-- ===== SIGNUP POPUP (guests only, scroll-triggered) ===== -->

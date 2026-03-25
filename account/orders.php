@@ -47,8 +47,9 @@ include __DIR__ . '/../components/navbar.php';
           </thead>
           <tbody>
             <?php foreach ($orders as $order): ?>
+              <?php $orderReference = 'ORD-' . str_pad((string)(int)$order['id'], 6, '0', STR_PAD_LEFT); ?>
               <tr>
-                <td class="fw-semibold">#<?= (int)$order['id'] ?></td>
+                <td class="fw-semibold"><?= Sanitizer::escape($orderReference) ?></td>
                 <td><?= Sanitizer::escape(date('d M Y, g:i A', strtotime((string)$order['created_at']))) ?></td>
                 <td>
                   <span class="badge bg-success text-capitalize">
