@@ -152,7 +152,6 @@ if (!empty($_SESSION['cart'])) {
             <?php if ($isAdmin): ?>
               <li><a href="/admin/dashboard.php">Admin Dashboard</a></li>
             <?php endif; ?>
-            <li><a href="<?= $memberHref ?>">Account Home</a></li>
             <li><a href="/auth/logout.php">Logout</a></li>
           <?php else: ?>
             <li><a href="/auth/login.php">Login</a></li>
