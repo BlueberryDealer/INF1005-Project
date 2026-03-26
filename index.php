@@ -103,10 +103,6 @@ include __DIR__ . "/components/header.php";
       </div>
 
       <div class="product-grid">
-        <div class="product-card tilt-card reveal-up" data-delay="0"></div>
-        <div class="product-card tilt-card reveal-up" data-delay="1"></div>
-        <div class="product-card tilt-card reveal-up" data-delay="2"></div>
-        <div class="product-card tilt-card reveal-up" data-delay="3"></div>
         <?php if (!empty($topSellers)): ?>
           <?php foreach ($topSellers as $product): ?>
             <?php $detailUrl = '/pages/product_details.php?id=' . (int)$product['product_id']; ?>
@@ -146,9 +142,10 @@ include __DIR__ . "/components/header.php";
             </div>
           <?php endforeach; ?>
         <?php else: ?>
-          <div class="col-12">
-            <p class="shop-empty reveal">Top sellers will appear here once customer orders are recorded.</p>
-          </div>
+          <div class="product-card tilt-card reveal-up" data-delay="0"></div>
+          <div class="product-card tilt-card reveal-up" data-delay="1"></div>
+          <div class="product-card tilt-card reveal-up" data-delay="2"></div>
+          <div class="product-card tilt-card reveal-up" data-delay="3"></div>
         <?php endif; ?>
       </div>
     </div>
