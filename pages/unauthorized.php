@@ -16,7 +16,7 @@ include __DIR__ . "/../components/navbar.php";
         <p>You do not have permission to access this page.</p>
         <p>This page requires admin access.</p>
         
-        <a href="/admin/dashboard.php" class="btn btn-primary">Go to Dashboard</a>
+        <a href="/index.php" class="btn btn-primary">Go to Home page</a>
         <a href="/auth/logout.php" class="btn btn-outline-secondary">Logout</a>
     <?php else: ?>
         <p>You must be logged in to access this page.</p>
