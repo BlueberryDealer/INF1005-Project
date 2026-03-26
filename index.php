@@ -135,7 +135,9 @@ include __DIR__ . "/components/header.php";
                 </p>
                 <span class="shop-card-price">$<?= number_format((float)$product['price'], 2) ?></span>
 
-                <?php if ((int)$product['quantity'] <= 0): ?>
+                <?php if ($session->getRole() === 'admin'): ?>
+                  <button class="shop-btn shop-btn--disabled" disabled>Not available for admins</button>
+                <?php elseif ((int)$product['quantity'] <= 0): ?>
                   <button class="shop-btn shop-btn--disabled" disabled>Unavailable</button>
                 <?php else: ?>
                   <button class="shop-btn add-cart">Add to Cart</button>

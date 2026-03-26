@@ -11,6 +11,7 @@ require_once __DIR__ . '/../models/order_model.php';
 require_once __DIR__ . '/../security/session.php';
 require_once __DIR__ . '/../security/sanitization.php';
 require_once __DIR__ . '/../security/csrf.php';
+require_once __DIR__ . '/../security/roleBasedAuth.php';
 $session = new SessionManager();
 
 // ---------- CSRF helper (mirrors security.php from Role 3) ----------
@@ -50,6 +51,13 @@ switch ($action) {
 
     // --------------------------------------------------
     case 'add':
+        // Admins are not allowed to add items to the cart
+        if ($session->getRole() === 'admin') {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Admins cannot add items to the cart.']);
+            exit;
+        }
+
         if ($productId <= 0) {
             echo json_encode(['success' => false, 'message' => 'Invalid product.']);
             exit;

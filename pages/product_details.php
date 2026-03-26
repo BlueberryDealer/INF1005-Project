@@ -126,7 +126,11 @@ include __DIR__ . '/../components/header.php';
           <!-- Action Buttons -->
           <div class="pd-actions">
 
-            <?php if ($pd_inStock): ?>
+            <?php if ($pd_session->getRole() === 'admin'): ?>
+              <button class="pd-btn pd-btn--disabled" disabled aria-disabled="true">
+                Not available for admins
+              </button>
+            <?php elseif ($pd_inStock): ?>
               <button class="pd-btn pd-btn--primary add-cart" data-product-id="<?= (int) $pd_product['product_id'] ?>"
                 data-name="<?= Sanitizer::escape($pd_product['name']) ?>"
                 aria-label="Add <?= Sanitizer::escape($pd_product['name']) ?> to cart">
