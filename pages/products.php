@@ -186,7 +186,9 @@ include __DIR__ . "/../components/header.php";
                 <p class="shop-card-desc card-text"><?= Sanitizer::escape($row['description']) ?></p>
                 <span class="shop-card-price">$<?= number_format($row['price'], 2) ?></span>
 
-                <?php if ($row['quantity'] <= 0): ?>
+                <?php if ($session->getRole() === 'admin'): ?>
+                  <button class="shop-btn shop-btn--disabled" disabled>Not available for admins</button>
+                <?php elseif ($row['quantity'] <= 0): ?>
                   <button class="shop-btn shop-btn--disabled" disabled>Unavailable</button>
                 <?php else: ?>
                   <button class="shop-btn add-cart">Add to Cart</button>
