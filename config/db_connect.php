@@ -24,12 +24,13 @@ function db_connect(): mysqli
         throw new RuntimeException('Failed to read database config file.');
     }
 
-    $conn = new mysqli(
-        $config['servername'],
-        $config['username'],
-        $config['password'],
-        $config['dbname']
-    );
+$conn = new mysqli(
+    $config['servername'],
+    $config['username'],
+    $config['password'],
+    $config['dbname'],
+    $config['port'] ?? 3306
+);
 
     if ($conn->connect_error) {
         throw new RuntimeException('Database connection failed: ' . $conn->connect_error);
