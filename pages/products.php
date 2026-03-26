@@ -183,7 +183,6 @@ include __DIR__ . "/../components/header.php";
                 <a href="<?= $detailUrl ?>" class="shop-card-title-link">
                   <h3 class="shop-card-title"><?= Sanitizer::escape($row['name']) ?></h3>
                 </a>
-                <p class="shop-card-desc card-text"><?= Sanitizer::escape($row['description']) ?></p>
                 <span class="shop-card-price">$<?= number_format($row['price'], 2) ?></span>
 
                 <?php if ($session->getRole() === 'admin'): ?>

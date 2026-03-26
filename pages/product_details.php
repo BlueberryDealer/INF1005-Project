@@ -105,7 +105,7 @@ include __DIR__ . '/../components/header.php';
 
           <p class="pd-description">
             <?= !empty($pd_product['description'])
-              ? Sanitizer::escape($pd_product['description'])
+              ? nl2br(Sanitizer::escape($pd_product['description']))
               : '<span class="pd-no-desc">No description available.</span>' ?>
           </p>
 
