@@ -20,8 +20,11 @@ include __DIR__ . "/components/header.php";
 
 <main id="maincontent">
 
-  <!-- ===== FULL-BLEED HERO ===== -->
+  <!-- ===== FULL-BLEED HERO WITH PARALLAX LAYERS ===== -->
   <section class="hero" aria-label="Welcome banner">
+
+    <!-- Cursor-reactive glow overlay -->
+    <div class="hero-glow" id="heroGlow" aria-hidden="true"></div>
 
     <div class="hero-slideshow" aria-hidden="true">
       <div class="hero-slide slide1"></div>
@@ -32,15 +35,15 @@ include __DIR__ . "/components/header.php";
     <div class="hero-overlay">
       <div class="container">
         <div class="hero-content">
-          <p class="hero-tag reveal">Experience Refreshment.</p>
+          <p class="hero-tag reveal-up" data-delay="0">Experience Refreshment.</p>
 
-          <h1 class="reveal">Your Favorite Sodas<br>and Drinks, <span class="text-accent">Delivered.</span></h1>
+          <h1 class="reveal-up" data-delay="1">Your Favorite Sodas<br>and Drinks, <span class="text-accent">Delivered.</span></h1>
 
-          <p class="hero-sub reveal">
+          <p class="hero-sub reveal-up" data-delay="2">
             Discover the best in classic sodas, sports drinks, and energy boosts.
           </p>
 
-          <a href="pages/products.php" class="hero-btn reveal" role="button">
+          <a href="pages/products.php" class="hero-btn magnetic-btn reveal-up" data-delay="3" role="button">
             Explore Our Collection
             <svg class="hero-btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -50,23 +53,48 @@ include __DIR__ . "/components/header.php";
       </div>
     </div>
 
+    <!-- Scroll indicator -->
+    <div class="hero-scroll-hint" aria-hidden="true">
+      <span class="scroll-text">Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+
   </section>
 
-  <!-- ===== BRAND TAGLINE STRIP ===== -->
-  <section class="tagline-strip" aria-label="Brand tagline">
-    <div class="container text-center">
-      <p class="tagline-text reveal">
-        Where Great Taste Meets Convenience. <span class="text-accent-bright">Zero Compromise.</span>
-      </p>
+  <!-- ===== BRAND MARQUEE STRIP ===== -->
+  <section class="marquee-strip" aria-label="Brand tagline">
+    <div class="marquee-track">
+      <div class="marquee-content">
+        <span class="marquee-item">Premium Selection</span>
+        <span class="marquee-dot" aria-hidden="true"></span>
+        <span class="marquee-item">Same-Day Delivery</span>
+        <span class="marquee-dot" aria-hidden="true"></span>
+        <span class="marquee-item">Quality Guaranteed</span>
+        <span class="marquee-dot" aria-hidden="true"></span>
+        <span class="marquee-item">50+ Brands</span>
+        <span class="marquee-dot" aria-hidden="true"></span>
+        <span class="marquee-item">Zero Compromise</span>
+        <span class="marquee-dot" aria-hidden="true"></span>
+        <span class="marquee-item">Premium Selection</span>
+        <span class="marquee-dot" aria-hidden="true"></span>
+        <span class="marquee-item">Same-Day Delivery</span>
+        <span class="marquee-dot" aria-hidden="true"></span>
+        <span class="marquee-item">Quality Guaranteed</span>
+        <span class="marquee-dot" aria-hidden="true"></span>
+        <span class="marquee-item">50+ Brands</span>
+        <span class="marquee-dot" aria-hidden="true"></span>
+        <span class="marquee-item">Zero Compromise</span>
+        <span class="marquee-dot" aria-hidden="true"></span>
+      </div>
     </div>
   </section>
 
   <!-- ===== TOP SELLERS ===== -->
-  <section class="top-sellers" aria-label="Top selling products">
+  <section class="top-sellers parallax-section" data-speed="0.03" aria-label="Top selling products">
     <div class="container">
-      <div class="section-header reveal">
+      <div class="section-header reveal-up">
         <h2 class="section-title-bold">Top Sellers</h2>
-        <a href="pages/products.php" class="section-link">
+        <a href="pages/products.php" class="section-link magnetic-btn">
           View All
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -75,6 +103,10 @@ include __DIR__ . "/components/header.php";
       </div>
 
       <div class="product-grid">
+        <div class="product-card tilt-card reveal-up" data-delay="0"></div>
+        <div class="product-card tilt-card reveal-up" data-delay="1"></div>
+        <div class="product-card tilt-card reveal-up" data-delay="2"></div>
+        <div class="product-card tilt-card reveal-up" data-delay="3"></div>
         <?php if (!empty($topSellers)): ?>
           <?php foreach ($topSellers as $product): ?>
             <?php $detailUrl = '/pages/product_details.php?id=' . (int)$product['product_id']; ?>
@@ -120,15 +152,15 @@ include __DIR__ . "/components/header.php";
     </div>
   </section>
 
-  <!-- ===== WHY QUENCH (bold border cards) ===== -->
-  <section class="why-us" aria-label="Why choose QUENCH">
+  <!-- ===== WHY QUENCH (3D tilt cards) ===== -->
+  <section class="why-us parallax-section" data-speed="0.02" aria-label="Why choose QUENCH">
     <div class="container">
-      <h2 class="section-title-bold center reveal">Why QUENCH</h2>
+      <h2 class="section-title-bold center reveal-up">Why QUENCH</h2>
 
       <div class="row g-4">
 
-        <div class="col-md-4 reveal">
-          <div class="value-block">
+        <div class="col-md-4 reveal-up" data-delay="0">
+          <div class="value-block tilt-card">
             <div class="why-icon" aria-hidden="true">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                 <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -139,8 +171,8 @@ include __DIR__ . "/components/header.php";
           </div>
         </div>
 
-        <div class="col-md-4 reveal">
-          <div class="value-block">
+        <div class="col-md-4 reveal-up" data-delay="1">
+          <div class="value-block tilt-card">
             <div class="why-icon" aria-hidden="true">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                 <rect x="1" y="3" width="15" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/>
@@ -154,8 +186,8 @@ include __DIR__ . "/components/header.php";
           </div>
         </div>
 
-        <div class="col-md-4 reveal">
-          <div class="value-block">
+        <div class="col-md-4 reveal-up" data-delay="2">
+          <div class="value-block tilt-card">
             <div class="why-icon" aria-hidden="true">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -174,10 +206,10 @@ include __DIR__ . "/components/header.php";
   <!-- ===== CTA BANNER ===== -->
   <section class="cta-banner" aria-label="Call to action">
     <div class="container text-center">
-      <div class="cta-inner reveal">
-        <h2>Ready to Refresh?</h2>
-        <p>Browse our full catalog and find your new favorite drink today.</p>
-        <a href="pages/products.php" class="cta-btn" role="button">
+      <div class="cta-inner reveal-up">
+        <p class="cta-overline">Ready to Refresh?</p>
+        <h2>Browse our full catalog and find<br>your new favorite drink today.</h2>
+        <a href="pages/products.php" class="cta-btn magnetic-btn" role="button">
           Shop Now
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
