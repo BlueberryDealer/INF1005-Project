@@ -126,9 +126,6 @@ include __DIR__ . "/components/header.php";
                 <a href="<?= $detailUrl ?>" class="shop-card-title-link">
                   <h3 class="shop-card-title"><?= Sanitizer::escape((string)$product['name']) ?></h3>
                 </a>
-                <p class="shop-card-desc card-text">
-                  <?= Sanitizer::escape((string)($product['description'] ?? 'A customer favorite from our best-selling collection.')) ?>
-                </p>
                 <span class="shop-card-price">$<?= number_format((float)$product['price'], 2) ?></span>
 
                 <?php if ($session->getRole() === 'admin'): ?>

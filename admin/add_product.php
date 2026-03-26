@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $ok = $validator->validate([
             'name' => 'required|min:3|max:100',
             'price' => 'required|float|min:0',
-            'description' => 'max:500',
+            'description' => 'max:600',
             'stock_quantity' => 'required|integer|min:0',
         ]);
 
