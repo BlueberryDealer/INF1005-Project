@@ -229,7 +229,7 @@ include __DIR__ . "/components/header.php";
       </svg>
     </button>
 
-    <div class="popup-body">
+    <div class="popup-body" id="popupBodyDefault">
       <div class="popup-icon" aria-hidden="true">
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
           <path d="M20 12V22H4V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -241,16 +241,43 @@ include __DIR__ . "/components/header.php";
       </div>
 
       <h2 class="popup-title" id="popupTitle">Get 10% Off Your First Order</h2>
-      <p class="popup-text">Sign up for a QUENCH account and enjoy <strong>10% off</strong> your first purchase. Refreshment is just a click away.</p>
+      <p class="popup-text">Subscribe to our newsletter and we'll send you a <strong>10% discount code</strong> straight to your inbox.</p>
 
+      <form class="popup-form" id="popupNewsletterForm" novalidate>
+        <div class="popup-input-wrap">
+          <input
+            type="email"
+            class="popup-email-input"
+            id="popupEmailInput"
+            placeholder="Enter your email"
+            aria-label="Email for discount code"
+            required
+          >
+          <button type="submit" class="popup-submit-btn" id="popupSubmitBtn">
+            Get My Code
+          </button>
+        </div>
+        <p class="popup-form-msg" id="popupFormMsg"></p>
+      </form>
+
+      <p class="popup-note">We respect your privacy. Unsubscribe anytime.</p>
+    </div>
+
+    <!-- Success state (shown after successful subscribe) -->
+    <div class="popup-body popup-success" id="popupBodySuccess" style="display:none;">
+      <div class="popup-icon popup-icon--success" aria-hidden="true">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+          <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2 class="popup-title">Check Your Inbox!</h2>
+      <p class="popup-text">We've sent your <strong>10% discount code</strong> to your email. Create an account to use it at checkout.</p>
       <a href="/auth/register.php" class="popup-cta" role="button">
         Create Account
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
-
-      <p class="popup-note">A discount code will be sent to your email after signup!</p>
     </div>
   </div>
 </div>

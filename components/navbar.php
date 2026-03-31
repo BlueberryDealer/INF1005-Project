@@ -102,36 +102,50 @@ if (!empty($_SESSION['cart'])) {
         </a>
         <div class="cart-preview" id="cartPreview">
           <?php if (empty($cartPreviewItems)): ?>
-            <div class="p-3 small text-muted">Your cart is empty.</div>
+            <div class="cart-preview-empty">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M16 10a4 4 0 01-8 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <p>Your cart is empty</p>
+              <a href="/pages/products.php" class="cart-preview-shop-link">Start Shopping</a>
+            </div>
           <?php else: ?>
-            <div class="p-3">
-              <div class="fw-semibold mb-2">Cart Preview</div>
+            <div class="cart-preview-header">
+              <span class="cart-preview-title">Your Cart</span>
+              <span class="cart-preview-count"><?= $cartCount ?> item<?= $cartCount > 1 ? 's' : '' ?></span>
+            </div>
+            <div class="cart-preview-items">
               <?php foreach (array_slice($cartPreviewItems, 0, 3) as $item): ?>
-                <div class="d-flex align-items-start gap-2 mb-2 small">
+                <div class="cart-preview-item">
                   <img
                     src="<?= htmlspecialchars($item['image']) ?>"
                     alt="<?= htmlspecialchars($item['name']) ?>"
-                    width="42"
-                    height="42"
-                    class="rounded object-fit-cover flex-shrink-0"
+                    class="cart-preview-img"
+                    loading="lazy"
                   >
-                  <div class="flex-grow-1">
-                    <div class="fw-semibold"><?= htmlspecialchars($item['name']) ?></div>
-                    <div class="text-muted">Qty: <?= (int)$item['quantity'] ?></div>
+                  <div class="cart-preview-info">
+                    <span class="cart-preview-name"><?= htmlspecialchars($item['name']) ?></span>
+                    <span class="cart-preview-qty"><?= (int)$item['quantity'] ?> &times; $<?= number_format((float)$item['subtotal'] / (int)$item['quantity'], 2) ?></span>
                   </div>
-                  <div>$<?= number_format((float)$item['subtotal'], 2) ?></div>
+                  <span class="cart-preview-price">$<?= number_format((float)$item['subtotal'], 2) ?></span>
                 </div>
               <?php endforeach; ?>
 
               <?php if (count($cartPreviewItems) > 3): ?>
-                <div class="small text-muted mb-2">+ <?= count($cartPreviewItems) - 3 ?> more item(s)</div>
+                <div class="cart-preview-more">+ <?= count($cartPreviewItems) - 3 ?> more item<?= (count($cartPreviewItems) - 3) > 1 ? 's' : '' ?></div>
               <?php endif; ?>
-
-              <div class="d-flex justify-content-between small border-top pt-2 mt-2">
+            </div>
+            <div class="cart-preview-footer">
+              <div class="cart-preview-subtotal">
                 <span>Subtotal</span>
                 <strong>$<?= number_format($cartPreviewTotal, 2) ?></strong>
               </div>
-              <a href="/pages/cart.php" class="btn btn-sm btn-primary w-100 mt-2">View Cart</a>
+              <div class="cart-preview-actions">
+                <a href="/pages/cart.php" class="cart-preview-btn cart-preview-btn--primary">View Cart</a>
+                <a href="/pages/checkout.php" class="cart-preview-btn cart-preview-btn--outline">Checkout</a>
+              </div>
             </div>
           <?php endif; ?>
         </div>

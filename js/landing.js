@@ -426,6 +426,59 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  /* ==========================================================
+     13b. POPUP NEWSLETTER FORM (AJAX)
+     ========================================================== */
+  var popupForm = document.getElementById("popupNewsletterForm");
+  if (popupForm) {
+    popupForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      var input = document.getElementById("popupEmailInput");
+      var msg = document.getElementById("popupFormMsg");
+      var btn = document.getElementById("popupSubmitBtn");
+
+      if (!input || !input.value.trim()) return;
+
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+      msg.textContent = "";
+      msg.className = "popup-form-msg";
+
+      var formData = new FormData();
+      formData.append("email", input.value.trim());
+      formData.append("source", "popup");
+
+      fetch("/pages/newsletter_subscribe.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.success) {
+          // Show success state
+          var defaultBody = document.getElementById("popupBodyDefault");
+          var successBody = document.getElementById("popupBodySuccess");
+          if (defaultBody && successBody) {
+            defaultBody.style.display = "none";
+            successBody.style.display = "block";
+          }
+        } else {
+          msg.textContent = data.message;
+          msg.className = "popup-form-msg popup-form-msg--error";
+          btn.disabled = false;
+          btn.textContent = "Get My Code";
+        }
+      })
+      .catch(function () {
+        msg.textContent = "Something went wrong. Try again.";
+        msg.className = "popup-form-msg popup-form-msg--error";
+        btn.disabled = false;
+        btn.textContent = "Get My Code";
+      });
+    });
+  }
+
 });
 
 

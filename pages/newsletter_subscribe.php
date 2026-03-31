@@ -5,11 +5,12 @@ require_once __DIR__ . '/../models/newsletter_model.php';
 header('Content-Type: application/json');
 
 $email = trim($_POST['email'] ?? '');
+$source = trim($_POST['source'] ?? 'footer');
 
 if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     echo json_encode(['success' => false, 'message' => 'Please enter a valid email.']);
     exit;
 }
 
-$result = subscribeNewsletter($email);
+$result = subscribeNewsletter($email, $source);
 echo json_encode($result);

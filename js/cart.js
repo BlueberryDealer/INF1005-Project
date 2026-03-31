@@ -132,39 +132,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!data.success || data.count <= 0 || !data.items.length) {
             preview.innerHTML = `
-                <div class="p-3 small text-muted">Your cart is empty.</div>
+                <div class="cart-preview-empty">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M16 10a4 4 0 01-8 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <p>Your cart is empty</p>
+                    <a href="/pages/products.php" class="cart-preview-shop-link">Start Shopping</a>
+                </div>
             `;
             return;
         }
 
-        const itemsHtml = data.items.slice(0, 3).map(item => `
-            <div class="d-flex align-items-start gap-2 mb-2 small">
-                <img
-                    src="${item.image}"
-                    alt="${item.name}"
-                    width="42"
-                    height="42"
-                    class="rounded object-fit-cover flex-shrink-0"
-                    onerror="this.src='/assets/images/placeholder.png'"
-                >
-                <div class="flex-grow-1">
-                    <div class="fw-semibold">${item.name}</div>
-                    <div class="text-muted">Qty: ${item.quantity}</div>
+        const itemsHtml = data.items.slice(0, 3).map(item => {
+            const unitPrice = Number(item.subtotal) / Number(item.quantity);
+            return `
+                <div class="cart-preview-item">
+                    <img
+                        src="${item.image}"
+                        alt="${item.name}"
+                        class="cart-preview-img"
+                        loading="lazy"
+                        onerror="this.src='/images/placeholder.png'"
+                    >
+                    <div class="cart-preview-info">
+                        <span class="cart-preview-name">${item.name}</span>
+                        <span class="cart-preview-qty">${item.quantity} &times; $${unitPrice.toFixed(2)}</span>
+                    </div>
+                    <span class="cart-preview-price">$${Number(item.subtotal).toFixed(2)}</span>
                 </div>
-                <div>$${Number(item.subtotal).toFixed(2)}</div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
+
+        const moreCount = data.items.length - 3;
 
         preview.innerHTML = `
-            <div class="p-3">
-                <div class="fw-semibold mb-2">Cart Preview</div>
+            <div class="cart-preview-header">
+                <span class="cart-preview-title">Your Cart</span>
+                <span class="cart-preview-count">${data.count} item${data.count > 1 ? 's' : ''}</span>
+            </div>
+            <div class="cart-preview-items">
                 ${itemsHtml}
-                ${data.items.length > 3 ? `<div class="small text-muted mb-2">+ ${data.items.length - 3} more item(s)</div>` : ''}
-                <div class="d-flex justify-content-between small border-top pt-2 mt-2">
+                ${moreCount > 0 ? `<div class="cart-preview-more">+ ${moreCount} more item${moreCount > 1 ? 's' : ''}</div>` : ''}
+            </div>
+            <div class="cart-preview-footer">
+                <div class="cart-preview-subtotal">
                     <span>Subtotal</span>
                     <strong>$${Number(data.total).toFixed(2)}</strong>
                 </div>
-                <a href="/pages/cart.php" class="btn btn-sm btn-primary w-100 mt-2">View Cart</a>
+                <div class="cart-preview-actions">
+                    <a href="/pages/cart.php" class="cart-preview-btn cart-preview-btn--primary">View Cart</a>
+                    <a href="/pages/checkout.php" class="cart-preview-btn cart-preview-btn--outline">Checkout</a>
+                </div>
             </div>
         `;
     }

@@ -6,10 +6,17 @@
 require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../models/order_model.php';
 require_once __DIR__ . '/../models/coupon_model.php';
-require_once __DIR__ . '/../security/auth_guard.php';
+require_once __DIR__ . '/../security/session.php';
 require_once __DIR__ . '/../security/sanitization.php';
 require_once __DIR__ . '/../security/csrf.php';
 $session = new SessionManager();
+
+// ---------- Redirect guests to login ----------
+if (!$session->isAuthenticated()) {
+    $_SESSION['flash_error'] = 'Please log in to complete your purchase.';
+    header('Location: /auth/login.php?redirect=checkout');
+    exit;
+}
 
 // ---------- Redirect if cart is empty ----------
 if (empty($_SESSION['cart'])) {

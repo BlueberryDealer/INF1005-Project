@@ -258,6 +258,7 @@ function getHomepageTopSellingProducts(int $limit = 4): array
 
     $sql = "
         SELECT
+<<<<<<< HEAD
             p.product_id,
             p.name,
             p.description,
@@ -269,6 +270,22 @@ function getHomepageTopSellingProducts(int $limit = 4): array
         LEFT JOIN order_items oi ON oi.product_id = p.product_id
         GROUP BY p.product_id, p.name, p.description, p.image_url, p.price, p.quantity
         ORDER BY units_sold DESC, p.name ASC
+=======
+            oi.product_id,
+            COALESCE(MAX(p.name), MAX(oi.product_name)) AS name,
+            MAX(p.description) AS description,
+            MAX(p.image_url) AS image_url,
+            COALESCE(MAX(p.price), MAX(oi.unit_price)) AS price,
+            COALESCE(MAX(p.quantity), 0) AS quantity,
+            SUM(oi.quantity) AS units_sold
+        FROM order_items oi
+        LEFT JOIN products p ON p.product_id = oi.product_id
+        WHERE p.quantity > 0
+          AND p.image_url IS NOT NULL
+          AND p.image_url != ''
+        GROUP BY oi.product_id
+        ORDER BY units_sold DESC, name ASC
+>>>>>>> 386d7da (Changed UI for dashboard and removed config folder)
         LIMIT $limit
     ";
 
@@ -281,43 +298,58 @@ function getHomepageTopSellingProducts(int $limit = 4): array
 
 function getAllOrdersWithItems(): array
 {
-    global $pdo;
- 
+    $conn = db_connect();
+
     // Fetch all orders, newest first
-    $stmt = $pdo->prepare("
+    $result = $conn->query("
         SELECT id, user_id, full_name, email, total_amount, status, created_at
         FROM orders
         ORDER BY created_at DESC
     ");
-    $stmt->execute();
-    $orders = $stmt->fetchAll();
- 
-    if (empty($orders)) return [];
- 
+
+    $orders = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+
+    if (empty($orders)) {
+        $conn->close();
+        return [];
+    }
+
     // Fetch all order items in one query for efficiency
-    $orderIds    = array_column($orders, 'id');
+    $orderIds     = array_column($orders, 'id');
     $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
-    $itemStmt = $pdo->prepare("
+    $types        = str_repeat('i', count($orderIds));
+
+    $itemStmt = $conn->prepare("
         SELECT order_id, product_name, unit_price, quantity, subtotal
         FROM order_items
         WHERE order_id IN ($placeholders)
         ORDER BY order_id
     ");
-    $itemStmt->execute($orderIds);
-    $allItems = $itemStmt->fetchAll();
- 
+
+    if ($itemStmt) {
+        $itemStmt->bind_param($types, ...$orderIds);
+        $itemStmt->execute();
+        $itemResult = $itemStmt->get_result();
+        $allItems   = $itemResult ? $itemResult->fetch_all(MYSQLI_ASSOC) : [];
+        $itemStmt->close();
+    } else {
+        $allItems = [];
+    }
+
+    $conn->close();
+
     // Group items by order_id
     $itemsByOrder = [];
     foreach ($allItems as $item) {
         $itemsByOrder[$item['order_id']][] = $item;
     }
- 
+
     // Attach items to each order
     foreach ($orders as &$order) {
         $order['items'] = $itemsByOrder[$order['id']] ?? [];
     }
     unset($order);
- 
+
     return $orders;
 }
 
@@ -355,4 +387,55 @@ function getProductsByIds(array $ids): array
     $conn->close();
 
     return $products;
+}
+
+function getDailyRevenueTrend(int $days = 30): array
+{
+    $conn = db_connect();
+
+    $stmt = $conn->prepare("
+        SELECT
+            DATE(created_at) AS order_date,
+            COUNT(*) AS order_count,
+            SUM(total_amount) AS daily_revenue
+        FROM orders
+        WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+        GROUP BY DATE(created_at)
+        ORDER BY order_date ASC
+    ");
+
+    if (!$stmt) {
+        $conn->close();
+        return [];
+    }
+
+    $stmt->bind_param('i', $days);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $trend = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    $stmt->close();
+    $conn->close();
+
+    return $trend;
+}
+
+function getRevenueByProduct(int $limit = 6): array
+{
+    $conn = db_connect();
+
+    $sql = "
+        SELECT
+            MAX(oi.product_name) AS product_name,
+            SUM(oi.subtotal) AS revenue
+        FROM order_items oi
+        GROUP BY oi.product_id
+        ORDER BY revenue DESC
+        LIMIT $limit
+    ";
+
+    $result = $conn->query($sql);
+    $data = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    $conn->close();
+
+    return $data;
 }
