@@ -77,11 +77,11 @@ class Sanitizer {
             
             // 'fname' - only letters, numbers, dash, underscore
             'fname' => ($value !== '' && $value !== null) && !preg_match('/^[a-zA-Z0-9_-]{0,50}$/', (string)$value) && 
-                         $this->addError($field, "$field must be at most 50 characters"),
+                         $this->addError($field, "$field must be at most 50 characters and contain only letters, numbers, dash, underscore"),
             
             // 'lname' - only letters, numbers, dash, underscore
             'lname' => ($value !== '' && $value !== null) && !preg_match('/^[a-zA-Z0-9_-]{0,50}$/', (string)$value) && 
-                         $this->addError($field, "$field must be at most 50 characters"),
+                         $this->addError($field, "$field must be at most 50 characters and contain only letters, numbers, dash, underscore"),
             
             // 'password' - needs uppercase, lowercase, number, special char
             'password' => ($value !== '' && $value !== null) && !$this->isStrongPassword($value) && 
