@@ -258,7 +258,6 @@ function getHomepageTopSellingProducts(int $limit = 4): array
 
     $sql = "
         SELECT
-<<<<<<< HEAD
             p.product_id,
             p.name,
             p.description,
@@ -270,22 +269,6 @@ function getHomepageTopSellingProducts(int $limit = 4): array
         LEFT JOIN order_items oi ON oi.product_id = p.product_id
         GROUP BY p.product_id, p.name, p.description, p.image_url, p.price, p.quantity
         ORDER BY units_sold DESC, p.name ASC
-=======
-            oi.product_id,
-            COALESCE(MAX(p.name), MAX(oi.product_name)) AS name,
-            MAX(p.description) AS description,
-            MAX(p.image_url) AS image_url,
-            COALESCE(MAX(p.price), MAX(oi.unit_price)) AS price,
-            COALESCE(MAX(p.quantity), 0) AS quantity,
-            SUM(oi.quantity) AS units_sold
-        FROM order_items oi
-        LEFT JOIN products p ON p.product_id = oi.product_id
-        WHERE p.quantity > 0
-          AND p.image_url IS NOT NULL
-          AND p.image_url != ''
-        GROUP BY oi.product_id
-        ORDER BY units_sold DESC, name ASC
->>>>>>> 386d7da (Changed UI for dashboard and removed config folder)
         LIMIT $limit
     ";
 
