@@ -181,7 +181,7 @@ include __DIR__ . "/../components/header.php";
 
               <div class="shop-card-body">
                 <a href="<?= $detailUrl ?>" class="shop-card-title-link">
-                  <h3 class="shop-card-title"><?= Sanitizer::escape($row['name']) ?></h3>
+                  <h2 class="shop-card-title"><?= Sanitizer::escape($row['name']) ?></h2>
                 </a>
                 <span class="shop-card-price">$<?= number_format($row['price'], 2) ?></span>
 

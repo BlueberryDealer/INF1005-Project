@@ -102,25 +102,32 @@
 .btn-primary {
   background: var(--accent-dark) !important;
   border-color: var(--accent-dark) !important;
+  color: #062a33 !important;
 }
 
 .btn-primary:hover {
   background: #0e7490 !important;
   border-color: #0e7490 !important;
+  color: #ffffff !important;
 }
 
 [data-theme="dark"] .btn-primary {
   background: var(--accent-bright) !important;
   border-color: var(--accent-bright) !important;
+  color: #062a33 !important;
 }
 
 [data-theme="dark"] .btn-primary:hover {
   background: #06b6d4 !important;
   border-color: #06b6d4 !important;
+  color: #062a33 !important;
 }
 
 [data-theme="dark"] .btn {
   color: #fff !important;
+}
+[data-theme="dark"] .btn.btn-primary {
+  color: #062a33 !important;
 }
 [data-theme="dark"] .btn-outline-secondary {
   color: rgba(255,255,255,0.7) !important;
@@ -1084,7 +1091,7 @@ h1, h2, h3 { font-family: var(--font-heading); }
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: #fff;
+  color: #062a33;
   background: var(--accent);
   border: none;
   border-radius: var(--radius-sm);
@@ -1095,6 +1102,7 @@ h1, h2, h3 { font-family: var(--font-heading); }
 .shop-btn:hover {
   background: var(--accent-hover);
   transform: translateY(-1px);
+  color: #ffffff;
 }
 
 .shop-btn--disabled {

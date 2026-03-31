@@ -10,7 +10,7 @@
       </div>
 
       <div class="footer-links-block">
-        <h3 class="footer-heading">Quick Links</h3>
+        <div class="footer-heading">Quick Links</div>
         <ul class="footer-links">
           <li><a href="/index.php">Home</a></li>
           <li><a href="/pages/products.php">Shop</a></li>
@@ -20,7 +20,7 @@
       </div>
 
       <div class="footer-newsletter-block">
-        <h3 class="footer-heading">Stay in the Loop</h3>
+        <div class="footer-heading">Stay in the Loop</div>
         <p class="footer-text">Get notified about new drops, exclusive deals, and more.</p>
         <form class="newsletter-form" onsubmit="handleNewsletter(event)">
           <div class="newsletter-input-wrap">

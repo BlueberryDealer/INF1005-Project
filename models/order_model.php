@@ -2,6 +2,27 @@
 
 require_once __DIR__ . '/../config/db_connect.php';
 
+function getStatisticsExcludedProductPatterns(): array
+{
+    return [
+        'test%',
+        'demo%',
+        'sample%',
+    ];
+}
+
+function buildStatisticsExclusionClause(string $column): string
+{
+    $clauses = [];
+
+    foreach (getStatisticsExcludedProductPatterns() as $pattern) {
+        $safePattern = addslashes($pattern);
+        $clauses[] = "$column NOT LIKE '$safePattern'";
+    }
+
+    return implode(' AND ', $clauses);
+}
+
 function createOrder(int $userId, array $shipping, array $cartItems, float $total): int|false
 {
     $conn = db_connect();
@@ -147,6 +168,7 @@ function getTopSellingProducts(int $limit = 8): array
 {
     $conn = db_connect();
     $limit = max(1, $limit);
+    $excludeClause = buildStatisticsExclusionClause('oi.product_name');
 
     $sql = "
         SELECT
@@ -157,6 +179,7 @@ function getTopSellingProducts(int $limit = 8): array
             COUNT(DISTINCT oi.order_id) AS order_count
         FROM order_items oi
         INNER JOIN orders o ON o.id = oi.order_id
+        WHERE $excludeClause
         GROUP BY oi.product_id
         ORDER BY units_sold DESC, revenue DESC, product_name ASC
         LIMIT $limit
@@ -172,6 +195,7 @@ function getTopSellingProducts(int $limit = 8): array
 function getSalesSummary(): array
 {
     $conn = db_connect();
+    $excludeClause = buildStatisticsExclusionClause('product_name');
 
     $summary = [
         'total_orders' => 0,
@@ -209,6 +233,7 @@ function getSalesSummary(): array
             MAX(product_name) AS product_name,
             SUM(quantity) AS units_sold
         FROM order_items
+        WHERE $excludeClause
         GROUP BY product_id
         ORDER BY units_sold DESC, product_name ASC
         LIMIT 1
@@ -233,17 +258,17 @@ function getHomepageTopSellingProducts(int $limit = 4): array
 
     $sql = "
         SELECT
-            oi.product_id,
-            COALESCE(MAX(p.name), MAX(oi.product_name)) AS name,
-            MAX(p.description) AS description,
-            MAX(p.image_url) AS image_url,
-            COALESCE(MAX(p.price), MAX(oi.unit_price)) AS price,
-            COALESCE(MAX(p.quantity), 0) AS quantity,
-            SUM(oi.quantity) AS units_sold
-        FROM order_items oi
-        LEFT JOIN products p ON p.product_id = oi.product_id
-        GROUP BY oi.product_id
-        ORDER BY units_sold DESC, name ASC
+            p.product_id,
+            p.name,
+            p.description,
+            p.image_url,
+            p.price,
+            p.quantity,
+            COALESCE(SUM(oi.quantity), 0) AS units_sold
+        FROM products p
+        LEFT JOIN order_items oi ON oi.product_id = p.product_id
+        GROUP BY p.product_id, p.name, p.description, p.image_url, p.price, p.quantity
+        ORDER BY units_sold DESC, p.name ASC
         LIMIT $limit
     ";
 
