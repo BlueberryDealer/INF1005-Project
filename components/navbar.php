@@ -41,17 +41,17 @@ if (!empty($_SESSION['cart'])) {
 }
 ?>
 <header class="navbar">
-  <nav class="nav-container">
+  <nav class="nav-container" aria-label="Main navigation">
 
     <!-- Hamburger (mobile only) -->
-    <button type="button" class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
-      <span class="hamburger-line"></span>
-      <span class="hamburger-line"></span>
-      <span class="hamburger-line"></span>
+    <button type="button" class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span class="hamburger-line" aria-hidden="true"></span>
+      <span class="hamburger-line" aria-hidden="true"></span>
+      <span class="hamburger-line" aria-hidden="true"></span>
     </button>
 
     <!-- Left navigation (desktop only) -->
-    <ul class="nav-links">
+    <ul class="nav-links" role="list">
       <li><a href="/pages/products.php">Shop</a></li>
       <li><a href="/pages/about.php">About</a></li>
       <li><a href="/pages/where_to_buy.php">Where to Buy</a></li>
@@ -61,21 +61,22 @@ if (!empty($_SESSION['cart'])) {
     </ul>
 
     <!-- Center brand -->
-    <a class="nav-brand" href="/index.php">QUENCH</a>
+    <a class="nav-brand" href="/index.php" aria-label="QUENCH home">QUENCH</a>
 
     <!-- Right side (always visible) -->
     <div class="nav-actions">
-      <form id="siteSearchForm" class="nav-search-form" action="/pages/products.php" method="get">
+      <form id="siteSearchForm" class="nav-search-form" action="/pages/products.php" method="get" role="search" aria-label="Site search">
+        <label for="searchInput" class="sr-only">Search products</label>
         <input
           type="text"
           id="searchInput"
           name="search"
           class="nav-search-input"
           placeholder="Search products..."
-          aria-label="Search products"
+          autocomplete="off"
         >
         <button type="submit" class="nav-icon" aria-label="Submit search">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <circle cx="11" cy="11" r="7" stroke="white" stroke-width="2"/>
             <line x1="16.65" y1="16.65" x2="21" y2="21" stroke="white" stroke-width="2" stroke-linecap="round"/>
           </svg>
@@ -84,23 +85,23 @@ if (!empty($_SESSION['cart'])) {
 
       <!-- Theme toggle -->
       <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme">
-        <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <circle cx="12" cy="12" r="5" stroke="white" stroke-width="2"/>
           <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="white" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
 
       <div class="cart-container">
-        <a href="/pages/cart.php" class="nav-cart">
+        <a href="/pages/cart.php" class="nav-cart" aria-label="Shopping cart<?= $cartCount > 0 ? ', ' . $cartCount . ' item' . ($cartCount > 1 ? 's' : '') : '' ?>">
           Cart
-          <span id="cartCount" class="cart-badge" <?= $cartCount <= 0 ? 'style="display:none;"' : '' ?>>
+          <span id="cartCount" class="cart-badge" <?= $cartCount <= 0 ? 'style="display:none;"' : '' ?> aria-hidden="true">
             <?= $cartCount ?>
           </span>
         </a>
-        <div class="cart-preview" id="cartPreview">
+        <div class="cart-preview" id="cartPreview" role="region" aria-label="Cart preview">
           <?php if (empty($cartPreviewItems)): ?>
             <div class="cart-preview-empty">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -153,31 +154,31 @@ if (!empty($_SESSION['cart'])) {
 
       <div class="dropdown nav-profile">
         <button type="button" class="nav-icon nav-trigger nav-icon-button" aria-label="Profile menu" aria-haspopup="true" aria-expanded="false">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <circle cx="12" cy="8" r="4" stroke="white" stroke-width="2"/>
             <path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6" stroke="white" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </button>
 
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu" role="menu">
           <?php if ($isAuthenticated): ?>
-            <li><a href="/account/userProfile.php">View Profile</a></li>
-            <li><a href="/account/orders.php">Order History</a></li>
+            <li role="none"><a href="/account/userProfile.php" role="menuitem">View Profile</a></li>
+            <li role="none"><a href="/account/orders.php" role="menuitem">Order History</a></li>
             <?php if ($isAdmin): ?>
-              <li><a href="/admin/dashboard.php">Admin Dashboard</a></li>
+              <li role="none"><a href="/admin/dashboard.php" role="menuitem">Admin Dashboard</a></li>
             <?php endif; ?>
-            <li><a href="/auth/logout.php">Logout</a></li>
+            <li role="none"><a href="/auth/logout.php" role="menuitem">Logout</a></li>
           <?php else: ?>
-            <li><a href="/auth/login.php">Login</a></li>
-            <li><a href="/auth/register.php">Register</a></li>
+            <li role="none"><a href="/auth/login.php" role="menuitem">Login</a></li>
+            <li role="none"><a href="/auth/register.php" role="menuitem">Register</a></li>
           <?php endif; ?>
         </ul>
       </div>
     </div>
 
     <!-- Mobile slide-out menu -->
-    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-      <ul class="mobile-menu-links">
+    <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation" aria-hidden="true">
+      <ul class="mobile-menu-links" role="list">
         <li><a href="/pages/products.php">Shop</a></li>
         <li><a href="/pages/about.php">About</a></li>
         <li><a href="/pages/where_to_buy.php">Where to Buy</a></li>
@@ -185,8 +186,8 @@ if (!empty($_SESSION['cart'])) {
           <li><a href="/admin/dashboard.php">Admin</a></li>
         <?php endif; ?>
       </ul>
-      <div class="mobile-menu-divider"></div>
-      <ul class="mobile-menu-links">
+      <div class="mobile-menu-divider" aria-hidden="true"></div>
+      <ul class="mobile-menu-links" role="list">
         <?php if ($isAuthenticated): ?>
           <li><a href="/account/userProfile.php">My Profile</a></li>
           <li><a href="/account/orders.php">Order History</a></li>
@@ -196,13 +197,13 @@ if (!empty($_SESSION['cart'])) {
           <li><a href="/auth/register.php">Register</a></li>
         <?php endif; ?>
       </ul>
-    </div>
+    </nav>
 
   </nav>
 </header>
 
 <!-- Mobile overlay -->
-<div class="mobile-overlay" id="mobileOverlay"></div>
+<div class="mobile-overlay" id="mobileOverlay" aria-hidden="true"></div>
 
 <?php if (!$isHomePage): ?>
   <div class="navbar-spacer" aria-hidden="true"></div>
@@ -210,7 +211,7 @@ if (!empty($_SESSION['cart'])) {
 
 <!-- Scroll-to-top button -->
 <button type="button" class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
 </button>

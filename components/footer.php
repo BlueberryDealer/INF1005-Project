@@ -1,17 +1,17 @@
-<footer class="site-footer">
+<footer class="site-footer" role="contentinfo">
   <div class="container footer-container">
     <div class="footer-top">
 
       <div class="footer-brand-block">
-        <div class="footer-brand">QUENCH</div>
+        <div class="footer-brand" aria-hidden="true">QUENCH</div>
         <p class="footer-text">
           Refreshing sodas and drinks, delivered with style.
         </p>
       </div>
 
       <div class="footer-links-block">
-        <div class="footer-heading">Quick Links</div>
-        <ul class="footer-links">
+        <h2 class="footer-heading">Quick Links</h2>
+        <ul class="footer-links" role="list">
           <li><a href="/index.php">Home</a></li>
           <li><a href="/pages/products.php">Shop</a></li>
           <li><a href="/pages/about.php">About</a></li>
@@ -20,15 +20,16 @@
       </div>
 
       <div class="footer-newsletter-block">
-        <div class="footer-heading">Stay in the Loop</div>
+        <h2 class="footer-heading">Stay in the Loop</h2>
         <p class="footer-text">Get notified about new drops, exclusive deals, and more.</p>
-        <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+        <form class="newsletter-form" onsubmit="handleNewsletter(event)" aria-label="Newsletter signup">
           <div class="newsletter-input-wrap">
+            <label for="newsletterEmail" class="sr-only">Email for newsletter</label>
             <input
               type="email"
+              id="newsletterEmail"
               class="newsletter-input"
               placeholder="Enter your email"
-              aria-label="Email for newsletter"
               required
             >
             <button type="submit" class="newsletter-btn" aria-label="Subscribe to newsletter">
@@ -37,14 +38,14 @@
               </svg>
             </button>
           </div>
-          <p class="newsletter-msg" id="newsletterMsg"></p>
+          <p class="newsletter-msg" id="newsletterMsg" aria-live="polite"></p>
         </form>
       </div>
 
     </div>
 
     <div class="footer-bottom">
-      <p class="footer-copy">© <?php echo date("Y"); ?> QUENCH. All rights reserved.</p>
+      <p class="footer-copy">&copy; <?php echo date("Y"); ?> QUENCH. All rights reserved.</p>
     </div>
   </div>
 </footer>
