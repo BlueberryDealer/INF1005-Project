@@ -54,7 +54,7 @@ try {
 
     $conn->close();
 } catch (Throwable $e) {
-    $errorMsg = 'Unable to load dashboard data.';
+    $errorMsg = 'Unable to load dashboard data: ' . $e->getMessage();
 }
 
 $adminName = $session->getlname() ?? 'Admin';

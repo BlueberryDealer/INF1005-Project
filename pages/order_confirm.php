@@ -149,7 +149,7 @@ $pageTitle = 'Order Confirmed – Quench';
                     <i class="bi bi-lightning-fill me-1" aria-hidden="true"></i>
                     Continue Shopping
                 </a>
-                <a href="index.php" class="btn btn-outline-secondary">
+                <a href="/" class="btn btn-outline-secondary">
                     <i class="bi bi-house me-1" aria-hidden="true"></i>
                     Back to Home
                 </a>
