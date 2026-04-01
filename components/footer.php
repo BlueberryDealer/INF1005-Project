@@ -55,5 +55,8 @@
 <script src="/js/main.js"></script>
 <script src="/js/cart.js"></script>
 <script src="/js/landing.js"></script>
+
+<?php include __DIR__ . '/chatbot.php'; ?>
+
 </body>
 </html>
