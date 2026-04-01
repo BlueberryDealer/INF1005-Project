@@ -4,20 +4,30 @@ use PHPMailer\PHPMailer\Exception;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+/**
+ * Configure shared SMTP settings (SendGrid via port 2525 for GCP compatibility)
+ */
+function configureSMTP(PHPMailer $mail): void
+{
+    $mail->isSMTP();
+    $mail->Host       = 'smtp.sendgrid.net';
+    $mail->SMTPAuth   = true;
+    $mail->Username   = 'apikey';
+    $config = parse_ini_file(__DIR__ . '/../config/db-config.ini');
+    $mail->Password   = $config['sendGrid_api_key'];
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port       = 2525;
+
+    $mail->setFrom('quench.store.singapore@gmail.com', 'QUENCH');
+}
+
 function sendWelcomeEmail(string $toEmail, string $userName): bool
 {
     $mail = new PHPMailer(true);
 
     try {
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'quench.store.sg@gmail.com';
-        $mail->Password   = 'zqjg bfwb fynp kuft';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        configureSMTP($mail);
 
-        $mail->setFrom('quench.store.sg@gmail.com', 'QUENCH');
         $mail->addAddress($toEmail, $userName);
         $mail->isHTML(true);
         $mail->Subject = 'Welcome to QUENCH - Here\'s Your 10% Off!';
@@ -88,15 +98,8 @@ function sendNewsletterConfirmation(string $toEmail): bool
     $mail = new PHPMailer(true);
 
     try {
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'quench.store.sg@gmail.com';
-        $mail->Password   = 'zqjg bfwb fynp kuft';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        configureSMTP($mail);
 
-        $mail->setFrom('quench.store.sg@gmail.com', 'QUENCH');
         $mail->addAddress($toEmail);
         $mail->isHTML(true);
         $mail->Subject = 'You\'re In! Welcome to the QUENCH Newsletter';
@@ -158,15 +161,8 @@ function sendNewsletterWithCode(string $toEmail): bool
     $mail = new PHPMailer(true);
 
     try {
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'quench.store.sg@gmail.com';
-        $mail->Password   = 'zqjg bfwb fynp kuft';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        configureSMTP($mail);
 
-        $mail->setFrom('quench.store.sg@gmail.com', 'QUENCH');
         $mail->addAddress($toEmail);
         $mail->isHTML(true);
         $mail->Subject = 'Your 10% Discount Code is Here!';
