@@ -29,22 +29,13 @@ unset($_SESSION['last_order_id']);
 
 $pageTitle = 'Order Confirmed – Quench';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= Sanitizer::escape($pageTitle) ?></title>
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="assets/css/styles.css">
-</head>
-<body>
 
 <?php include __DIR__ . '/../components/header.php'; ?>
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <?php include __DIR__ . '/../components/navbar.php'; ?>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
 <main class="container my-5" id="main-content">
 
@@ -160,7 +151,3 @@ $pageTitle = 'Order Confirmed – Quench';
 </main>
 
 <?php include __DIR__ . '/../components/footer.php'; ?>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
