@@ -63,7 +63,7 @@ function applyFilter() {
 
   if (wtbFilterOpen) {
     results = results.filter(function (place) {
-      return place.opening_hours && place.opening_hours.isOpen();
+      return place.opening_hours && place.opening_hours.open_now;
     });
   }
 
@@ -161,7 +161,7 @@ function displayResults(places) {
     li.setAttribute("tabindex", "0");
     li.setAttribute("data-index", index);
 
-    var isOpen = place.opening_hours ? place.opening_hours.isOpen() : null;
+    var isOpen = place.opening_hours ? place.opening_hours.open_now : null;
     var statusHtml = isOpen !== null
       ? '<span class="wtb-result-status ' + (isOpen ? "wtb-open" : "wtb-closed") + '">' +
         (isOpen ? "Open Now" : "Closed") + "</span>"
@@ -206,7 +206,7 @@ function displayResults(places) {
 function showInfoWindow(place, marker) {
   var lat = place.geometry.location.lat();
   var lng = place.geometry.location.lng();
-  var isOpen = place.opening_hours ? place.opening_hours.isOpen() : null;
+  var isOpen = place.opening_hours ? place.opening_hours.open_now : null;
 
   var content =
     '<div class="wtb-iw">' +

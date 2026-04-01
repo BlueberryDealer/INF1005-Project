@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/../config/db_connect.php';
+require_once __DIR__ . '/mailer.php';
 
-function subscribeNewsletter(string $email): array
+function subscribeNewsletter(string $email, string $source = 'footer'): array
 {
     $conn = db_connect();
 
@@ -25,7 +26,15 @@ function subscribeNewsletter(string $email): array
     if ($stmt->execute()) {
         $stmt->close();
         $conn->close();
-        return ['success' => true, 'message' => 'Thanks for subscribing!'];
+
+        // Send different emails based on source
+        if ($source === 'popup') {
+            sendNewsletterWithCode($email);
+            return ['success' => true, 'message' => 'Check your inbox for your discount code!'];
+        } else {
+            sendNewsletterConfirmation($email);
+            return ['success' => true, 'message' => 'Thanks for subscribing! Check your inbox for confirmation.'];
+        }
     }
 
     $stmt->close();

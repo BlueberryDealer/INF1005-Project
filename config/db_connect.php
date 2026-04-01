@@ -38,6 +38,4 @@ $conn = new mysqli(
 
     return $conn;
 }
-
-$conn = db_connect();
 ?>
