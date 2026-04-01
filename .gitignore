@@ -1,2 +1,4 @@
 .vscode/launch.json
 .vscode/sftp.json
+config/db-config.ini
+.DS_Store
