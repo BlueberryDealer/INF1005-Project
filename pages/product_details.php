@@ -84,7 +84,7 @@ include __DIR__ . '/../components/header.php';
           <div class="pd-image-frame">
             <img src="/images/<?= Sanitizer::escape($pd_product['image_url']) ?>"
               alt="<?= Sanitizer::escape($pd_product['name']) ?>" class="pd-image"
-              onerror="this.src='/assets/images/placeholder.png'" loading="eager">
+              onerror="this.src='/images/placeholder.png'" loading="eager">
           </div>
 
           <!-- Stock badge overlaid on image corner -->
