@@ -250,10 +250,14 @@
   fab.addEventListener('keydown', function(e) { if (e.key === 'Enter') toggleChat(); });
   closeBtn.addEventListener('click', toggleChat);
 
-  function addMessage(text, sender) {
+    function addMessage(text, sender) {
     var div = document.createElement('div');
     div.className = 'qchat-msg qchat-msg--' + sender;
-    div.innerHTML = '<div class="qchat-msg-bubble">' + escapeHtml(text) + '</div>';
+    var html = escapeHtml(text);
+    if (sender === 'bot') {
+      html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    }
+    div.innerHTML = '<div class="qchat-msg-bubble">' + html + '</div>';
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
   }
