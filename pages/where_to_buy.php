@@ -80,7 +80,7 @@ include __DIR__ . "/../components/header.php";
 <?php include __DIR__ . "/../components/footer.php"; ?>
 
 <!-- Google Maps JS API with Places library -->
+<script src="/js/where_to_buy.js"></script>
 <script async defer
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_bwlsDlOr1emKMP6oTB9pjywGAkLNnjE&libraries=places&callback=initWtbMap">
 </script>
-<script src="/js/where_to_buy.js"></script>
