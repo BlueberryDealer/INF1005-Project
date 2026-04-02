@@ -40,7 +40,8 @@ if (!empty($_SESSION['cart'])) {
     }
 }
 ?>
-<header class="navbar">
+<?php $isAdminPage = strpos($_SERVER['REQUEST_URI'], '/admin/') !== false; ?>
+<header class="navbar<?= $isAdminPage ? ' admin-navbar' : '' ?>">
   <nav class="nav-container" aria-label="Main navigation">
 
     <!-- Hamburger (mobile only) -->
