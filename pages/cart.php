@@ -128,7 +128,9 @@ include __DIR__ . '/../components/header.php';
             </td>
 
             <!-- Subtotal -->
-            <td class="item-subtotal fw-semibold">
+            <td class="item-subtotal fw-semibold"
+                data-subtotal="<?= $item['subtotal'] ?>"
+                data-unit-price="<?= $item['price'] ?>">
               $<?= number_format($item['subtotal'], 2) ?>
             </td>
 

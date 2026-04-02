@@ -320,8 +320,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!subtotalEl || !input) return;
 
         const qty = parseInt(input.value, 10);
-        const subtotalVal = parseFloat(subtotalEl.textContent.replace('$', '')) || 0;
-        const unitPrice = qty > 0 ? subtotalVal / qty : 0;
+        const subtotalVal = subtotalEl.dataset.subtotal
+        ? parseFloat(subtotalEl.dataset.subtotal)
+        : parseFloat(subtotalEl.textContent.replace('$', '').replace(/,/g, '')) || 0;
+        const unitPrice = subtotalEl.dataset.unitPrice
+        ? parseFloat(subtotalEl.dataset.unitPrice)
+        : (qty > 0 ? subtotalVal / qty : 0);
 
         subtotalEl.dataset.subtotal  = subtotalVal;
         subtotalEl.dataset.unitPrice = unitPrice;
