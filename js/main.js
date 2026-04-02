@@ -7,6 +7,7 @@ function init() {
     initProductFilters();
     initAdminSearch();
     initAuthForms();
+    initOrderHistory();
 }
 
 function initMobileMenu() {
@@ -165,12 +166,45 @@ function initAdminSearch() {
         const query = searchInput.value.trim().toLowerCase();
 
         rows.forEach(function (row) {
-            const name = row.querySelector(".product-name")?.textContent.toLowerCase() ?? "";
-            const desc = row.querySelector(".product-desc")?.textContent.toLowerCase() ?? "";
-            const matches = query === "" || name.includes(query) || desc.includes(query);
+            const name = row.querySelector(".dash-product-name")?.textContent.toLowerCase() ?? "";
+            const matches = query === "" || name.includes(query);
             row.style.display = matches ? "" : "none";
         });
     });
+}
+
+function initOrderHistory() {
+    // Accordion toggle
+    document.querySelectorAll(".oh-order-header").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            var expanded = this.getAttribute("aria-expanded") === "true";
+            // Close all
+            document.querySelectorAll(".oh-order-header").forEach(function (b) {
+                b.setAttribute("aria-expanded", "false");
+            });
+            document.querySelectorAll(".oh-order-detail").forEach(function (d) {
+                d.classList.remove("oh-open");
+            });
+            // Toggle current
+            if (!expanded) {
+                this.setAttribute("aria-expanded", "true");
+                var detail = this.parentElement.querySelector(".oh-order-detail");
+                if (detail) detail.classList.add("oh-open");
+            }
+        });
+    });
+
+    // Search filter
+    var search = document.getElementById("orderSearch");
+    if (search) {
+        search.addEventListener("input", function () {
+            var term = this.value.toLowerCase();
+            document.querySelectorAll(".oh-order").forEach(function (order) {
+                var data = order.getAttribute("data-search") || "";
+                order.style.display = data.includes(term) ? "" : "none";
+            });
+        });
+    }
 }
 
 function initAuthForms() {
