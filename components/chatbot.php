@@ -200,7 +200,7 @@
   text-align: center; font-size: 10px; color: #bbb;
   padding: 6px 0 10px; letter-spacing: 0.03em;
 }
-[data-theme="dark"] .qchat-powered { color: rgba(255,255,255,0.2); }
+[data-theme="dark"] .qchat-powered { color: rgba(255,255,255,0.5); }
 /* ── Mobile ── */
 @media (max-width: 480px) {
   .qchat-window { right: 12px; left: 12px; bottom: 88px; width: auto; max-height: 70vh; }

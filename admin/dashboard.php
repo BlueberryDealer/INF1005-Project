@@ -161,7 +161,7 @@ include __DIR__ . '/../components/header.php';
         <?php if (empty($recentOrders)): ?>
           <div class="dash-empty">No orders yet. Orders will appear here once customers checkout.</div>
         <?php else: ?>
-          <div class="dash-orders-wrap">
+          <div class="dash-orders-wrap" tabindex="0" role="region" aria-label="Recent orders">
             <table class="dash-orders-table">
               <thead>
                 <tr>

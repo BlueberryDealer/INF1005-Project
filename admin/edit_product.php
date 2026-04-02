@@ -155,8 +155,8 @@ include __DIR__ . "/../components/header.php";
           </div>
 
           <div class="pf-field">
-            <label class="pf-label">Product ID</label>
-            <input type="text" class="pf-input" value="#<?= Sanitizer::escape($product['product_id']) ?>" disabled>
+            <label for="product_id" class="pf-label">Product ID</label>
+            <input type="text" id="product_id" class="pf-input" value="#<?= Sanitizer::escape($product['product_id']) ?>" disabled>
             <span class="pf-hint">Product ID cannot be changed.</span>
           </div>
 

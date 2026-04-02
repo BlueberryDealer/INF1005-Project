@@ -11,7 +11,7 @@
   --white-hover-border: rgba(255,255,255,.18);
   --glass-bg: rgba(18,18,18,0.82);
   --glass-blur: blur(14px) saturate(170%);
-  --accent-dark: #0891b2;       
+  --accent-dark: #0e7490;       
   --accent-bright: #22d3ee;     
 
   
@@ -24,7 +24,7 @@
   --text-secondary: #444;
   --divider: rgba(0,0,0,0.08);
   --accent: var(--accent-dark);
-  --accent-hover: #0e7490;
+  --accent-hover: #0c5e73;
 
   
   --nav-height: 72px;
@@ -333,7 +333,7 @@ h1, h2, h3 { font-family: var(--font-heading); }
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 100;
-  background: rgba(18,18,18,0.22);
+  background: rgba(18,18,18,0.85);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   border-bottom: 1px solid var(--white-border);
@@ -3283,14 +3283,14 @@ object-fit: cover;
 .pf-wrapper { max-width: 680px; margin: 0 auto; }
 
 .pf-top { margin-bottom: 24px; }
-.pf-breadcrumb { font-size: 13px; color: #999; margin: 0 0 4px; }
+.pf-breadcrumb { font-size: 13px; color: #666; margin: 0 0 4px; }
 .pf-id-badge {
   font-size: 16px; font-weight: 600; color: var(--accent-bright);
   margin-left: 4px; opacity: 0.7;
 }
 .pf-breadcrumb a { color: var(--accent-bright); text-decoration: none; }
 .pf-breadcrumb a:hover { text-decoration: underline; }
-[data-theme="dark"] .pf-breadcrumb { color: rgba(255,255,255,0.4); }
+[data-theme="dark"] .pf-breadcrumb { color: rgba(255,255,255,0.65); }
 
 .pf-card {
   background: var(--white, #fff); border: 1px solid #eee;
