@@ -1,7 +1,12 @@
 <?php
 require_once __DIR__ . '/../security/session.php';
+require_once __DIR__ . '/../config/db_connect.php';
 
 $session = new SessionManager();
+
+// Load Google Maps API key from config (not hardcoded)
+$config = parse_ini_file(db_config_path());
+$mapsApiKey = htmlspecialchars($config['google_maps_api_key'] ?? '', ENT_QUOTES, 'UTF-8');
 
 include __DIR__ . "/../components/header.php";
 ?>
@@ -80,7 +85,7 @@ include __DIR__ . "/../components/header.php";
 <!-- Google Maps JS API with Places library -->
 <script src="/js/where_to_buy.js"></script>
 <script async defer
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_bwlsDlOr1emKMP6oTB9pjywGAkLNnjE&libraries=places&callback=initWtbMap">
+  src="https://maps.googleapis.com/maps/api/js?key=<?= $mapsApiKey ?>&libraries=places&callback=initWtbMap">
 </script>
 
 <?php include __DIR__ . "/../components/footer.php"; ?>
