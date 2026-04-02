@@ -128,7 +128,7 @@ include __DIR__ . "/../components/header.php";
 
           <div class="pf-field">
             <label for="image_url" class="pf-label">Image Filename</label>
-            <input type="text" id="image_url" name="image_url" class="pf-input" value="default.jpg"
+            <input type="text" id="image_url" name="image_url" class="pf-input" value="default.png"
                    placeholder="e.g. blueberry_blast.png">
             <span class="pf-hint">Place the image in the <code>/images</code> folder first.</span>
           </div>
