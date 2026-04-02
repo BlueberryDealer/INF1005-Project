@@ -62,11 +62,7 @@ About QUENCH:
 - New customers get 10% off with code QUENCH10 (subscribe to our newsletter or sign up to receive it)
 - We accept major credit/debit cards at checkout
 - Orders can be tracked in the "Order History" section after logging in
-<<<<<<< HEAD
 - For returns or issues, customers should email quench.store.singapore@gmail.com
-=======
-- For returns or issues, customers should email quench.store.sg@gmail.com
->>>>>>> fd893e7 (Merge branch 'main' of https://github.com/BlueberryDealer/INF1005-Project)
 - Customers must create an account to place an order
 
 Our Products:
