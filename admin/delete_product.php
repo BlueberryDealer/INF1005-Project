@@ -1,8 +1,8 @@
 <?php
-session_start();
 require_once __DIR__ . '/../security/admin_guard.php';
 require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../security/sanitization.php';
+require_once __DIR__ . '/../security/csrf.php';
 
 
 $errorMsg = "";
@@ -23,6 +23,12 @@ $productId = (int) $_GET['id'];
 
 // ── Step 3: Handle confirmed deletion (POST = confirmed) ──────
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+    // CSRF check
+    if (!CSRFToken::validate($_POST['csrf_token'] ?? '', true)) {
+        http_response_code(403);
+        exit('Invalid CSRF token');
+    }
 
     // Double-check the posted ID matches the URL ID — prevents tampering
     if (!isset($_POST['product_id']) || (int) $_POST['product_id'] !== $productId) {
@@ -176,6 +182,7 @@ include __DIR__ . "/../components/header.php";
                             -->
                             <form action="delete_product.php?id=<?= Sanitizer::escape($product['product_id']) ?>"
                                 method="POST">
+                                <?= CSRFToken::field('csrf_token') ?>
                                 <input type="hidden" name="product_id"
                                     value="<?= Sanitizer::escape($product['product_id']) ?>">
 

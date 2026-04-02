@@ -74,6 +74,12 @@ switch ($action) {
         $currentQty = $_SESSION['cart'][$productId] ?? 0;
         $newQty     = $currentQty + max(1, $quantity);
 
+        // Check against available stock
+        if (isset($product['quantity']) && $newQty > (int)$product['quantity']) {
+            echo json_encode(['success' => false, 'message' => 'Not enough stock available.']);
+            exit;
+        }
+
         $_SESSION['cart'][$productId] = $newQty;
 
         echo json_encode([

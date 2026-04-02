@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once __DIR__ . '/../security/sanitization.php';
 require_once __DIR__ . '/../security/csrf.php';
 require_once __DIR__ . '/../security/admin_guard.php';

@@ -175,6 +175,6 @@ include __DIR__ . '/../components/header.php';
 <input type="hidden" id="csrf-token" value="<?= Sanitizer::escape($pd_csrf) ?>">
 
 <!-- Page-specific JS -->
-<script src="/assets/js/product_details.js" defer></script>
+<script src="/js/product_details.js" defer></script>
 
 <?php include __DIR__ . '/../components/footer.php'; ?>

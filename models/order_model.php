@@ -68,6 +68,12 @@ function createOrder(int $userId, array $shipping, array $cartItems, float $tota
             throw new RuntimeException('Failed to prepare order item insert.');
         }
 
+        // Prepare stock deduction statement
+        $stockStmt = $conn->prepare("UPDATE products SET quantity = quantity - ? WHERE product_id = ? AND quantity >= ?");
+        if (!$stockStmt) {
+            throw new RuntimeException('Failed to prepare stock update.');
+        }
+
         foreach ($cartItems as $item) {
             $productId = (int)$item['product_id'];
             $productName = (string)$item['name'];
@@ -77,8 +83,16 @@ function createOrder(int $userId, array $shipping, array $cartItems, float $tota
 
             $itemStmt->bind_param('iisdid', $orderId, $productId, $productName, $unitPrice, $quantity, $subtotal);
             $itemStmt->execute();
+
+            // Deduct stock for this product
+            $stockStmt->bind_param('iii', $quantity, $productId, $quantity);
+            $stockStmt->execute();
+            if ($stockStmt->affected_rows === 0) {
+                throw new RuntimeException("Insufficient stock for product: $productName");
+            }
         }
 
+        $stockStmt->close();
         $itemStmt->close();
         $conn->commit();
         $conn->close();
@@ -346,7 +360,7 @@ function getProductsByIds(array $ids): array
     $placeholders = implode(',', array_fill(0, count($ids), '?'));
 
     $stmt = $conn->prepare("
-        SELECT product_id, name, price, image_url
+        SELECT product_id, name, price, image_url, quantity
         FROM products
         WHERE product_id IN ($placeholders)
     ");

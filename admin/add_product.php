@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $errorMsg = $validator->firstError() ?? 'Please check your input.';
         } else {
             $stmt = $conn->prepare("INSERT INTO products (name, description, price, image_url, quantity, category) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssdssi", $name, $desc, $price, $image_url, $quantity, $category);
+            $stmt->bind_param("ssdsis", $name, $desc, $price, $image_url, $quantity, $category);
 
             if ($stmt->execute()) {
                 $successMsg = "Product added successfully!";
