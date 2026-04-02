@@ -67,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if ($stmt->execute()) {
                 $successMsg = "Product updated successfully!";
             } else {
-                $errorMsg = "Database error: " . $stmt->error;
+                $errorMsg = "Failed to update product. Please try again.";
             }
 
             $stmt->close();

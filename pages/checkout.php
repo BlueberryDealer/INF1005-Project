@@ -60,13 +60,15 @@ $discount = 0.0;
 
 // Apply coupon
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['coupon_code'])) {
-    $couponResult = validateCoupon(trim($_POST['coupon_code']));
-    if ($couponResult['valid']) {
-        $_SESSION['applied_coupon'] = $couponResult;
-    } else {
-        unset($_SESSION['applied_coupon']);
-        $couponMsg = $couponResult['message'];
-        $couponClass = 'text-danger';
+    if (CSRFToken::validate($_POST['csrf_token'] ?? '', false)) {
+        $couponResult = validateCoupon(trim($_POST['coupon_code']));
+        if ($couponResult['valid']) {
+            $_SESSION['applied_coupon'] = $couponResult;
+        } else {
+            unset($_SESSION['applied_coupon']);
+            $couponMsg = $couponResult['message'];
+            $couponClass = 'text-danger';
+        }
     }
 }
 
@@ -355,7 +357,7 @@ include __DIR__ . '/../components/header.php';
             <span>$<?= number_format($grandTotal, 2) ?></span>
           </div>
           <div class="checkout-summary-row text-success">
-            <span>Discount (<?= $_SESSION['applied_coupon']['discount_percent'] ?>%)</span>
+            <span>Discount (<?= Sanitizer::escape((string)$_SESSION['applied_coupon']['discount_percent']) ?>%)</span>
             <span>-$<?= number_format($discount, 2) ?></span>
           </div>
           <?php endif; ?>

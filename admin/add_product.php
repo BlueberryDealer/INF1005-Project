@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $successMsg = "Product added successfully!";
                 $name = $price = $desc = $stock = $category = "";
             } else {
-                $errorMsg = "Database error: " . $stmt->error;
+                $errorMsg = "Failed to add product. Please try again.";
             }
             $stmt->close();
             $conn->close();

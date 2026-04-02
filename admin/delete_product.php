@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             header("Location: dashboard.php?deleted=1");
             exit();
         } else {
-            $errorMsg = "Database error: " . $stmt->error;
+            $errorMsg = "Failed to delete product. Please try again.";
             $stmt->close();
         }
         $conn->close();
