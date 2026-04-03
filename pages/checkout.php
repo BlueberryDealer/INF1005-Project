@@ -150,6 +150,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         if ($orderId) {
+            // Mark coupon as redeemed if one was used
+            if (!empty($_SESSION['applied_coupon'])) {
+                markCouponRedeemed($session->getEmail() ?? '');
+            }
             unset($_SESSION['applied_coupon']);
             $_SESSION['cart'] = [];
             $_SESSION['last_order_id'] = $orderId;

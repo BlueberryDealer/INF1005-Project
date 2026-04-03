@@ -27,18 +27,23 @@ function validateCoupon(string $code, string $userEmail = ''): array
         return ['valid' => false, 'message' => 'Invalid or expired coupon code.'];
     }
 
-    // Check if user is a newsletter subscriber
+    // Check if user is a newsletter subscriber and hasn't already used a coupon
     if ($userEmail !== '') {
-        $subStmt = $conn->prepare("SELECT id FROM newsletter_subscribers WHERE email = ?");
+        $subStmt = $conn->prepare("SELECT id, coupon_redeemed FROM newsletter_subscribers WHERE email = ?");
         $subStmt->bind_param('s', $userEmail);
         $subStmt->execute();
-        $subStmt->store_result();
-        $isSubscribed = $subStmt->num_rows > 0;
+        $subResult = $subStmt->get_result();
+        $subscriber = $subResult ? $subResult->fetch_assoc() : null;
         $subStmt->close();
 
-        if (!$isSubscribed) {
+        if (!$subscriber) {
             $conn->close();
             return ['valid' => false, 'message' => 'Invalid or expired coupon code.'];
+        }
+
+        if ((int)$subscriber['coupon_redeemed'] === 1) {
+            $conn->close();
+            return ['valid' => false, 'message' => 'This coupon has already been used.'];
         }
     }
 
@@ -50,4 +55,16 @@ function validateCoupon(string $code, string $userEmail = ''): array
         'discount_percent' => (float) $coupon['discount_percent'],
         'message' => $coupon['discount_percent'] . '% discount applied!'
     ];
+}
+
+function markCouponRedeemed(string $email): void
+{
+    $conn = db_connect();
+    $stmt = $conn->prepare("UPDATE newsletter_subscribers SET coupon_redeemed = 1 WHERE email = ?");
+    if ($stmt) {
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
+        $stmt->close();
+    }
+    $conn->close();
 }
