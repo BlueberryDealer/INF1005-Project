@@ -100,12 +100,21 @@ switch ($action) {
             // Treat quantity 0 as remove
             unset($_SESSION['cart'][$productId]);
         } else {
+            // Cap at available stock
+            $products = getProductsByIds([$productId]);
+            if (!empty($products)) {
+                $maxStock = (int)($products[0]['quantity'] ?? 0);
+                if ($maxStock > 0 && $quantity > $maxStock) {
+                    $quantity = $maxStock;
+                }
+            }
             $_SESSION['cart'][$productId] = $quantity;
         }
 
         echo json_encode([
             'success'    => true,
             'cart_count' => array_sum($_SESSION['cart']),
+            'quantity'   => $quantity,
         ]);
         break;
 

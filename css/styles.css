@@ -419,6 +419,7 @@ h1, h2, h3 { font-family: var(--font-heading); }
   gap: 10px;
 }
 .nav-cart:hover, .nav-cart:focus { color: var(--white); }
+.nav-cart-icon { display: none; }
 
 .nav-search-form { display: flex; align-items: center; gap: 8px; }
 .nav-search-input { padding: 8px 12px; border-radius: 20px; border: none; outline: none; }
@@ -1927,6 +1928,7 @@ a:focus-visible, button:focus-visible {
   .nav-actions { gap: 8px; }
   .nav-search-form { display: none; }
   .nav-cart { font-size: 0; }
+  .nav-cart .nav-cart-icon { width: 20px; height: 20px; display: inline-block; }
   .nav-cart .cart-badge { position: static; font-size: 11px; }
 
   /* Disable hover-based cart preview on touch/mobile — prevents it from

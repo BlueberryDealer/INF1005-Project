@@ -40,7 +40,7 @@ if ($success) {
     foreach ($matchedProducts as $product) {
       $category = trim((string) ($product['category'] ?? ''));
       if ($category !== '') {
-        $categories[$category] = true;
+        $categories[ucfirst(strtolower($category))] = true;
       }
     }
   }
@@ -94,7 +94,9 @@ include __DIR__ . "/../components/header.php";
         <select id="stockFilter" class="shop-toolbar-select">
           <option value="">All items</option>
           <option value="in-stock" <?= $selectedStock === 'in-stock' ? 'selected' : '' ?>>In stock</option>
-          <option value="out-of-stock" <?= $selectedStock === 'out-of-stock' ? 'selected' : '' ?>>Out of stock</option>
+          <?php if ($session->getRole() === 'admin'): ?>
+            <option value="out-of-stock" <?= $selectedStock === 'out-of-stock' ? 'selected' : '' ?>>Out of stock</option>
+          <?php endif; ?>
         </select>
       </div>
 
@@ -169,7 +171,7 @@ include __DIR__ . "/../components/header.php";
           <div class="col-sm-6 col-md-4 col-lg-3">
             <div class="shop-card product-card" data-product-id="<?= (int) $row['product_id'] ?>"
               data-name="<?= Sanitizer::escape($row['name']) ?>" data-price="<?= Sanitizer::escape($row['price']) ?>"
-              data-category="<?= Sanitizer::escape($row['category'] ?? '') ?>" data-stock="<?= (int) $row['quantity'] ?>"
+              data-category="<?= Sanitizer::escape(ucfirst(strtolower($row['category'] ?? ''))) ?>" data-stock="<?= (int) $row['quantity'] ?>"
               data-default-order="<?= (int) $row['product_id'] ?>">
 
               <a href="<?= $detailUrl ?>" class="shop-card-img"

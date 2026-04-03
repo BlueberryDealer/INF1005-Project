@@ -250,10 +250,12 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const data = await cartAction('update', productId, qty);
                 if (data.success) {
-                    updateRowSubtotal(row, unitPrice, qty);
+                    const actualQty = data.quantity ?? qty;
+                    input.value = actualQty;
+                    updateRowSubtotal(row, unitPrice, actualQty);
                     recalcTotal();
                     updateCartBadge(data.cart_count);
-                    announce('Quantity updated.');
+                    announce(actualQty < qty ? 'Not enough stock available.' : 'Quantity updated.');
                 }
             } catch {
                 announce('Could not update quantity. Please try again.');
@@ -305,9 +307,12 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const data = await cartAction('update', productId, qty);
             if (data.success) {
-                updateRowSubtotal(row, unitPrice, qty);
+                const actualQty = data.quantity ?? qty;
+                input.value = actualQty;
+                updateRowSubtotal(row, unitPrice, actualQty);
                 recalcTotal();
                 updateCartBadge(data.cart_count);
+                if (actualQty < qty) announce('Not enough stock available.');
             }
         } catch {
             announce('Could not update quantity. Please try again.');

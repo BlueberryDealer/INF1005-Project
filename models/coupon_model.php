@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/db_connect.php';
 
-function validateCoupon(string $code): array
+function validateCoupon(string $code, string $userEmail = ''): array
 {
     $conn = db_connect();
 
@@ -21,16 +21,33 @@ function validateCoupon(string $code): array
     $result = $stmt->get_result();
     $coupon = $result ? $result->fetch_assoc() : null;
     $stmt->close();
-    $conn->close();
 
-    if ($coupon) {
-        return [
-            'valid' => true,
-            'code' => $coupon['code'],
-            'discount_percent' => (float) $coupon['discount_percent'],
-            'message' => $coupon['discount_percent'] . '% discount applied!'
-        ];
+    if (!$coupon) {
+        $conn->close();
+        return ['valid' => false, 'message' => 'Invalid or expired coupon code.'];
     }
 
-    return ['valid' => false, 'message' => 'Invalid or expired coupon code.'];
+    // Check if user is a newsletter subscriber
+    if ($userEmail !== '') {
+        $subStmt = $conn->prepare("SELECT id FROM newsletter_subscribers WHERE email = ?");
+        $subStmt->bind_param('s', $userEmail);
+        $subStmt->execute();
+        $subStmt->store_result();
+        $isSubscribed = $subStmt->num_rows > 0;
+        $subStmt->close();
+
+        if (!$isSubscribed) {
+            $conn->close();
+            return ['valid' => false, 'message' => 'Invalid or expired coupon code.'];
+        }
+    }
+
+    $conn->close();
+
+    return [
+        'valid' => true,
+        'code' => $coupon['code'],
+        'discount_percent' => (float) $coupon['discount_percent'],
+        'message' => $coupon['discount_percent'] . '% discount applied!'
+    ];
 }

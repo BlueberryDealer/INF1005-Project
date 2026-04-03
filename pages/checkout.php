@@ -61,7 +61,7 @@ $discount = 0.0;
 // Apply coupon
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['coupon_code'])) {
     if (CSRFToken::validate($_POST['csrf_token'] ?? '', false)) {
-        $couponResult = validateCoupon(trim($_POST['coupon_code']));
+        $couponResult = validateCoupon(trim($_POST['coupon_code']), $session->getEmail() ?? '');
         if ($couponResult['valid']) {
             $_SESSION['applied_coupon'] = $couponResult;
         } else {
