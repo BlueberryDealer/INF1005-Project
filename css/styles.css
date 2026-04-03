@@ -329,7 +329,7 @@ h1, h2, h3 { font-family: var(--font-heading); }
 }
 .nav-links a.active { color: var(--white); border-bottom-color: var(--white); }
 
-.navbar:not(.admin-navbar) {
+.navbar {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 100;
@@ -1238,7 +1238,7 @@ h1, h2, h3 { font-family: var(--font-heading); }
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: #062a33;
+  color: #ffffff;
   background: var(--accent);
   border: none;
   border-radius: var(--radius-sm);
@@ -1830,7 +1830,7 @@ a:focus-visible, button:focus-visible {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.6);
-  z-index: 140;
+  z-index: 90;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease;
@@ -1926,8 +1926,17 @@ a:focus-visible, button:focus-visible {
 
   .nav-actions { gap: 8px; }
   .nav-search-form { display: none; }
-  .nav-cart { font-size: 0; } 
+  .nav-cart { font-size: 0; }
   .nav-cart .cart-badge { position: static; font-size: 11px; }
+
+  /* Disable hover-based cart preview on touch/mobile — prevents it from
+     appearing when tapping nearby buttons like the theme toggle */
+  .cart-container:hover .cart-preview,
+  .cart-preview:hover {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
 
   .navbar-spacer { height: 72px; }
 
@@ -1970,16 +1979,6 @@ a:focus-visible, button:focus-visible {
 
   
   .scroll-top { bottom: 20px; right: 20px; width: 40px; height: 40px; }
-}
-
-.admin-navbar {
-  z-index: 100;
-  background: #111 !important;
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border-bottom: 1px solid var(--white-border);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.10);
-  transition: background 0.35s ease, box-shadow 0.35s ease;
 }
 
 a.shop-card-img {

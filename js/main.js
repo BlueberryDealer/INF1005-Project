@@ -26,6 +26,7 @@ function initMobileMenu() {
         hamburgerBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
         mobileMenu.setAttribute("aria-hidden", isOpen ? "false" : "true");
         mobileOverlay.setAttribute("aria-hidden", isOpen ? "false" : "true");
+        document.body.style.overflow = isOpen ? "hidden" : "";
 
         focusableItems.forEach(function (item) {
             item.tabIndex = isOpen ? 0 : -1;
@@ -41,6 +42,12 @@ function initMobileMenu() {
 
     mobileOverlay.addEventListener("click", function () {
         setMobileMenuState(false);
+    });
+
+    focusableItems.forEach(function (item) {
+        item.addEventListener("click", function () {
+            setMobileMenuState(false);
+        });
     });
 
     document.addEventListener("keydown", function (e) {

@@ -256,55 +256,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* ==========================================================
-     9. HAMBURGER MOBILE MENU
-     ========================================================== */
-  var hamburger = document.getElementById("hamburgerBtn");
-  var mobileMenu = document.getElementById("mobileMenu");
-  var overlay = document.getElementById("mobileOverlay");
-
-  function openMenu() {
-    hamburger.classList.add("is-active");
-    hamburger.setAttribute("aria-expanded", "true");
-    mobileMenu.classList.add("is-open");
-    mobileMenu.setAttribute("aria-hidden", "false");
-    overlay.classList.add("is-visible");
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeMenu() {
-    hamburger.classList.remove("is-active");
-    hamburger.setAttribute("aria-expanded", "false");
-    mobileMenu.classList.remove("is-open");
-    mobileMenu.setAttribute("aria-hidden", "true");
-    overlay.classList.remove("is-visible");
-    document.body.style.overflow = "";
-  }
-
-  if (hamburger && mobileMenu && overlay) {
-    hamburger.addEventListener("click", function () {
-      if (mobileMenu.classList.contains("is-open")) {
-        closeMenu();
-      } else {
-        openMenu();
-      }
-    });
-
-    overlay.addEventListener("click", closeMenu);
-
-    var mobileLinks = mobileMenu.querySelectorAll("a");
-    mobileLinks.forEach(function (link) {
-      link.addEventListener("click", closeMenu);
-    });
-
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && mobileMenu.classList.contains("is-open")) {
-        closeMenu();
-      }
-    });
-  }
-
-
-  /* ==========================================================
      10. ANIMATED STAT COUNTERS (eased count-up on scroll)
      ========================================================== */
   var statNumbers = document.querySelectorAll(".stat-number[data-count]");
