@@ -61,14 +61,14 @@ include __DIR__ . '/../components/header.php';
         <div class="oh-order" data-search="<?= Sanitizer::escape(strtolower($order['full_name'] . ' ' . $order['email'] . ' #' . $order['id'])) ?>">
           <!-- Order Header (clickable) -->
           <button class="oh-order-header" aria-expanded="false" aria-controls="order-detail-<?= (int)$order['id'] ?>">
-            <div class="oh-order-left">
+            <span class="oh-order-left">
               <span class="oh-order-id">#<?= (int)$order['id'] ?></span>
-              <div class="oh-order-customer">
+              <span class="oh-order-customer">
                 <span class="oh-customer-name"><?= Sanitizer::escape($order['full_name']) ?></span>
                 <span class="oh-customer-email"><?= Sanitizer::escape($order['email']) ?></span>
-              </div>
-            </div>
-            <div class="oh-order-right">
+              </span>
+            </span>
+            <span class="oh-order-right">
               <span class="oh-order-date">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
                 <?= date('d M Y, g:i A', strtotime($order['created_at'])) ?>
@@ -76,7 +76,7 @@ include __DIR__ . '/../components/header.php';
               <span class="oh-order-amount">$<?= number_format((float)$order['total_amount'], 2) ?></span>
               <span class="oh-status <?= $statusClass ?>"><?= Sanitizer::escape(ucfirst($order['status'])) ?></span>
               <svg class="oh-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
+            </span>
           </button>
 
           <!-- Order Detail (expandable) -->
