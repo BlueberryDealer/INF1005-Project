@@ -1,6 +1,6 @@
 # 🥤 QUENCH — Drinks E-Commerce Platform
 
-A full-stack e-commerce web application for browsing and purchasing drinks, built as part of the INF1005 Web Systems & Technologies module at Singapore Institute of Technology.
+A full-stack e-commerce web application for browsing and purchasing drinks, built for a project at SIT.
 
 ![PHP](https://img.shields.io/badge/-PHP-777BB4?style=flat-square&logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/-MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
