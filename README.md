@@ -69,10 +69,9 @@ A full-stack e-commerce web application for browsing and purchasing drinks, buil
    ```bash
    git clone https://github.com/BlueberryDealer/INF1005-Project.git
    ```
-2. Import the database schema from `database/` into MySQL
-3. Configure database credentials in `config/`
-4. Start your local server or deploy to a LAMP stack
-5. Visit `http://localhost/` in your browser
+2. Configure database credentials in `config/`
+3. Start your local server or deploy to a LAMP stack
+4. Visit `http://localhost/` in your browser
 
 ## Contributors
 
